@@ -1,0 +1,65 @@
+############################################
+# ️🌐  GENERAL / CROSS‑PLATFORM
+############################################
+# OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+# IDE / editor settings
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+# Logs & temps
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+*.tmp
+*.temp
+
+############################################
+# ️🛠️  .NET / VISUAL STUDIO / ASP.NET Core
+############################################
+# Build output
+bin/
+obj/
+# Rider & VS cache
+.vs/
+_ReSharper*/
+*.DotSettings.user
+# NuGet
+*.nupkg
+packages/
+# EF Core Migrations snapshots
+Migrations/*Designer.cs
+# Publish output
+publish/
+wwwroot/dist/
+# Secrets & config overrides
+appsettings.*.json
+secrets.json
+
+############################################
+# ️📦  NODE / REACT FRONT‑END
+############################################
+# Dependencies
+node_modules/
+# Build artifacts
+dist/
+build/
+# Vite / CRA cache
+.vite/
+.cache/
+# Testing coverage
+coverage/
+# Env variables
+.env
+.env.*       # e.g., .env.development.local
+# Local tooling
+npm-debug.log*
+yarn-error.log*
+*.tsbuildinfo
