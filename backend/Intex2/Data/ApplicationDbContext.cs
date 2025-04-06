@@ -2,12 +2,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Intex2.API.Data;
-
-public class ApplicationDbContext: IdentityDbContext<IdentityUser>
+namespace RootkitAuth.API.Data
 {
-    ApplicationDbContext(DbContextOptions<ApplicationDbContext> options):base(options)
+    public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) :
+        base(options)
+        {
 
+        }
     }
-};
+}
