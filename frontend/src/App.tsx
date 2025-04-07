@@ -1,5 +1,4 @@
 import "./App.css";
-import CompetitionPage from "./pages/CompetitionPage";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ProductPage from "./pages/ProductPage";
 import CartPage from "./pages/CartPage";
@@ -16,7 +15,7 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<Homepage />} />
-            <Route path="/competition" element={<CompetitionPage />} />
+            <Route path="/homepage" element={<Homepage />} />
             <Route
               path="/product/:rootbeerName/:rootbeerId/:currentRetailPrice"
               element={<ProductPage />}
