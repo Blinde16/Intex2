@@ -10,5 +10,10 @@ public class MovieDbContext: DbContext
         
     }
     
-    public DbSet<Movie> Movies { get; set; }
+    public DbSet<Movie> movies_titles { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Movie>().ToTable("movies_titles");
+    }
 }

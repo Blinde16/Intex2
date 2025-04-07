@@ -20,7 +20,7 @@ namespace RootkitAuth.API.Controllers
         [HttpGet("GetMovies")]
         public IActionResult GetMovies(int pageSize = 10, int pageNum = 1, [FromQuery] List<string>? types = null)
         {
-            var query = _movieContext.Movies.AsQueryable();
+            var query = _movieContext.movies_titles.AsQueryable();
 
             if (types != null && types.Any())
             {
@@ -45,7 +45,7 @@ namespace RootkitAuth.API.Controllers
         [HttpGet("GetCategoryTypes")]
         public IActionResult GetCategoryTypes()
         {
-            var categoryTypes = _movieContext.Movies
+            var categoryTypes = _movieContext.movies_titles
                 .Select(c => c.type)
                 .Distinct()
                 .ToList();
