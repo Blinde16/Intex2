@@ -17,8 +17,8 @@ namespace RootkitAuth.API.Controllers
         {
             _movieContext = temp;
         }
-        [HttpGet("GetRootbeers")]
-        public IActionResult GetRootbeers(int pageSize = 10, int pageNum = 1, [FromQuery] List<string>? types = null)
+        [HttpGet("GetMovies")]
+        public IActionResult GetMovies(int pageSize = 10, int pageNum = 1, [FromQuery] List<string>? types = null)
         {
             var query = _movieContext.Movies.AsQueryable();
 
@@ -27,23 +27,23 @@ namespace RootkitAuth.API.Controllers
                 query = query.Where(c => types.Contains(c.type ?? string.Empty));
             }
 
-            var totalNumBrews = query.Count();
+            var totalNumMovies = query.Count();
             var brews = query
                 .Skip((pageNum - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
 
-            var returnBrews = new
+            var returnMovies = new
             {
                 Brews = brews,
-                TotalNumProjects = totalNumBrews
+                TotalNumProjects = totalNumMovies
             };
             
-            return Ok(returnBrews);
+            return Ok(returnMovies);
         }
 
-        [HttpGet("GetContainerTypes")]
-        public IActionResult GetContainerTypes()
+        [HttpGet("GetCategoryTypes")]
+        public IActionResult GetCategoryTypes()
         {
             var categoryTypes = _movieContext.Movies
                 .Select(c => c.type)
