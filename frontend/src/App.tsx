@@ -20,7 +20,7 @@ function App() {
               path="/product/:rootbeerName/:rootbeerId/:currentRetailPrice"
               element={<ProductPage />}
             />
-            
+
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
           </Routes>
