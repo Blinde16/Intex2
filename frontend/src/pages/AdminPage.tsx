@@ -16,10 +16,10 @@ const AdminProjectsPage = () => {
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
 
   useEffect(() => {
-    const loadBooks = async () => {
+    const loadMovies = async () => {
       try {
         const data = await fetchMovies(pageSize, pageNumber, []);
-        setMovies(data.movies);
+        setMovies(data.movies ?? []);
         setTotalPages(Math.ceil(data.totalNumberMovies / pageSize));
       } catch (error) {
         setError((error as Error).message);
@@ -28,12 +28,12 @@ const AdminProjectsPage = () => {
       }
     };
 
-    loadBooks();
+    loadMovies();
   }, [pageSize, pageNumber]);
 
   const handleDelete = async (show_id: string) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this project?"
+      "Are you sure you want to delete this movie?"
     );
     if (!confirmDelete) return;
 
@@ -41,23 +41,24 @@ const AdminProjectsPage = () => {
       await deleteMovie(show_id);
       setMovies(movies.filter((p) => p.show_id !== show_id));
     } catch (error) {
-      alert("failed to delete movie. Please try again. ");
+      alert("Failed to delete movie. Please try again.");
     }
   };
 
   if (loading) return <p>Loading movies...</p>;
-  if (error) return <p className="text-red 500">Error: {error}</p>;
+  if (error) return <p className="text-danger">Error: {error}</p>;
 
   return (
     <div>
-      <h1>Admin - Books</h1>
-      {!showForm}
+      <h1>Admin - Movies</h1>
+
       <button
         className="btn btn-success mb-3"
         onClick={() => setShowForm(true)}
       >
-        Add Book
+        Add Movie
       </button>
+
       {showForm && (
         <NewMovieForm
           onSuccess={() => {
@@ -69,6 +70,7 @@ const AdminProjectsPage = () => {
           onCancel={() => setShowForm(false)}
         />
       )}
+
       {editingMovie && (
         <EditMovieForm
           movie={editingMovie}
@@ -81,53 +83,61 @@ const AdminProjectsPage = () => {
           onCancel={() => setEditingMovie(null)}
         />
       )}
+
       <table className="table table-bordered table-striped">
         <thead className="table-dark">
           <tr>
-            <th>Show_id</th>
+            <th>Show ID</th>
             <th>Type</th>
             <th>Title</th>
             <th>Director</th>
             <th>Cast</th>
             <th>Country</th>
-            <th>release_year</th>
-            <th>rating</th>
-            <th>duration</th>
-            <th>Genre</th>
-            <th></th>
+            <th>Release Year</th>
+            <th>Rating</th>
+            <th>Duration</th>
+            <th>Action</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {movies.map((p) => (
-            <tr key={p.show_id}>
-              <td>{p.show_id}</td>
-              <td>{p.type}</td>
-              <td>{p.title}</td>
-              <td>{p.director}</td>
-              <td>{p.cast}</td>
-              <td>{p.country}</td>
-              <td>{p.release_year}</td>
-              <td>{p.rating}</td>
-              <td>{p.duration}</td>
-              <td>{p.Action}</td>
-              <td>
-                <button
-                  className="btn btn-primary btn-sm w-100 mb-1"
-                  onClick={() => setEditingMovie(p)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="btn btn-danger btn-sm w-100"
-                  onClick={() => handleDelete(p.show_id)}
-                >
-                  Delete
-                </button>
-              </td>
+          {Array.isArray(movies) && movies.length > 0 ? (
+            movies.map((p) => (
+              <tr key={p.show_id}>
+                <td>{p.show_id}</td>
+                <td>{p.type ?? "—"}</td>
+                <td>{p.title ?? "—"}</td>
+                <td>{p.director ?? "—"}</td>
+                <td>{p.cast ?? "—"}</td>
+                <td>{p.country ?? "—"}</td>
+                <td>{p.release_year}</td>
+                <td>{p.rating ?? "—"}</td>
+                <td>{p.duration ?? "—"}</td>
+                <td>{p.Action === 1 ? "Yes" : "No"}</td>
+                <td>
+                  <button
+                    className="btn btn-primary btn-sm w-100 mb-1"
+                    onClick={() => setEditingMovie(p)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="btn btn-danger btn-sm w-100"
+                    onClick={() => handleDelete(p.show_id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={11}>No movies found.</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
+
       <Pagination
         currentPage={pageNumber}
         totalPages={totalPages}

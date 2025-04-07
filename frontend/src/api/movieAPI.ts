@@ -16,13 +16,20 @@ export const fetchMovies = async (
     const categoryParams = selectedCategories
       .map((cat) => `categories=${encodeURIComponent(cat)}`)
       .join("&");
+
     const response = await fetch(
-      `${API_URL}/GetMovies?pageSize=${pageSize}&pageNumber=${pageNumber}${selectedCategories.length ? `&${categoryParams}` : ""}`
+      `${API_URL}/GetAdminMovies?pageSize=${pageSize}&pageNumber=${pageNumber}${
+        selectedCategories.length ? `&${categoryParams}` : ""
+      }`,
+      {
+        credentials: "include", // ✅ send cookie with request
+      }
     );
 
     if (!response.ok) {
       throw new Error("failed to fetch Movies");
     }
+
     return await response.json();
   } catch (error) {
     console.error("Error fetching Movies", error);
@@ -37,12 +44,14 @@ export const addMovie = async (newMovie: Movie): Promise<Movie> => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include", // ✅ send cookie
       body: JSON.stringify(newMovie),
     });
 
     if (!response.ok) {
-      throw new Error("failed to fetch Movies");
+      throw new Error("failed to add Movie");
     }
+
     return await response.json();
   } catch (error) {
     console.error("Error adding Movie", error);
@@ -60,12 +69,14 @@ export const updateBook = async (
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include", // ✅ send cookie
       body: JSON.stringify(updatedMovie),
     });
 
     if (!response.ok) {
       throw new Error("Failed to update Movie");
     }
+
     return await response.json();
   } catch (error) {
     console.error("Error updating Movie", error);
@@ -77,6 +88,7 @@ export const deleteMovie = async (show_id: string): Promise<void> => {
   try {
     const response = await fetch(`${API_URL}/DeleteMovie/${show_id}`, {
       method: "DELETE",
+      credentials: "include", // ✅ send cookie
     });
 
     if (!response.ok) {
@@ -84,5 +96,6 @@ export const deleteMovie = async (show_id: string): Promise<void> => {
     }
   } catch (error) {
     console.error("Error deleting movie:", error);
+    throw error;
   }
 };

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using RootkitAuth.API.Data;
 using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
@@ -18,6 +19,31 @@ namespace RootkitAuth.API.Controllers
             _movieContext = temp;
         }
         [HttpGet("GetMovies")]
+        public IActionResult GetMovies([FromQuery] string? afterId, [FromQuery] string[]? containers)
+        {
+            int pageSize = 10; // or tweak as needed
+
+            IQueryable<Movie> query = _movieContext.movies_titles
+                .OrderBy(m => m.show_id); // or by created time or something stable
+
+            if (!string.IsNullOrEmpty(afterId))
+            {
+                query = query.Where(m => String.Compare(m.show_id, afterId) > 0);
+            }
+
+            if (containers != null && containers.Length > 0)
+            {
+                query = query.Where(m => containers.Contains(m.type));
+            }
+
+            var movies = query.Take(pageSize).ToList();
+
+            return Ok(new
+            {
+                brews = movies
+            });
+        }
+        [HttpGet("GetAdminMovies")]
         public IActionResult GetMovies(int pageSize = 10, int pageNum = 1, [FromQuery] List<string>? types = null)
         {
             var query = _movieContext.movies_titles.AsQueryable();
@@ -52,7 +78,6 @@ namespace RootkitAuth.API.Controllers
             
             return Ok(categoryTypes);
         }
-
         [HttpPost("AddMovie")]
         public IActionResult AddMovie([FromBody] Movie newMovie)
         {
@@ -130,6 +155,19 @@ namespace RootkitAuth.API.Controllers
 
             return NoContent();
         }
+		 [HttpGet("GetMovieById/{show_id}")]
+        public IActionResult GetMovieById(string show_id)
+        {
+            var movie = _movieContext.movies_titles.FirstOrDefault(m => m.show_id == show_id);
+
+            if (movie == null)
+            {
+                return NotFound(new { message = "Movie not found" });
+            }
+
+            return Ok(movie);
+        }
+		
 
     }
 }
