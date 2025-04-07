@@ -1,0 +1,166 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+html, body, * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+  
+
+.page-container {
+    background-color: #1E1822;
+    color: white;
+    font-family: Arial, sans-serif;
+  }
+  
+  .matrix-container {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 8px;
+    background-color: #1E1822;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .matrix-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.5;
+    filter: blur(2px);
+    pointer-events: none;
+    user-select: none;
+  }
+  
+  .overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    background-color: rgba(30, 24, 34, 0.7);
+    padding: 40px 60px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  }
+  
+  .overlay h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+  
+  .overlay p {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    color: #ccc;
+  }
+  
+  .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  .buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  
+  .sign-in {
+    background-color: #fff;
+    color: #1E1822;
+  }
+  
+  .register {
+    background-color: #8e44ad;
+    color: #fff;
+  }
+  
+  .sign-in:hover {
+    background-color: #ddd;
+  }
+  
+  .register:hover {
+    background-color: #732d91;
+  }
+  
+  /* Subscription Tiers */
+  .tiers-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 60px 20px;
+    background-color: #1E1822;
+  }
+  
+  .tier-box {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 30px;
+    width: 250px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s;
+  }
+  
+  .tier-box:hover {
+    transform: translateY(-5px);
+  }
+  
+  .tier-box h2 {
+    margin-bottom: 10px;
+    color: #0a0a0a;
+  }
+  
+  .tier-box .price {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #8e44ad;
+  }
+  
+  .tier-box ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .tier-box li {
+    margin-bottom: 8px;
+    color: #ccc;
+  }
+  
+  /* Footer */
+  .footer {
+    background-color: #1E1822;
+    text-align: center;
+    padding: 20px;
+    color: #777;
+    font-size: 0.9rem;
+  }
+  
+  .header {
+    width: 100%;
+    /* padding: 20px 20px; */
+    background-color: rgba(0, 0, 0, 0.7);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+  }
+  

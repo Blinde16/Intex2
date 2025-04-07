@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./Identity.css";
 import "@fortawesome/fontawesome-free/css/all.css";
 
@@ -12,6 +12,10 @@ function LoginPage() {
   // state variable for error messages
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
+
+  const location = useLocation();
+  const mode = location.state?.mode || 'login'; // fallback to login if no state
+
 
   // handle change events for input fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,9 +78,10 @@ function LoginPage() {
       <div className="row">
         <div className="card border-0 shadow rounded-3 ">
           <div className="card-body p-4 p-sm-5">
-            <h5 className="card-title text-center mb-5 fw-light fs-5">
-              Sign In
-            </h5>
+          <h5 className="card-title text-center mb-5 fw-light fs-5">
+            {mode === 'register' ? 'Register' : 'Sign In'}
+          </h5>
+
             <form onSubmit={handleSubmit}>
               <div className="form-floating mb-3">
                 <input
@@ -116,20 +121,13 @@ function LoginPage() {
                 </label>
               </div>
               <div className="d-grid mb-2">
-                <button
-                  className="btn btn-primary btn-login text-uppercase fw-bold"
-                  type="submit"
-                >
-                  Sign in
-                </button>
-              </div>
-              <div className="d-grid mb-2">
-                <button
-                  className="btn btn-primary btn-login text-uppercase fw-bold"
-                  onClick={handleRegisterClick}
-                >
-                  Register
-                </button>
+              <button
+                className="btn btn-primary btn-login text-uppercase fw-bold"
+                type="submit"
+              >
+                {mode === 'register' ? 'Register' : 'Sign in'}
+              </button>
+
               </div>
               <hr className="my-4" />
               <div className="d-grid mb-2">
