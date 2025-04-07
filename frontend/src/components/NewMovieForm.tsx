@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Book } from "../types/Book";
-import { addBook } from "../api/booksAPI";
+import { Movie } from "../types/Movie";
+import { updateMovie } from "../api/movieAPI";
 
 interface NewProjectFormProps {
   onSuccess: () => void;

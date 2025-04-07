@@ -7,6 +7,7 @@ import RegisterPage from "./pages/RegisterPage";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Homepage from "./pages/Homepage";
 import MoviePage from "./pages/MoviePage";
+import AdminPage from "./pages/AdminPage";
 
 function App() {
   return (
@@ -20,9 +21,10 @@ function App() {
               path="/product/:rootbeerName/:rootbeerId/:currentRetailPrice"
               element={<ProductPage />}
             />
-            
+
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/adminMovies" element={<AdminPage />} />
           </Routes>
         </Router>
       </CartProvider>
