@@ -17,7 +17,7 @@ function MoviesList({ selectedTypes }: { selectedTypes: string[] }) {
         .join("&");
 
       const response = await fetch(
-        `https://localhost:5000/Movie/GetMovies?pageSize=${pageSize}&pageNum=${pageNum}${selectedTypes.length ? `&${containerParams}` : ""}`,
+        `https://localhost:5000/Competition/GetRootbeers?pageSize=${pageSize}&pageNum=${pageNum}${selectedTypes.length ? `&${containerParams}` : ""}`,
         {
           credentials: "include",
         }
