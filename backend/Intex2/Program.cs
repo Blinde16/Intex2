@@ -1,11 +1,21 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using RootkitAuth.API.Data;
 using RootkitAuth.API.Services;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
+// Optionally test connection here
+var connStr = builder.Configuration.GetConnectionString("AzureSqlDb");
+using (SqlConnection conn = new SqlConnection(connStr))
+{
+    conn.Open();
+    // Do stuff
+}
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -14,7 +24,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<MovieDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("MySqlConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AzureSqlDb")));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("IdentityConnection")));
