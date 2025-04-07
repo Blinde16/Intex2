@@ -55,7 +55,6 @@ public IActionResult GetMovies([FromQuery] string? afterId, [FromQuery] string[]
             
             return Ok(categoryTypes);
         }
-
         [HttpPost("AddMovie")]
         public IActionResult AddMovie([FromBody] Movie newMovie)
         {
@@ -133,6 +132,19 @@ public IActionResult GetMovies([FromQuery] string? afterId, [FromQuery] string[]
 
             return NoContent();
         }
+		 [HttpGet("GetMovieById/{show_id}")]
+        public IActionResult GetMovieById(string show_id)
+        {
+            var movie = _movieContext.movies_titles.FirstOrDefault(m => m.show_id == show_id);
+
+            if (movie == null)
+            {
+                return NotFound(new { message = "Movie not found" });
+            }
+
+            return Ok(movie);
+        }
+		
 
     }
 }
