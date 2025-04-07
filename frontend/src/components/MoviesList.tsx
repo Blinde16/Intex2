@@ -34,4 +34,4 @@ function MoviesList({
         setTotalPages(Math.ceil(totalItems / pageSize));
       };
       fetchCompetition();
-    }, [pageSize, pageNum, totalItems, selectedTypes]);
+    }, [pageSize, pageNum, totalItems, selectedTypes]);}
