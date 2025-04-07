@@ -7,6 +7,7 @@ import { CartProvider } from "./context/CartContext";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Homepage from "./pages/Homepage";
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
       <CartProvider>
         <Router>
           <Routes>
-            <Route path="/" element={<CompetitionPage />} />
+            <Route path="/" element={<Homepage />} />
             <Route path="/competition" element={<CompetitionPage />} />
             <Route
               path="/product/:rootbeerName/:rootbeerId/:currentRetailPrice"
