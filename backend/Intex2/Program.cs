@@ -14,7 +14,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<MovieDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("MySqlConnection")));
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("MySqlConnection"),
+        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("MySqlConnection"))
+    ));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("IdentityConnection")));

@@ -20,7 +20,6 @@ function MoviesList({
           .map((cont) => `containers=${encodeURIComponent(cont)}`)
           .join("&");
         
-        const MySqlUrl = 'https://localhost:3306'
         const response = await fetch(
           `https://localhost:5000/Competition/GetRootbeers?pageSize=${pageSize}&pageNum=${pageNum}${selectedTypes.length ? `&${containerParams}` : ""}`,
           {
