@@ -1,10 +1,11 @@
-import ContainerFilter from "../components/ContainerFilter";
+
 import MoviePage from "../components/MovieList";
 import Header from "../components/Header";
 import { useState } from "react";
 import AuthorizeView, { AuthorizedUser } from "../components/AuthorizeView";
 import Logout from "../components/Logout";
 import MovieList from "../components/MovieList";
+import ContainerFilter from "../components/ContainerFilter";
 
 function CompetitionPage() {
   const [selectedContainers, setSelectedContainers] = useState<string[]>([]);
