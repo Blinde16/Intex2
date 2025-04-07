@@ -1,13 +1,12 @@
 import "./App.css";
-import CompetitionPage from "./pages/CompetitionPage";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ProductPage from "./pages/ProductPage";
-import CartPage from "./pages/CartPage";
 import { CartProvider } from "./context/CartContext";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Homepage from "./pages/Homepage";
+import MoviePage from "./pages/MoviePage";
 
 function App() {
   return (
@@ -16,12 +15,12 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<Homepage />} />
-            <Route path="/competition" element={<CompetitionPage />} />
+            <Route path="/movie" element={<MoviePage />} />
             <Route
               path="/product/:rootbeerName/:rootbeerId/:currentRetailPrice"
               element={<ProductPage />}
             />
-            <Route path="/cart" element={<CartPage />} />
+            
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
           </Routes>

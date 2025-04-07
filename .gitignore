@@ -42,6 +42,8 @@ wwwroot/dist/
 # Secrets & config overrides
 appsettings.*.json
 secrets.json
+*.sqlite-shm
+*.sqlite-wal
 
 ############################################
 # ️📦  NODE / REACT FRONT‑END
@@ -63,3 +65,4 @@ coverage/
 npm-debug.log*
 yarn-error.log*
 *.tsbuildinfo
+/pictures

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Rootbeer } from "../types/Rootbeer";
+import { Rootbeer } from "../types/Movie";
 import { useNavigate } from "react-router-dom";
 
 function CompetitionList({
