@@ -52,7 +52,6 @@ namespace RootkitAuth.API.Controllers
             
             return Ok(categoryTypes);
         }
-
         [HttpPost("AddMovie")]
         public IActionResult AddMovie([FromBody] Movie newMovie)
         {
@@ -130,6 +129,19 @@ namespace RootkitAuth.API.Controllers
 
             return NoContent();
         }
+		 [HttpGet("GetMovieById/{show_id}")]
+        public IActionResult GetMovieById(string show_id)
+        {
+            var movie = _movieContext.movies_titles.FirstOrDefault(m => m.show_id == show_id);
+
+            if (movie == null)
+            {
+                return NotFound(new { message = "Movie not found" });
+            }
+
+            return Ok(movie);
+        }
+		
 
     }
 }

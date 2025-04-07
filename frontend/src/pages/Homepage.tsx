@@ -63,8 +63,11 @@ const images = imageNames.map((name, idx) => (
           </div>
         ))}
       </div>
-
-      <MovieDetails title ='7SEEDS' />
+      
+      <div>
+      <MovieDetails />
+      </div>
+      
 
       {/* Footer */}
       <footer className="footer">
