@@ -107,13 +107,14 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
               </li>
             </ul>
           </div>
-      </div>
+        </div>
+      ))}
 
       {loading && <p style={{ textAlign: "center" }}>Loading...</p>}
       {!hasMore && (
         <p style={{ textAlign: "center" }}>No more movies to show.</p>
       )}
-    </div>
+    </>
   );
 }
 
