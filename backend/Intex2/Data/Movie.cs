@@ -23,7 +23,6 @@ namespace RootkitAuth.API.Data
         public byte? Adventure { get; set; }
         public byte? Anime_Series_International_TV_Shows { get; set; }
         public byte? British_TV_Shows_Docuseries_International_TV_Shows { get; set; }
-        public byte? Children_Family_Movies {get; set;}
         public byte? Children { get; set; }
         public byte? Comedies { get; set; }
         public byte? Comedies_Dramas_International_Movies { get; set; }

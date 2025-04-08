@@ -14,12 +14,13 @@ const AdminPage = () => {
   const [error, setError] = useState<string>("");
   const [pageSize, setPageSize] = useState<number>(10);
   const [pageNumber, setPageNumber] = useState<number>(1);
-  const [totalPages] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(0);
 
   const getMovies = async () => {
     try {
-      const data = await fetchMovies(50, 1, []);
+      const data = await fetchMovies(pageSize, pageNumber, []);
       setMovies(data.movies);
+      setTotalPages(Math.ceil(data.totalNumberMovies / pageSize)); // 👈 if your API provides total count
     } catch (err) {
       console.error("Failed to fetch movies:", err);
       setError("Failed to load movies. Please try again later.");
@@ -28,7 +29,7 @@ const AdminPage = () => {
 
   useEffect(() => {
     getMovies();
-  }, []);
+  }, [pageSize, pageNumber]);
 
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this movie?")) return;
