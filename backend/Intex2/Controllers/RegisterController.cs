@@ -32,7 +32,7 @@ namespace RootkitAuth.API.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
+            
             var user = new IdentityUser
             {
                 UserName = model.Email,
@@ -50,12 +50,20 @@ namespace RootkitAuth.API.Controllers
 
             await _userManager.AddToRoleAsync(user, "AuthenticatedCustomer");
 
-            // Enable 2FA via email
-            await _userManager.SetTwoFactorEnabledAsync(user, true);
+            var no2faEmails = new[] { "admin@nichemovies.com", "user@nichemovies.com" };
+            var isExcluded = no2faEmails.Contains(user.Email.ToLower());
 
-            // Send 2FA token via email
-            var token = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
-            await _emailSender.SendPasswordResetCodeAsync(user, user.Email, token);
+            if (model.Force2FA || !isExcluded)
+            {
+                await _userManager.SetTwoFactorEnabledAsync(user, true);
+
+                var token = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
+
+                Console.WriteLine($"✅ 2FA Token for {user.Email}: {token}");
+
+                await _emailSender.SendPasswordResetCodeAsync(user, user.Email, token);
+            }
+
 
             return Ok(new
             {
@@ -94,8 +102,9 @@ namespace RootkitAuth.API.Controllers
     }
 
     public class RegisterDto
-    {
-        public string Email { get; set; }
-        public string Password { get; set; }
-    }
+{
+    public string Email { get; set; }
+    public string Password { get; set; }
+    public bool Force2FA { get; set; } = false;
+}
 }

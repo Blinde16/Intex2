@@ -58,21 +58,20 @@ function LoginPage() {
 
       try {
         const contentLength = response.headers.get("content-length");
-        if (contentLength && parseInt(contentLength, 10) > 0) {
+        if (contentLength && parseInt(contentLength) > 0) {
           data = await response.json();
         }
       } catch (err) {
-        console.error("JSON parse error:", err);
-      }
-
-      if (response.status === 200 && data.requires2FA) {
-        // Redirect to 2FA page and pass the email along
-        navigate("/verify-2fa", { state: { email } });
-        return;
+        console.warn("Failed to parse response JSON", err);
       }
 
       if (!response.ok) {
-        throw new Error(data?.message || "Invalid email or password.");
+        throw new Error(data?.message || "Login failed.");
+      }
+
+      if (data?.requires2FA) {
+        navigate("/verify-2fa", { state: { email } });
+        return;
       }
 
       navigate("/movie");

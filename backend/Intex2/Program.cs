@@ -12,11 +12,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Optionally test connection here
 var connStr = builder.Configuration.GetConnectionString("AzureSqlDb");
-using (SqlConnection conn = new SqlConnection(connStr))
+try
 {
-    conn.Open();
-    // Do stuff
+    using (SqlConnection conn = new SqlConnection(connStr))
+    {
+        conn.Open();
+        Console.WriteLine("✅ Database connection successful.");
+        // Do stuff if needed for testing
+    }
 }
+catch (SqlException ex)
+{
+    Console.WriteLine($"❌ Database connection failed: {ex.Message}");
+    // Consider logging the full exception details
+}
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -36,9 +46,8 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddTransient<IEmailSender<IdentityUser>, DummyEmailSender>(); 
-
-builder.Services.AddTransient<IUserTwoFactorTokenProvider<IdentityUser>, PhoneNumberTokenProvider<IdentityUser>>();
+builder.Services.AddTransient<IEmailSender<IdentityUser>, SmtpEmailSender>(); // Assuming you want to keep your original EmailSender
+builder.Services.AddTransient<IUserTwoFactorTokenProvider<IdentityUser>, NumericTwoFactorTokenProvider>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -53,10 +62,15 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
     options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
 
-    // ✅ Tell ASP.NET to use short codes for "Email"
+    // ✅ Tell ASP.NET to use your custom provider for "Email"
     options.Tokens.ProviderMap["Email"] = new TokenProviderDescriptor(
-        typeof(PhoneNumberTokenProvider<IdentityUser>)
+        typeof(NumericTwoFactorTokenProvider)
     );
+
+    // Remove the PhoneNumberTokenProvider registration as we are replacing it for Email
+    // options.Tokens.ProviderMap["Phone"] = new TokenProviderDescriptor(
+    //     typeof(PhoneNumberTokenProvider<IdentityUser>)
+    // );
 });
 
 
@@ -102,7 +116,7 @@ app.Use(async (context, next) =>
 
 app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
-app.UseRouting(); 
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -142,7 +156,7 @@ app.MapGet("/pingauth", (ClaimsPrincipal user) =>
     });
 }).RequireAuthorization();
 
-//  SEED ROLES & ASSIGN USERS 
+//  SEED ROLES & ASSIGN USERS
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
