@@ -19,30 +19,37 @@ namespace RootkitAuth.API.Controllers
             _movieContext = temp;
         }
         [HttpGet("GetMovies")]
-public IActionResult GetMovies([FromQuery] string? afterId, [FromQuery] string[]? containers)
-{
-    int pageSize = 10; // or tweak as needed
+        public IActionResult GetMovies([FromQuery] string? afterId, [FromQuery] string[]? containers)
+        {
+            int pageSize = 10;
 
-    IQueryable<Movie> query = _movieContext.movies_titles
-        .OrderBy(m => m.show_id); // or by created time or something stable
+            IQueryable<Movie> query = _movieContext.movies_titles
+                .OrderBy(m => m.show_id);
 
-    if (!string.IsNullOrEmpty(afterId))
-    {
-        query = query.Where(m => String.Compare(m.show_id, afterId) > 0);
-    }
+            if (!string.IsNullOrEmpty(afterId))
+            {
+                query = query.Where(m => string.Compare(m.show_id, afterId) > 0);
+            }
 
-    if (containers != null && containers.Length > 0)
-    {
-        query = query.Where(m => containers.Contains(m.type));
-    }
+            if (containers != null && containers.Length > 0)
+            {
+                query = query.Where(m => containers.Contains(m.type));
+            }
 
-    var movies = query.Take(pageSize).ToList();
+            // ✅ Ensure uniqueness by grouping by show_id
+            var movies = query
+                .AsEnumerable() // switch to LINQ to Objects
+                .GroupBy(m => m.show_id)
+                .Select(g => g.First())
+                .Take(pageSize)
+                .ToList();
 
-    return Ok(new
-    {
-        brews = movies
-    });
-}
+            return Ok(new
+            {
+                brews = movies
+            });
+        }
+
 
 
         [HttpGet("GetCategoryTypes")]

@@ -49,20 +49,20 @@ const images = imageNames.map((name, idx) => (
         </div>
       </div>
 
-      {/* Subscription Tiers */}
       <div className="tiers-container">
-        {randomTiers.map((tier, index) => (
-          <div key={index} className="tier-box">
-            <h2>{tier.title}</h2>
-            <p className="price">{tier.price}</p>
-            <ul>
-              {tier.features.map((feature, idx) => (
-                <li key={idx}>{feature}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
+      {randomTiers.map((tier) => (
+        <div key={tier.title} className="tier-box">
+          <h2>{tier.title}</h2>
+          <p className="price">{tier.price}</p>
+          <ul>
+            {tier.features.map((feature) => (
+              <li key={`${tier.title}-${feature}`}>{feature}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
       
       <div>
       <MovieDetails />

@@ -7,10 +7,9 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
   const [movieList, setMovieList] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
-  
-  const navigate = useNavigate();
 
-  const isInitialLoad = useRef(true); // 🧩 Add this
+  const navigate = useNavigate();
+  const isInitialLoad = useRef(true);
 
   const fetchMovies = async () => {
     if (loading || !hasMore) return;
@@ -20,17 +19,30 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
       .map((cont) => `containers=${encodeURIComponent(cont)}`)
       .join("&");
 
-    const afterIdParam = movieList.length > 0 ? `afterId=${movieList[movieList.length - 1].show_id}&` : '';
+    const afterIdParam =
+      movieList.length > 0
+        ? `afterId=${movieList[movieList.length - 1].show_id}&`
+        : "";
+
     const url = `https://localhost:5000/Movie/GetMovies?${afterIdParam}${containerParams}`;
 
     try {
       const response = await fetch(url, { credentials: "include" });
+
+      if (!response.ok) {
+        throw new Error(`Error fetching movies: ${response.statusText}`);
+      }
+
       const data = await response.json();
 
       if (data.brews.length === 0) {
         setHasMore(false);
       } else {
-        setMovieList((prevMovies) => [...prevMovies, ...data.brews]);
+        setMovieList((prevMovies) => {
+          const allMovies = [...prevMovies, ...data.brews];
+          const uniqueMovies = Array.from(new Map(allMovies.map(m => [m.show_id, m])).values());
+          return uniqueMovies;
+        });
       }
     } catch (error) {
       console.error("Error fetching movies:", error);
@@ -39,7 +51,6 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
     }
   };
 
-  // ✅ Filter change effect
   useEffect(() => {
     setMovieList([]);
     setHasMore(true);
@@ -56,31 +67,31 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
         fetchMovies();
       }
     };
-
+  
     if (isInitialLoad.current) {
       isInitialLoad.current = false;
-      return; // 🚀 Prevent double fetch!
+      return;
     }
-
+  
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [movieList, hasMore, selectedContainers]);
+  }, [movieList, hasMore, selectedContainers]); // ❌ Problem: these dependencies
+  
 
   const getPosterUrl = (title: string) => {
-    const encodedTitle = encodeURIComponent(title);
-    return `https://moviepostersintex2.blob.core.windows.net/movieposter/Movie Posters/${encodedTitle}.jpg`;
+    const cleanTitle = title
+      .replace(/[()'":?!,&#.]/g, " ") 
+      .replace(/\s+/g, " ")       
+      .trim();                    
+  
+    const encodedTitle = encodeURIComponent(cleanTitle);
+    const folderName = encodeURIComponent("Movie Posters");
+    return `https://moviepostersintex2.blob.core.windows.net/movieposter/${folderName}/${encodedTitle}.jpg`;
   };
+  
 
   return (
     <div>
-      {/* Placeholder Carousels */}
-      <div style={{ marginBottom: "20px" }}>Carousel Placeholder 1</div>
-      <div style={{ marginBottom: "20px" }}>Carousel Placeholder 2</div>
-      <div style={{ marginBottom: "20px" }}>Carousel Placeholder 3</div>
-      <div style={{ marginBottom: "20px" }}>Carousel Placeholder 4</div>
-      <div style={{ marginBottom: "20px" }}>Carousel Placeholder 5</div>
-
-      {/* Movie Grid */}
       <div className="movie-grid">
         {movieList.map((m) => (
           <div
@@ -94,7 +105,7 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
               className="movie-poster"
               onError={(e) =>
                 (e.currentTarget.src =
-                  "https://via.placeholder.com/300x450?text=No+Image")
+                  "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=")
               }
             />
             <div className="movie-info">
@@ -106,7 +117,9 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
       </div>
 
       {loading && <p style={{ textAlign: "center" }}>Loading...</p>}
-      {!hasMore && <p style={{ textAlign: "center" }}>No more movies to show.</p>}
+      {!hasMore && (
+        <p style={{ textAlign: "center" }}>No more movies to show.</p>
+      )}
     </div>
   );
 }

@@ -13,6 +13,7 @@ function MoviePage() {
     <AuthorizeView>
       <Header />
       <div className="container-fluid movie-page pt-3">
+        {/* Logout Section */}
         <div className="d-flex justify-content-end mb-3">
           <Logout>
             Logout <AuthorizedUser value="email" />
@@ -30,11 +31,15 @@ function MoviePage() {
 
           {/* Main Content */}
           <div className="col-md-9 movie-list-area">
-            <div className="recommendation-placeholder mb-4">🎥 Recommender 1 Placeholder</div>
-            <div className="recommendation-placeholder mb-4">🎥 Recommender 2 Placeholder</div>
-            <div className="recommendation-placeholder mb-4">🎥 Recommender 3 Placeholder</div>
-            <div className="recommendation-placeholder mb-4">🎥 Recommender 4 Placeholder</div>
-            <div className="recommendation-placeholder mb-4">🎥 Recommender 5 Placeholder</div>
+            {/* Future Recommendations */}
+            {[1, 2, 3, 4, 5].map((num) => (
+              <div
+                key={`recommendation-${num}`}
+                className="recommendation-placeholder mb-4"
+              >
+                🎥 Recommender {num} Placeholder
+              </div>
+            ))}
 
             {/* Infinite Scroll Movie List */}
             <MovieList selectedContainers={selectedContainers} />

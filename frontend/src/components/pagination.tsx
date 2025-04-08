@@ -24,7 +24,7 @@ const Pagination = ({
 
       {[...Array(totalPages)].map((_, index) => (
         <button
-          key={index + 1}
+          key={`page-${index + 1}`} // ✅ This solves the duplicate key issue
           onClick={() => onPageChange(index + 1)}
           disabled={currentPage === index + 1}
         >
@@ -43,9 +43,10 @@ const Pagination = ({
       <label>
         <select
           value={pageSize}
-          onChange={(p) => (
-            onPageSizeChange(Number(p.target.value)), onPageChange(1)
-          )}
+          onChange={(p) => {
+            onPageSizeChange(Number(p.target.value));
+            onPageChange(1); // Reset to page 1 when page size changes
+          }}
         >
           <option value="5">5</option>
           <option value="10">10</option>
