@@ -1,23 +1,11 @@
-import React from "react";
-import "./css/Homepage.css";
+import React from 'react';
+import './css/Homepage.css';
 import { useNavigate } from "react-router-dom";
 
 const subscriptionTiers = [
-  {
-    title: "Basic Plan",
-    price: "$3.99/month",
-    features: ["1 Screen", "SD Quality", "Limited Catalog"],
-  },
-  {
-    title: "Standard Plan",
-    price: "$7.99/month",
-    features: ["2 Screens", "HD Quality", "Full Catalog"],
-  },
-  {
-    title: "Premium Plan",
-    price: "$12.99/month",
-    features: ["4 Screens", "Ultra HD", "Full Catalog + Extras"],
-  },
+  { title: 'Basic Plan', price: '$3.99/month', features: ['1 Screen', 'SD Quality', 'Limited Catalog'] },
+  { title: 'Standard Plan', price: '$7.99/month', features: ['2 Screens', 'HD Quality', 'Full Catalog'] },
+  { title: 'Premium Plan', price: '$12.99/month', features: ['4 Screens', 'Ultra HD', 'Full Catalog + Extras'] },
 ];
 
 const Homepage: React.FC = () => {
@@ -33,9 +21,7 @@ const Homepage: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const randomTiers = [...subscriptionTiers]
-    .sort(() => 0.5 - Math.random())
-    .slice(0, 3);
+  const randomTiers = [...subscriptionTiers].sort(() => 0.5 - Math.random()).slice(0, 3);
 
   return (
     <div className="page-container">
@@ -45,15 +31,21 @@ const Homepage: React.FC = () => {
       </header>
 
       {/* Background Matrix */}
+      <div className="matrix-container">
+        {images}
+        <div className="overlay">
           <h1>Unlimited, Independent Movies & Originals</h1>
           <p>Enjoy hundreds of titles anytime, anywhere. Starting at just $3.99/month.</p>
+          <div className="buttons">
             <button className="sign-in" onClick={() => navigate('/login', { state: { mode: 'login' } })}>
               Sign In
             </button>
             <button className="register" onClick={() => navigate('/register')}>
               Get Started
             </button>
+          </div>
         </div>
+      </div>
 
       {/* Welcome Section */}
       <section className="welcome-section">
