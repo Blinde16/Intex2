@@ -3,13 +3,11 @@ import { useNavigate } from "react-router-dom";
 function Logout(props: { children: React.ReactNode }) {
   const navigate = useNavigate();
 
-  const handleLogout = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-
+  const handleLogout = async () => {
     try {
       const response = await fetch("https://localhost:5000/logout", {
         method: "POST",
-        credentials: "include", // Ensure cookies are sent
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -26,9 +24,18 @@ function Logout(props: { children: React.ReactNode }) {
   };
 
   return (
-    <a className="logout" href="#" onClick={handleLogout}>
+    <button
+      className="logout btn btn-link p-0"
+      onClick={handleLogout}
+      style={{
+        textDecoration: "none",
+        color: "inherit",
+        background: "none",
+        border: "none",
+      }}
+    >
       {props.children}
-    </a>
+    </button>
   );
 }
 

@@ -1,53 +1,95 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Movie } from "../types/Movie";
 import { useNavigate } from "react-router-dom";
 import Adventure from "./Adventure";
+import './css/movielist.css';
 
 function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
   const [movieList, setMovieList] = useState<Movie[]>([]);
-  const [lastId, setLastId] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
-  const loaderRef = useRef<HTMLDivElement | null>(null);
-  const navigate = useNavigate();
 
-  const fetchMovies = useCallback(async () => {
+  const navigate = useNavigate();
+  const isInitialLoad = useRef(true);
+
+  const fetchMovies = async () => {
+    if (loading || !hasMore) return;
+    setLoading(true);
+
     const containerParams = selectedContainers
       .map((cont) => `containers=${encodeURIComponent(cont)}`)
       .join("&");
 
-    const url = `https://localhost:5000/Movie/GetMovies?${lastId ? `afterId=${lastId}&` : ""}${containerParams}`;
+    const afterIdParam =
+      movieList.length > 0
+        ? `afterId=${movieList[movieList.length - 1].show_id}&`
+        : "";
 
-    const response = await fetch(url, { credentials: "include" });
-    const data = await response.json();
+    const url = `https://localhost:5000/Movie/GetMovies?${afterIdParam}${containerParams}`;
 
-    if (data.brews.length === 0) {
-      setHasMore(false);
+    try {
+      const response = await fetch(url, { credentials: "include" });
+
+      if (!response.ok) {
+        throw new Error(`Error fetching movies: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (data.brews.length === 0) {
+        setHasMore(false);
+      } else {
+        setMovieList((prevMovies) => {
+          const allMovies = [...prevMovies, ...data.brews];
+          const uniqueMovies = Array.from(new Map(allMovies.map(m => [m.show_id, m])).values());
+          return uniqueMovies;
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching movies:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    setMovieList([]);
+    setHasMore(true);
+    isInitialLoad.current = true;
+    fetchMovies();
+  }, [selectedContainers]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 1 >=
+        document.documentElement.scrollHeight
+      ) {
+        fetchMovies();
+      }
+    };
+  
+    if (isInitialLoad.current) {
+      isInitialLoad.current = false;
       return;
     }
+  
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [movieList, hasMore, selectedContainers]); // ❌ Problem: these dependencies
+  
 
-    setMovieList((prev) => [...prev, ...data.brews]);
-    setLastId(data.brews[data.brews.length - 1].show_id); // update lastId
-  }, [selectedContainers, lastId]);
-
-  useEffect(() => {
-    fetchMovies();
-  }, [fetchMovies]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore) {
-          fetchMovies();
-        }
-      },
-      { threshold: 1 }
-    );
-
-    if (loaderRef.current) observer.observe(loaderRef.current);
-    return () => {
-      if (loaderRef.current) observer.unobserve(loaderRef.current);
-    };
-  }, [hasMore, fetchMovies]);
+  const getPosterUrl = (title: string) => {
+    const cleanTitle = title
+      .replace(/[()'":?!,&#.]/g, " ") 
+      .replace(/\s+/g, " ")       
+      .trim();                    
+  
+    const encodedTitle = encodeURIComponent(cleanTitle);
+    const folderName = encodeURIComponent("Movie Posters");
+    return `https://moviepostersintex2.blob.core.windows.net/movieposter/${folderName}/${encodedTitle}.jpg`;
+  };
+  
 
   return (
     <>

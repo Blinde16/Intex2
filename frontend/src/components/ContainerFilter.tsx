@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "./ContainerFilter.css"; // Assuming you have some CSS for styling
+import "./ContainerFilter.css";
 
 function ContainerFilter({
   selectedContainers,
@@ -21,14 +21,15 @@ function ContainerFilter({
         );
 
         const data = await response.json();
-        setContainers(data);
 
-        // Automatically check all fetched containers
-        setSelectedContainers(data);
+        const uniqueContainers = [...new Set(data)];
+        setContainers(uniqueContainers);
+        setSelectedContainers(uniqueContainers);
       } catch (error) {
         console.error("Error fetching container types", error);
       }
     };
+
     fetchContainers();
   }, [setSelectedContainers]);
 
@@ -45,7 +46,7 @@ function ContainerFilter({
       <h5>Container Types</h5>
       <div className="container-list">
         {containers.map((c) => (
-          <div key={c} className="container-item">
+          <div key={`container-${c}`} className="container-item">
             <input
               type="checkbox"
               id={c}

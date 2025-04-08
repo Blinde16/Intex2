@@ -13,8 +13,10 @@ const Pagination = ({
   onPageChange,
   onPageSizeChange,
 }: PaginationProps) => {
+  const safePageCount = Math.max(1, totalPages || 1);
+
   return (
-    <div className="flex item-center justify-center mt-4">
+    <div className="flex items-center justify-center mt-4 gap-2 flex-wrap">
       <button
         disabled={currentPage === 1}
         onClick={() => onPageChange(currentPage - 1)}
@@ -22,9 +24,8 @@ const Pagination = ({
         Previous
       </button>
 
-      {[...Array(totalPages)].map((_, index) => (
+      {Array.from({ length: safePageCount }).map((_, index) => (
         <button
-          key={index + 1}
           onClick={() => onPageChange(index + 1)}
           disabled={currentPage === index + 1}
         >
@@ -33,23 +34,25 @@ const Pagination = ({
       ))}
 
       <button
-        disabled={currentPage === totalPages}
+        disabled={currentPage === safePageCount}
         onClick={() => onPageChange(currentPage + 1)}
       >
         Next
       </button>
 
-      <br />
-      <label>
+      <label className="ml-4">
+        Items per page:{" "}
         <select
           value={pageSize}
-          onChange={(p) => (
-            onPageSizeChange(Number(p.target.value)), onPageChange(1)
-          )}
+          onChange={(e) => {
+            const newSize = Number(e.target.value);
+            onPageSizeChange(newSize);
+            onPageChange(1); // reset to page 1 when page size changes
+          }}
         >
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="20">20</option>
+          <option value="100">100</option>
+          <option value="250">250</option>
+          <option value="500">500</option>
         </select>
       </label>
     </div>

@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { Movie } from "../types/Movie";
-import { updateMovie } from "../api/moviesAPI";
+import { Movie, GENRES } from "../types/Movie";
+import { updateMovie } from "../api/movieAPI";
+import AuthorizeView, { AuthorizedUser } from "./AuthorizeView";
+import Logout from "./Logout";
 
 interface EditMovieFormProps {
   movie: Movie;
@@ -23,25 +25,42 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Edit Movie</h2>
-      <input type="text" name="title" value={formData.title} onChange={handleChange} />
-      <input type="text" name="director" value={formData.director} onChange={handleChange} />
-      <input type="text" name="cast" value={formData.cast} onChange={handleChange} />
-      <input type="text" name="country" value={formData.country} onChange={handleChange} />
-      <input type="number" name="release_year" value={formData.release_year} onChange={handleChange} />
-      <input type="text" name="rating" value={formData.rating} onChange={handleChange} />
-      <input type="text" name="duration" value={formData.duration} onChange={handleChange} />
-      <input type="text" name="description" value={formData.description} onChange={handleChange} />
-      <label>
-        Action:
-        <input type="checkbox" name="Action" checked={formData.Action} onChange={handleChange} />
-      </label>
-      {/* Repeat for other genre flags */}
-      <button type="submit">Update Movie</button>
-      <button type="button" onClick={onCancel}>Cancel</button>
-    </form>
+    <AuthorizeView>
+      <Logout>
+        Logout <AuthorizedUser value="email" />
+      </Logout>
+
+      <form onSubmit={handleSubmit}>
+        <h2>Edit Movie</h2>
+        <input type="text" name="title" value={formData.title} onChange={handleChange} />
+        <input type="text" name="director" value={formData.director} onChange={handleChange} />
+        <input type="text" name="cast" value={formData.cast} onChange={handleChange} />
+        <input type="text" name="country" value={formData.country} onChange={handleChange} />
+        <input type="text" name="release_year" value={formData.release_year} onChange={handleChange} />
+        <input type="text" name="rating" value={formData.rating} onChange={handleChange} />
+        <input type="text" name="duration" value={formData.duration} onChange={handleChange} />
+        <input type="text" name="description" value={formData.description} onChange={handleChange} />
+
+        <h4>Genres</h4>
+        {GENRES.map((genre) => (
+          <label key={genre} style={{ display: "block" }}>
+            <input
+              type="checkbox"
+              name={genre}
+              checked={formData[genre]}
+              onChange={handleChange}
+            />
+            {genre}
+          </label>
+        ))}
+
+        <br />
+        <button type="submit">Update Movie</button>
+        <button type="button" onClick={onCancel}>Cancel</button>
+      </form>
+    </AuthorizeView>
   );
 };
 
 export default EditMovieForm;
+
