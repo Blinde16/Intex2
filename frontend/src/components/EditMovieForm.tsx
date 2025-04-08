@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Movie } from "../types/Movie";
 import { updateMovie } from "../api/movieAPI";
-import AuthorizeView from "./AuthorizeView";
+import AuthorizeView, { AuthorizedUser } from "./AuthorizeView";
+import Logout from "./Logout";
 
 interface EditMovieFormProps {
   movie: Movie;
