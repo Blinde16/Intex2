@@ -45,10 +45,8 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
     setHasMore(true);
     isInitialLoad.current = true;
     fetchMovies();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedContainers]);
 
-  // ✅ Scroll effect
   useEffect(() => {
     const handleScroll = () => {
       if (
