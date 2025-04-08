@@ -15,9 +15,7 @@ function MoviePage() {
       <div className="container-fluid movie-page pt-3">
         {/* Logout Section */}
         <div className="d-flex justify-content-end mb-3">
-          <Logout>
-            Logout <AuthorizedUser value="email" />
-          </Logout>
+          
         </div>
 
         <div className="row">

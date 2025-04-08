@@ -1,12 +1,47 @@
-/* Make all text on the page white */
+/* General page styling */
 body {
-    color: white;
-    background-color: black;  /* Optional: For better contrast */
-    font-family: Arial, sans-serif;  /* Optional: Set a clean font */
-  }
-  
-  /* If you want to target specific elements, you can use the following styles */
-  h1, h2, h3, p, a {
-    color: white;  /* Ensures headings, paragraphs, and links are white */
-  }
-  
+  color: white;
+  background-color: black;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 2rem;
+}
+
+/* Ensure text elements are white */
+h1,
+h2,
+h3,
+p,
+a {
+  color: white;
+}
+
+/* Box style for each section */
+.section-box {
+  background-color: #1e1e1e; /* Dark gray box */
+  padding: 1.5rem;
+  border: 1px solid #444;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* Remove bullet points from lists */
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+/* Optional: Style the list items */
+li {
+  margin-bottom: 0.5rem;
+  padding-left: 1rem;
+  position: relative;
+}
+
+li::before {
+  content: "•"; /* Optional: Add a custom bullet (or skip this to remove bullets entirely) */
+  color: #f1d600;
+  position: absolute;
+  left: 0;
+}
