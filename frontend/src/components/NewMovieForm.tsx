@@ -79,83 +79,107 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
         Logout <AuthorizedUser value="email" />
       </Logout>
 
-      <form onSubmit={handleSubmit}>
-        <h2>Add New Movie</h2>
-        <input
-          type="text"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          placeholder="Title"
-        />
-        <input
-          type="text"
-          name="director"
-          value={formData.director}
-          onChange={handleChange}
-          placeholder="Director"
-        />
-        <input
-          type="text"
-          name="cast"
-          value={formData.cast}
-          onChange={handleChange}
-          placeholder="Cast"
-        />
-        <input
-          type="text"
-          name="country"
-          value={formData.country}
-          onChange={handleChange}
-          placeholder="Country"
-        />
-        <input
-          type="text"
-          name="release_year"
-          value={formData.release_year}
-          onChange={handleChange}
-          placeholder="Release Year"
-        />
-        <input
-          type="text"
-          name="rating"
-          value={formData.rating}
-          onChange={handleChange}
-          placeholder="Rating"
-        />
-        <input
-          type="text"
-          name="duration"
-          value={formData.duration}
-          onChange={handleChange}
-          placeholder="Duration"
-        />
-        <input
-          type="text"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          placeholder="Description"
-        />
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white text-black p-4 rounded shadow-lg max-w-3xl mx-auto"
+      >
+        <h2 className="text-2xl font-bold mb-4">🎬 Add New Movie</h2>
 
-        <h4>Genres</h4>
-        {GENRES.map((genre) => (
-          <label key={genre} style={{ display: "block" }}>
-            <input
-              type="checkbox"
-              name={genre}
-              checked={formData[genre]}
-              onChange={handleChange}
-            />
-            {genre}
-          </label>
-        ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <input
+            className="form-control"
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            placeholder="Title"
+          />
+          <input
+            className="form-control"
+            type="text"
+            name="director"
+            value={formData.director}
+            onChange={handleChange}
+            placeholder="Director"
+          />
+          <input
+            className="form-control"
+            type="text"
+            name="cast"
+            value={formData.cast}
+            onChange={handleChange}
+            placeholder="Cast"
+          />
+          <input
+            className="form-control"
+            type="text"
+            name="country"
+            value={formData.country}
+            onChange={handleChange}
+            placeholder="Country"
+          />
+          <input
+            className="form-control"
+            type="text"
+            name="release_year"
+            value={formData.release_year}
+            onChange={handleChange}
+            placeholder="Release Year"
+          />
+          <input
+            className="form-control"
+            type="text"
+            name="rating"
+            value={formData.rating}
+            onChange={handleChange}
+            placeholder="Rating"
+          />
+          <input
+            className="form-control"
+            type="text"
+            name="duration"
+            value={formData.duration}
+            onChange={handleChange}
+            placeholder="Duration"
+          />
+          <input
+            className="form-control col-span-2"
+            type="text"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Description"
+          />
+        </div>
 
-        <br />
-        <button type="submit">Add Movie</button>
-        <button type="button" onClick={onCancel}>
-          Cancel
-        </button>
+        <h4 className="mt-6 text-lg font-semibold">🎭 Genres</h4>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 text-sm">
+          {GENRES.map((genre) => (
+            <label key={genre} className="inline-flex items-center space-x-2">
+              <input
+                type="checkbox"
+                name={genre}
+                checked={formData[genre]}
+                onChange={handleChange}
+                className="form-checkbox"
+              />
+              <span>{genre}</span>
+            </label>
+          ))}
+        </div>
+
+        <div className="mt-6 flex gap-4">
+          <button type="submit" className="btn btn-primary">
+            ✅ Add Movie
+          </button>
+          <button
+            type="button"
+            onClick={onCancel}
+            className="btn btn-secondary"
+          >
+            ❌ Cancel
+          </button>
+        </div>
       </form>
     </AuthorizeView>
   );

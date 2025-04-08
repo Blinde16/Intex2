@@ -213,7 +213,7 @@ static async Task CreateRolesAndAssignUsers(IServiceProvider serviceProvider)
 //                 Email = email
 //             };
 
-//             var result = await userManager.CreateAsync(user, "Customer123!"); // You can change this default password
+//             var result = await userManager.CreateAsync(user, "SuperPurpleFresh7"); // You can change this default password
 
 //             if (!result.Succeeded)
 //             {
