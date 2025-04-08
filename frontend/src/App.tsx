@@ -5,8 +5,9 @@ import RegisterPage from "./pages/RegisterPage";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Homepage from "./pages/Homepage";
 import MoviePage from "./pages/MoviePage";
-import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import AdminPage from "./pages/AdminPage";
+import PrivacyPage from "./pages/PrivacyPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/homepage" element={<Homepage />} />
           <Route path="/AdminPage" element={<AdminPage />} />
+          <Route path="/PrivacyPage" element={<PrivacyPage />} />
         </Routes>
       </Router>
     </>
