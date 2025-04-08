@@ -8,6 +8,7 @@ import MoviePage from "./pages/MoviePage";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import AdminPage from "./pages/AdminPage";
 import PrivacyPage from "./pages/PrivacyPage";
+import CookieBanner from "./components/Cookiebanner";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/PrivacyPage" element={<PrivacyPage />} />
         </Routes>
       </Router>
+      <CookieBanner />
     </>
   );
 }

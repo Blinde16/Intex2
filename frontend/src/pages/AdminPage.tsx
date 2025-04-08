@@ -6,6 +6,7 @@ import NewMovieForm from "../components/NewMovieForm";
 import EditMovieForm from "../components/EditMovieForm";
 import AuthorizeView, { AuthorizedUser } from "../components/AuthorizeView";
 import Logout from "../components/Logout";
+import Header from "../components/Header";
 
 const AdminPage = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -43,6 +44,8 @@ const AdminPage = () => {
   };
 
   return (
+    <>
+    <Header/>
     <AuthorizeView>
       <div className="container py-4">
         <div className="d-flex justify-content-between align-items-center mb-3">
@@ -155,6 +158,7 @@ const AdminPage = () => {
         }}
       />
     </AuthorizeView>
+    </>
   );
 };
 
