@@ -50,7 +50,7 @@ function Register() {
       })
         .then((response) => {
           if (response.ok) {
-            setError("Successful registration. Please log in.");
+            navigate("/verify-2fa", { state: { email } });
           } else {
             setError("Error registering.");
           }

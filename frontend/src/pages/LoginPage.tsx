@@ -35,7 +35,7 @@ function LoginPage() {
   // handle submit event for the form
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(""); // Clear any previous errors
+    setError("");
 
     if (!email || !password) {
       setError("Please fill in all fields.");
@@ -49,16 +49,17 @@ function LoginPage() {
     try {
       const response = await fetch(loginUrl, {
         method: "POST",
-        credentials: "include", // ✅ Ensures cookies are sent & received
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
-      // Ensure we only parse JSON if there is content
-      let data = null;
-      const contentLength = response.headers.get("content-length");
-      if (contentLength && parseInt(contentLength, 10) > 0) {
-        data = await response.json();
+      const data = await response.json();
+
+      if (response.status === 200 && data.requires2FA) {
+        // Redirect to 2FA page and pass the email along
+        navigate("/verify-2fa", { state: { email } });
+        return;
       }
 
       if (!response.ok) {
