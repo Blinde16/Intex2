@@ -7,7 +7,6 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
   const [movieList, setMovieList] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
-
   const navigate = useNavigate();
   const isInitialLoad = useRef(true);
 
@@ -23,8 +22,9 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
       movieList.length > 0
         ? `afterId=${movieList[movieList.length - 1].show_id}&`
         : "";
+    const API_URL = `https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net//Movie`;
 
-    const url = `https://localhost:5000/Movie/GetMovies?${afterIdParam}${containerParams}`;
+    const url = `${API_URL}/Movie/GetMovies?${afterIdParam}${containerParams}`;
 
     try {
       const response = await fetch(url, { credentials: "include" });
@@ -92,7 +92,6 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
 
   return (
     <>
-      <Adventure />
       {movieList.map((m) => (
         <div id="rootbeerCard" className="card" key={m.show_id}>
           <h2 className="card-title">{m.title}</h2>

@@ -41,10 +41,10 @@ function LoginPage() {
       setError("Please fill in all fields.");
       return;
     }
-
+    const API_URL = `https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net`;
     const loginUrl = rememberme
-      ? "https://localhost:5000/login?useCookies=true"
-      : "https://localhost:5000/login?useSessionCookies=true";
+      ? `${API_URL}/login?useCookies=true`
+      : `${API_URL}/login?useSessionCookies=true`;
 
     try {
       const response = await fetch(loginUrl, {

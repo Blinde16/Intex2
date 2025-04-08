@@ -42,8 +42,8 @@ function AuthorizeView(props: { children: React.ReactNode }) {
         setLoading(false);
       }
     }
-
-    fetchWithRetry("https://localhost:5000/pingauth", {
+    const API_URL = `https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie`;
+    fetchWithRetry(`https:localhost:5000/pingauth`, {
       method: "GET",
       credentials: "include",
     });
