@@ -5,7 +5,7 @@ import RegisterPage from "./pages/RegisterPage";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Homepage from "./pages/Homepage";
 import MoviePage from "./pages/MoviePage";
-import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import AdminPage from "./pages/AdminPage";
 
 function App() {
