@@ -1,18 +1,50 @@
-/* Header.css */
-
 .header-bar {
   width: 100%;
-  background-color: #6c757d; /* Bootstrap secondary */
+  background-color: #1e1e1e;
   color: white;
-  padding: 1rem 0;
-  position: sticky; /* or fixed if you want it always visible */
+  padding: 1rem 1.5rem;
+  position: sticky;
   top: 0;
   z-index: 1000;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  display: flex; /* Flexbox layout */
+  justify-content: space-between; /* Space between the image/text and buttons */
+  align-items: center; /* Vertically center content */
 }
 
 .header-bar h1 {
   margin: 0;
-  padding-left: 1.5rem;
   font-size: 2rem;
+}
+
+.header-image {
+  width: 200px;
+  height: 80px;
+  margin-right: 15px;
+  object-fit: cover;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+  gap: 15px; /* Space between the buttons */
+}
+
+.admin-button,
+.logout-button {
+  background-color: #1e1e1e;
+  color: white;
+  outline: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease; /* Smooth transition on hover */
+}
+
+.admin-button:hover,
+.logout-button:hover {
+  transform: scale(1.1); /* Expand on hover */
+  background-color: #333333; /* Change background color on hover */
 }
