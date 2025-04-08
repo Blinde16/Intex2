@@ -5,46 +5,46 @@ export interface Movie {
   director: string;
   cast: string;
   country: string;
-  release_year: string;
+  release_year: number;
   rating: string;
   duration: string;
   description: string;
-  genre: string;
-  Action: boolean;
-  Adventure: boolean;
-  Anime_Series_International_TV_Shows: boolean;
-  British_TV_Shows_Docuseries_International_TV_Shows: boolean;
-  Children_Family_Movies: boolean;
-  Children: boolean;
-  Comedies: boolean;
-  Comedies_Dramas_International_Movies: boolean;
-  Comedies_International_Movies: boolean;
-  Comedies_Romantic_Movies: boolean;
-  Crime_TV_Shows_Docuseries: boolean;
-  Documentaries: boolean;
-  Documentaries_International_Movies: boolean;
-  Docuseries: boolean;
-  Dramas: boolean;
-  Dramas_International_Movies: boolean;
-  Dramas_Romantic_Movies: boolean;
-  Family_Movies: boolean;
-  Fantasy: boolean;
-  Horror_Movies: boolean;
-  International_Movies_Thrillers: boolean;
-  International_TV_Shows_Romantic_TV_Shows_TV_Dramas: boolean;
-  Kids_TV: boolean;
-  Language_TV_Shows: boolean;
-  Musicals: boolean;
-  Nature_TV: boolean;
-  Reality_TV: boolean;
-  Spirituality: boolean;
-  TV_Action: boolean;
-  TV_Comedies: boolean;
-  TV_Dramas: boolean;
-  Talk_Shows_TV_Comedies: boolean;
-  Thrillers: boolean;
+  // No genre field, it's just for UI
+  Action: number;
+  Adventure: number;
+  Anime_Series_International_TV_Shows: number;
+  British_TV_Shows_Docuseries_International_TV_Shows: number;
+  Children: number;
+  Comedies: number;
+  Comedies_Dramas_International_Movies: number;
+  Comedies_International_Movies: number;
+  Comedies_Romantic_Movies: number;
+  Crime_TV_Shows_Docuseries: number;
+  Documentaries: number;
+  Documentaries_International_Movies: number;
+  Docuseries: number;
+  Dramas: number;
+  Dramas_International_Movies: number;
+  Dramas_Romantic_Movies: number;
+  Family_Movies: number;
+  Fantasy: number;
+  Horror_Movies: number;
+  International_Movies_Thrillers: number;
+  International_TV_Shows_Romantic_TV_Shows_TV_Dramas: number;
+  Kids_TV: number;
+  Language_TV_Shows: number;
+  Musicals: number;
+  Nature_TV: number;
+  Reality_TV: number;
+  Spirituality: number;
+  TV_Action: number;
+  TV_Comedies: number;
+  TV_Dramas: number;
+  Talk_Shows_TV_Comedies: number;
+  Thrillers: number;
 }
 
+// Export GENRES list
 export const GENRES: (keyof Omit<
   Movie,
   | "show_id"
@@ -57,7 +57,6 @@ export const GENRES: (keyof Omit<
   | "rating"
   | "duration"
   | "description"
-  | "genre"
 >)[] = [
   "Action",
   "Adventure",

@@ -4,72 +4,61 @@ import { addMovie } from "../api/movieAPI";
 import AuthorizeView, { AuthorizedUser } from "./AuthorizeView";
 import Logout from "./Logout";
 
+type MovieFormData = Omit<Movie, keyof typeof GENRES> &
+  Record<(typeof GENRES)[number], number> & {
+    genre?: string; // UI-only
+  };
+
 interface NewMovieFormProps {
   onSuccess: () => void;
   onCancel: () => void;
 }
 
 const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
-  const genreDefaults = GENRES.reduce(
-    (acc, genre) => {
-      acc[genre] = false;
-      return acc;
-    },
-    {} as Record<string, boolean>
-  );
-
-  const [formData, setFormData] = useState<Movie>({
+  const [formData, setFormData] = useState<MovieFormData>(() => ({
     show_id: "",
     type: "",
     title: "",
     director: "",
     cast: "",
     country: "",
-    release_year: new Date().getFullYear().toString(),
+    release_year: new Date().getFullYear(),
     rating: "",
     duration: "",
     description: "",
     genre: "",
-    Action: false,
-    Adventure: false,
-    Anime_Series_International_TV_Shows: false,
-    British_TV_Shows_Docuseries_International_TV_Shows: false,
-    Children_Family_Movies: false,
-    Comedies: false,
-    Crime_TV_Shows: false,
-    Cult_Movies: false,
-    Documentaries: false,
-    Dramas: false,
-    Faith_Spirituality: false,
-    Fantasy: false,
-    Horror: false,
-    Independent_Movies: false,
-    International_Movies: false,
-    International_TV_Shows: false,
-    LGBTQ_Movies: false,
-    Music_Musicals: false,
-    Reality_TV: false,
-    Romantic_Movies: false,
-    Romantic_TV_Shows: false,
-    Sci_Fi: false,
-    Stand_Up_Comedy: false,
-    Thrillers: false,
-    TV_Dramas: false,
-    TV_Horror: false,
-    TV_Mysteries: false,
-    TV_Sci_Fi_Fantasy: false,
-    TV_Shows: false,
-    ...genreDefaults,
-  });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
+    // Add all genre flag properties with default 0
+    ...GENRES.reduce(
+      (acc, genre) => {
+        acc[genre] = 0;
+        return acc;
+      },
+      {} as Record<(typeof GENRES)[number], number>
+    ),
+  }));
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "release_year" ? parseInt(value) : value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await addMovie(formData);
+
+    const { genre, ...movieData } = formData;
+
+    const finalPayload = {
+      ...movieData,
+      release_year: Number(formData.release_year),
+    };
+
+    await addMovie(finalPayload as Movie);
     onSuccess();
   };
 
@@ -79,83 +68,126 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
         Logout <AuthorizedUser value="email" />
       </Logout>
 
-      <form onSubmit={handleSubmit}>
-        <h2>Add New Movie</h2>
-        <input
-          type="text"
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
-          placeholder="Title"
-        />
-        <input
-          type="text"
-          name="director"
-          value={formData.director}
-          onChange={handleChange}
-          placeholder="Director"
-        />
-        <input
-          type="text"
-          name="cast"
-          value={formData.cast}
-          onChange={handleChange}
-          placeholder="Cast"
-        />
-        <input
-          type="text"
-          name="country"
-          value={formData.country}
-          onChange={handleChange}
-          placeholder="Country"
-        />
-        <input
-          type="text"
-          name="release_year"
-          value={formData.release_year}
-          onChange={handleChange}
-          placeholder="Release Year"
-        />
-        <input
-          type="text"
-          name="rating"
-          value={formData.rating}
-          onChange={handleChange}
-          placeholder="Rating"
-        />
-        <input
-          type="text"
-          name="duration"
-          value={formData.duration}
-          onChange={handleChange}
-          placeholder="Duration"
-        />
-        <input
-          type="text"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          placeholder="Description"
-        />
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white text-black p-4 rounded shadow-lg max-w-3xl mx-auto"
+      >
+        <h2 className="text-2xl font-bold mb-4">🎬 Add New Movie</h2>
 
-        <h4>Genres</h4>
-        {GENRES.map((genre) => (
-          <label key={genre} style={{ display: "block" }}>
-            <input
-              type="checkbox"
-              name={genre}
-              checked={formData[genre]}
-              onChange={handleChange}
-            />
-            {genre}
-          </label>
-        ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <input
+            className="form-control"
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            placeholder="Title"
+          />
+          <input
+            className="form-control"
+            type="text"
+            name="type"
+            value={formData.type}
+            onChange={handleChange}
+            placeholder="Type"
+          />
+          <input
+            className="form-control"
+            type="text"
+            name="director"
+            value={formData.director}
+            onChange={handleChange}
+            placeholder="Director"
+          />
+          <input
+            className="form-control"
+            type="text"
+            name="cast"
+            value={formData.cast}
+            onChange={handleChange}
+            placeholder="Cast"
+          />
+          <input
+            className="form-control"
+            type="text"
+            name="country"
+            value={formData.country}
+            onChange={handleChange}
+            placeholder="Country"
+          />
+          <input
+            className="form-control"
+            type="number"
+            name="release_year"
+            value={formData.release_year}
+            onChange={handleChange}
+            placeholder="Release Year"
+          />
+          <input
+            className="form-control"
+            type="text"
+            name="rating"
+            value={formData.rating}
+            onChange={handleChange}
+            placeholder="Rating"
+          />
+          <input
+            className="form-control"
+            type="text"
+            name="duration"
+            value={formData.duration}
+            onChange={handleChange}
+            placeholder="Duration"
+          />
+          <input
+            className="form-control col-span-2"
+            type="text"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Description"
+          />
+        </div>
 
-        <br />
-        <button type="submit">Add Movie</button>
-        <button type="button" onClick={onCancel}>
-          Cancel
-        </button>
+        <h4 className="mt-4 mb-2 font-semibold">🎭 Select Genre</h4>
+        <select
+          name="genre"
+          className="form-control mb-4"
+          value={formData.genre}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              genre: e.target.value,
+              ...GENRES.reduce(
+                (acc, g) => {
+                  acc[g] = g === e.target.value ? 1 : 0;
+                  return acc;
+                },
+                {} as Record<string, number>
+              ),
+            })
+          }
+        >
+          <option value="">-- Choose a genre --</option>
+          {GENRES.map((genre) => (
+            <option key={genre} value={genre}>
+              {genre}
+            </option>
+          ))}
+        </select>
+
+        <div className="mt-6 flex gap-4">
+          <button type="submit" className="btn btn-primary">
+            ✅ Add Movie
+          </button>
+          <button
+            type="button"
+            onClick={onCancel}
+            className="btn btn-secondary"
+          >
+            ❌ Cancel
+          </button>
+        </div>
       </form>
     </AuthorizeView>
   );
