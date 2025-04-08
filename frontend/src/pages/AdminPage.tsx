@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Movie } from "../types/Movie";
 import { deleteMovie, fetchMovies } from "../api/movieAPI";
