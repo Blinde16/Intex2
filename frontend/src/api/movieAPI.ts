@@ -59,7 +59,7 @@ export const addMovie = async (newMovie: Movie): Promise<Movie> => {
   }
 };
 
-export const updateBook = async (
+export const updateMovie = async (
   show_id: string,
   updatedMovie: Movie
 ): Promise<Movie> => {
