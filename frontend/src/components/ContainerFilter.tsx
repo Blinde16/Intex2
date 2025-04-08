@@ -14,7 +14,7 @@ function ContainerFilter({
     const fetchContainers = async () => {
       try {
         const response = await fetch(
-          "https://localhost:5000/Competition/GetContainerTypes",
+          "https://localhost:5000/Movie/GetCategoryTypes",
           {
             credentials: "include",
           }

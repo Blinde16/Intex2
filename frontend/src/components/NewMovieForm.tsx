@@ -10,10 +10,13 @@ interface NewMovieFormProps {
 }
 
 const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
-  const genreDefaults = GENRES.reduce((acc, genre) => {
-    acc[genre] = false;
-    return acc;
-  }, {} as Record<string, boolean>);
+  const genreDefaults = GENRES.reduce(
+    (acc, genre) => {
+      acc[genre] = false;
+      return acc;
+    },
+    {} as Record<string, boolean>
+  );
 
   const [formData, setFormData] = useState<Movie>({
     show_id: "",
@@ -32,7 +35,6 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
     Anime_Series_International_TV_Shows: false,
     British_TV_Shows_Docuseries_International_TV_Shows: false,
     Children_Family_Movies: false,
-    Classic_Movies: false,
     Comedies: false,
     Crime_TV_Shows: false,
     Cult_Movies: false,
@@ -79,14 +81,62 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
 
       <form onSubmit={handleSubmit}>
         <h2>Add New Movie</h2>
-        <input type="text" name="title" value={formData.title} onChange={handleChange} placeholder="Title" />
-        <input type="text" name="director" value={formData.director} onChange={handleChange} placeholder="Director" />
-        <input type="text" name="cast" value={formData.cast} onChange={handleChange} placeholder="Cast" />
-        <input type="text" name="country" value={formData.country} onChange={handleChange} placeholder="Country" />
-        <input type="text" name="release_year" value={formData.release_year} onChange={handleChange} placeholder="Release Year" />
-        <input type="text" name="rating" value={formData.rating} onChange={handleChange} placeholder="Rating" />
-        <input type="text" name="duration" value={formData.duration} onChange={handleChange} placeholder="Duration" />
-        <input type="text" name="description" value={formData.description} onChange={handleChange} placeholder="Description" />
+        <input
+          type="text"
+          name="title"
+          value={formData.title}
+          onChange={handleChange}
+          placeholder="Title"
+        />
+        <input
+          type="text"
+          name="director"
+          value={formData.director}
+          onChange={handleChange}
+          placeholder="Director"
+        />
+        <input
+          type="text"
+          name="cast"
+          value={formData.cast}
+          onChange={handleChange}
+          placeholder="Cast"
+        />
+        <input
+          type="text"
+          name="country"
+          value={formData.country}
+          onChange={handleChange}
+          placeholder="Country"
+        />
+        <input
+          type="text"
+          name="release_year"
+          value={formData.release_year}
+          onChange={handleChange}
+          placeholder="Release Year"
+        />
+        <input
+          type="text"
+          name="rating"
+          value={formData.rating}
+          onChange={handleChange}
+          placeholder="Rating"
+        />
+        <input
+          type="text"
+          name="duration"
+          value={formData.duration}
+          onChange={handleChange}
+          placeholder="Duration"
+        />
+        <input
+          type="text"
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          placeholder="Description"
+        />
 
         <h4>Genres</h4>
         {GENRES.map((genre) => (
@@ -103,11 +153,12 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
 
         <br />
         <button type="submit">Add Movie</button>
-        <button type="button" onClick={onCancel}>Cancel</button>
+        <button type="button" onClick={onCancel}>
+          Cancel
+        </button>
       </form>
     </AuthorizeView>
   );
 };
 
 export default NewMovieForm;
-
