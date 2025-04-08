@@ -28,7 +28,7 @@ builder.Services.AddDbContext<MovieDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AzureSqlDb")));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("IdentityConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AzureSqlDb")));
 
 builder.Services.AddAuthorization();
 
@@ -40,9 +40,18 @@ builder.Services.AddTransient<IEmailSender<IdentityUser>, DummyEmailSender>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
+    // Password settings
+    options.Password.RequiredLength = 12;
+    options.Password.RequiredUniqueChars = 1;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = false; // set true if you want symbols
+
+    // Claims settings
     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
-    options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email; // Ensure email is stored in claims
+    options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
 });
+
 
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, CustomUserClaimsPrincipalFactory>();
 
@@ -122,7 +131,9 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     await CreateRolesAndAssignUsers(services);
+    //await PromoteMovieUsersToIdentity(services); // 👈 Add this line
 }
+
 
 app.Run();
 
@@ -162,10 +173,62 @@ static async Task CreateRolesAndAssignUsers(IServiceProvider serviceProvider)
     if (customerUser == null)
     {
         customerUser = new IdentityUser { UserName = customerEmail, Email = customerEmail };
-        var result = await userManager.CreateAsync(customerUser, "Customer123!");
+        var result = await userManager.CreateAsync(customerUser, "Superpurplefresh!");
         if (result.Succeeded)
         {
             await userManager.AddToRoleAsync(customerUser, "AuthenticatedCustomer");
         }
     }
 }
+// static async Task PromoteMovieUsersToIdentity(IServiceProvider serviceProvider)
+// {
+//     using var scope = serviceProvider.CreateScope();
+//     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+//     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+//     var dbContext = scope.ServiceProvider.GetRequiredService<MovieDbContext>();
+
+//     // Ensure the AuthenticatedCustomer role exists
+//     var roleExists = await roleManager.RoleExistsAsync("AuthenticatedCustomer");
+//     if (!roleExists)
+//     {
+//         await roleManager.CreateAsync(new IdentityRole("AuthenticatedCustomer"));
+//     }
+
+//     // Get all unique emails from movies_users table
+//     var movieUserEmails = dbContext.movies_users
+//         .Select(mu => mu.email)
+//         .Distinct()
+//         .ToList();
+
+//     foreach (var email in movieUserEmails)
+//     {
+//         if (string.IsNullOrWhiteSpace(email)) continue;
+
+//         var user = await userManager.FindByEmailAsync(email);
+//         if (user == null)
+//         {
+//             user = new IdentityUser
+//             {
+//                 UserName = email,
+//                 Email = email
+//             };
+
+//             var result = await userManager.CreateAsync(user, "Customer123!"); // You can change this default password
+
+//             if (!result.Succeeded)
+//             {
+//                 Console.WriteLine($"❌ Failed to create user {email}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+//                 continue;
+//             }
+//         }
+
+//         // Add to role if not already in it
+//         var inRole = await userManager.IsInRoleAsync(user, "AuthenticatedCustomer");
+//         if (!inRole)
+//         {
+//             await userManager.AddToRoleAsync(user, "AuthenticatedCustomer");
+//         }
+
+//         Console.WriteLine($"✅ {email} is now an AuthenticatedCustomer");
+//     }
+// }
