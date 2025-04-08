@@ -1,74 +1,115 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Movie } from "../types/Movie";
 import { useNavigate } from "react-router-dom";
+import './css/movielist.css';
 
 function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
   const [movieList, setMovieList] = useState<Movie[]>([]);
-  const [lastId, setLastId] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
-  const loaderRef = useRef<HTMLDivElement | null>(null);
+  
   const navigate = useNavigate();
 
-  const fetchMovies = useCallback(async () => {
+  const isInitialLoad = useRef(true); // 🧩 Add this
+
+  const fetchMovies = async () => {
+    if (loading || !hasMore) return;
+    setLoading(true);
+
     const containerParams = selectedContainers
       .map((cont) => `containers=${encodeURIComponent(cont)}`)
       .join("&");
 
-    const url = `https://localhost:5000/Movie/GetMovies?${lastId ? `afterId=${lastId}&` : ""}${containerParams}`;
+    const afterIdParam = movieList.length > 0 ? `afterId=${movieList[movieList.length - 1].show_id}&` : '';
+    const url = `https://localhost:5000/Movie/GetMovies?${afterIdParam}${containerParams}`;
 
-    const response = await fetch(url, { credentials: "include" });
-    const data = await response.json();
+    try {
+      const response = await fetch(url, { credentials: "include" });
+      const data = await response.json();
 
-    if (data.brews.length === 0) {
-      setHasMore(false);
-      return;
+      if (data.brews.length === 0) {
+        setHasMore(false);
+      } else {
+        setMovieList((prevMovies) => [...prevMovies, ...data.brews]);
+      }
+    } catch (error) {
+      console.error("Error fetching movies:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Filter change effect
+  useEffect(() => {
+    setMovieList([]);
+    setHasMore(true);
+    isInitialLoad.current = true;
+    fetchMovies();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedContainers]);
+
+  // ✅ Scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 1 >=
+        document.documentElement.scrollHeight
+      ) {
+        fetchMovies();
+      }
+    };
+
+    if (isInitialLoad.current) {
+      isInitialLoad.current = false;
+      return; // 🚀 Prevent double fetch!
     }
 
-    setMovieList((prev) => [...prev, ...data.brews]);
-    setLastId(data.brews[data.brews.length - 1].show_id); // update lastId
-  }, [selectedContainers, lastId]);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [movieList, hasMore, selectedContainers]);
 
-  useEffect(() => {
-    fetchMovies();
-  }, [fetchMovies]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasMore) {
-          fetchMovies();
-        }
-      },
-      { threshold: 1 }
-    );
-
-    if (loaderRef.current) observer.observe(loaderRef.current);
-    return () => {
-      if (loaderRef.current) observer.unobserve(loaderRef.current);
-    };
-  }, [hasMore, fetchMovies]);
+  const getPosterUrl = (title: string) => {
+    const encodedTitle = encodeURIComponent(title);
+    return `https://moviepostersintex2.blob.core.windows.net/movieposter/Movie Posters/${encodedTitle}.jpg`;
+  };
 
   return (
-    <>
-      {movieList.map((m) => (
-        <div id="rootbeerCard" className="card" key={m.show_id}>
-          <h2 className="card-title">{m.title}</h2>
-          <div className="card-body">
-            <ul className="list-group list-group-flush">
-              <li className="list-group-item">
-                <strong>Release Year:</strong> {m.release_year}
-              </li>
-              <li className="list-group-item">
-                <strong>Description:</strong> {m.description}
-              </li>
-            </ul>
+    <div>
+      {/* Placeholder Carousels */}
+      <div style={{ marginBottom: "20px" }}>Carousel Placeholder 1</div>
+      <div style={{ marginBottom: "20px" }}>Carousel Placeholder 2</div>
+      <div style={{ marginBottom: "20px" }}>Carousel Placeholder 3</div>
+      <div style={{ marginBottom: "20px" }}>Carousel Placeholder 4</div>
+      <div style={{ marginBottom: "20px" }}>Carousel Placeholder 5</div>
+
+      {/* Movie Grid */}
+      <div className="movie-grid">
+        {movieList.map((m) => (
+          <div
+            key={m.show_id}
+            className="movie-card"
+            onClick={() => navigate(`/movie/${m.show_id}`)}
+          >
+            <img
+              src={getPosterUrl(m.title)}
+              alt={m.title}
+              className="movie-poster"
+              onError={(e) =>
+                (e.currentTarget.src =
+                  "https://via.placeholder.com/300x450?text=No+Image")
+              }
+            />
+            <div className="movie-info">
+              <h3>{m.title}</h3>
+              <p>{m.release_year}</p>
+            </div>
           </div>
-        </div>
-      ))}
-      <div ref={loaderRef} style={{ height: "50px", textAlign: "center" }}>
-        {hasMore ? "Loading more..." : "No more movies 👀"}
+        ))}
       </div>
-    </>
+
+      {loading && <p style={{ textAlign: "center" }}>Loading...</p>}
+      {!hasMore && <p style={{ textAlign: "center" }}>No more movies to show.</p>}
+    </div>
   );
 }
 

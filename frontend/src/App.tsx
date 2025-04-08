@@ -1,12 +1,12 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import ProductPage from "./pages/ProductPage";
 import { CartProvider } from "./context/CartContext";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Homepage from "./pages/Homepage";
 import MoviePage from "./pages/MoviePage";
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (

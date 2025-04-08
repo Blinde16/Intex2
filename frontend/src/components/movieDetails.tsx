@@ -22,7 +22,7 @@ const MovieDetails: React.FC = () => {
   const [userRating, setUserRating] = useState<number>(0);
 
   useEffect(() => {
-    axios.get(`https://localhost:5000/Movie/GetMovieById/s1`, { //${show_id}
+    axios.get(`https://localhost:5000/Movie/GetMovieById/${show_id}`, { 
       withCredentials: true
     })
     .then(response => {

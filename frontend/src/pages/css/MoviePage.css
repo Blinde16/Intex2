@@ -1,0 +1,24 @@
+/* Movie Page general styling */
+.movie-page {
+    background-color: #1E1822;
+    min-height: 100vh;
+    padding: 20px;
+    color: white;
+  }
+  
+  /* Layout container */
+  .movie-page .container {
+    display: flex;
+    gap: 40px;
+  }
+  
+  /* Filter sidebar */
+  .movie-page .filter-sidebar {
+    flex: 0 0 250px;
+  }
+  
+  /* Movie list area */
+  .movie-page .movie-list-area {
+    flex: 1;
+  }
+  

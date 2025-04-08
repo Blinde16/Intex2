@@ -1,5 +1,5 @@
 import React from 'react';
-import './homepage/css/Homepage.css';
+import './css/Homepage.css';
 import { useNavigate } from "react-router-dom";
 import MovieDetails from '../components/movieDetails';
 
