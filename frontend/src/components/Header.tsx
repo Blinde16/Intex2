@@ -22,7 +22,7 @@ function Header() {
           </div>
         </div>
       </AuthorizeView>
-    </div>
+    </>
   );
 }
 

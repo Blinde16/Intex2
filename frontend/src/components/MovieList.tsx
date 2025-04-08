@@ -1,8 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { Movie } from "../types/Movie";
 import { useNavigate } from "react-router-dom";
-import './css/movielist.css';
-import Adventure from "./Adventure";
+import "./css/movielist.css";
 
 function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
   const [movieList, setMovieList] = useState<Movie[]>([]);
@@ -41,7 +40,9 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
       } else {
         setMovieList((prevMovies) => {
           const allMovies = [...prevMovies, ...data.brews];
-          const uniqueMovies = Array.from(new Map(allMovies.map(m => [m.show_id, m])).values());
+          const uniqueMovies = Array.from(
+            new Map(allMovies.map((m) => [m.show_id, m])).values()
+          );
           return uniqueMovies;
         });
       }
@@ -68,32 +69,30 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
         fetchMovies();
       }
     };
-  
+
     if (isInitialLoad.current) {
       isInitialLoad.current = false;
       return;
     }
-  
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [movieList, hasMore, selectedContainers]); // ❌ Problem: these dependencies
-  
 
   const getPosterUrl = (title: string) => {
     const cleanTitle = title
-      .replace(/[()'":?!,&#.]/g, " ") 
-      .replace(/\s+/g, " ")       
-      .trim();                    
-  
+      .replace(/[()'":?!,&#.]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
     const encodedTitle = encodeURIComponent(cleanTitle);
     const folderName = encodeURIComponent("Movie Posters");
     return `https://moviepostersintex2.blob.core.windows.net/movieposter/${folderName}/${encodedTitle}.jpg`;
   };
-  
 
   return (
     <>
-    <Adventure />
+      <Adventure />
       {movieList.map((m) => (
         <div id="rootbeerCard" className="card" key={m.show_id}>
           <h2 className="card-title">{m.title}</h2>
@@ -106,7 +105,7 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
                 <strong>Description:</strong> {m.description}
               </li>
             </ul>
-           </div>
+          </div>
         </div>
       ))}
       <div ref={loaderRef} style={{ height: "50px", textAlign: "center" }}>
