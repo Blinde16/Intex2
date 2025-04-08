@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
   const [movieList, setMovieList] = useState<Movie[]>([]);
-  const [pageSize] = useState<number>(10);
-  const [pageNum, setPageNum] = useState<number>(1);
+  const [lastId, setLastId] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const loaderRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
@@ -15,18 +14,19 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
       .map((cont) => `containers=${encodeURIComponent(cont)}`)
       .join("&");
 
-    const response = await fetch(
-      `https://localhost:5000/Movie/GetMovies?pageSize=${pageSize}&pageNum=${pageNum}${selectedContainers.length ? `&${containerParams}` : ""}`,
-      {
-        credentials: "include",
-      }
-    );
+    const url = `https://localhost:5000/Movie/GetMovies?${lastId ? `afterId=${lastId}&` : ""}${containerParams}`;
 
+    const response = await fetch(url, { credentials: "include" });
     const data = await response.json();
 
+    if (data.brews.length === 0) {
+      setHasMore(false);
+      return;
+    }
+
     setMovieList((prev) => [...prev, ...data.brews]);
-    setHasMore(data.brews.length === pageSize);
-  }, [pageSize, pageNum, selectedContainers]);
+    setLastId(data.brews[data.brews.length - 1].show_id); // update lastId
+  }, [selectedContainers, lastId]);
 
   useEffect(() => {
     fetchMovies();
@@ -36,7 +36,7 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasMore) {
-          setPageNum((prev) => prev + 1);
+          fetchMovies();
         }
       },
       { threshold: 1 }
@@ -46,7 +46,7 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
     return () => {
       if (loaderRef.current) observer.unobserve(loaderRef.current);
     };
-  }, [hasMore]);
+  }, [hasMore, fetchMovies]);
 
   return (
     <>
@@ -65,7 +65,6 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
           </div>
         </div>
       ))}
-
       <div ref={loaderRef} style={{ height: "50px", textAlign: "center" }}>
         {hasMore ? "Loading more..." : "No more movies 👀"}
       </div>

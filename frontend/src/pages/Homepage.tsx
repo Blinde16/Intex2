@@ -1,6 +1,7 @@
 import React from 'react';
 import './homepage/css/Homepage.css';
 import { useNavigate } from "react-router-dom";
+import MovieDetails from '../components/movieDetails';
 
 const subscriptionTiers = [
   { title: 'Basic Plan', price: '$3.99/month', features: ['1 Screen', 'SD Quality', 'Limited Catalog'] },
@@ -62,6 +63,11 @@ const images = imageNames.map((name, idx) => (
           </div>
         ))}
       </div>
+      
+      <div>
+      <MovieDetails />
+      </div>
+      
 
       {/* Footer */}
       <footer className="footer">

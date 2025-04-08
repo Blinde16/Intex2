@@ -16,13 +16,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Homepage />} />
             <Route path="/movie" element={<MoviePage />} />
-            <Route
-              path="/product/:rootbeerName/:rootbeerId/:currentRetailPrice"
-              element={<ProductPage />}
-            />
-            
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/homepage" element={<Homepage />} />
           </Routes>
         </Router>
       </CartProvider>

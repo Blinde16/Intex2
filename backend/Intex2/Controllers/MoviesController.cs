@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 using RootkitAuth.API.Data;
 using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
@@ -18,29 +19,31 @@ namespace RootkitAuth.API.Controllers
             _movieContext = temp;
         }
         [HttpGet("GetMovies")]
-        public IActionResult GetMovies(int pageSize = 10, int pageNum = 1, [FromQuery] List<string>? types = null)
-        {
-            var query = _movieContext.movies_titles.AsQueryable();
+public IActionResult GetMovies([FromQuery] string? afterId, [FromQuery] string[]? containers)
+{
+    int pageSize = 10; // or tweak as needed
 
-            if (types != null && types.Any())
-            {
-                query = query.Where(c => types.Contains(c.type ?? string.Empty));
-            }
+    IQueryable<Movie> query = _movieContext.movies_titles
+        .OrderBy(m => m.show_id); // or by created time or something stable
 
-            var totalNumMovies = query.Count();
-            var brews = query
-                .Skip((pageNum - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
+    if (!string.IsNullOrEmpty(afterId))
+    {
+        query = query.Where(m => String.Compare(m.show_id, afterId) > 0);
+    }
 
-            var returnMovies = new
-            {
-                Brews = brews,
-                TotalNumProjects = totalNumMovies
-            };
-            
-            return Ok(returnMovies);
-        }
+    if (containers != null && containers.Length > 0)
+    {
+        query = query.Where(m => containers.Contains(m.type));
+    }
+
+    var movies = query.Take(pageSize).ToList();
+
+    return Ok(new
+    {
+        brews = movies
+    });
+}
+
 
         [HttpGet("GetCategoryTypes")]
         public IActionResult GetCategoryTypes()
@@ -52,7 +55,6 @@ namespace RootkitAuth.API.Controllers
             
             return Ok(categoryTypes);
         }
-
         [HttpPost("AddMovie")]
         public IActionResult AddMovie([FromBody] Movie newMovie)
         {
@@ -130,6 +132,19 @@ namespace RootkitAuth.API.Controllers
 
             return NoContent();
         }
+		 [HttpGet("GetMovieById/{show_id}")]
+        public IActionResult GetMovieById(string show_id)
+        {
+            var movie = _movieContext.movies_titles.FirstOrDefault(m => m.show_id == show_id);
+
+            if (movie == null)
+            {
+                return NotFound(new { message = "Movie not found" });
+            }
+
+            return Ok(movie);
+        }
+		
 
     }
 }
