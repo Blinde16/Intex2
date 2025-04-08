@@ -4,8 +4,7 @@ import { deleteMovie, fetchMovies } from "../api/movieAPI";
 import Pagination from "../components/pagination";
 import NewMovieForm from "../components/NewMovieForm";
 import EditMovieForm from "../components/EditMovieForm";
-import AuthorizeView, { AuthorizedUser } from "../components/AuthorizeView";
-import Logout from "../components/Logout";
+import AuthorizeView from "../components/AuthorizeView";
 import Header from "../components/Header";
 
 const AdminPage = () => {
