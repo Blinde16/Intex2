@@ -1,8 +1,6 @@
 import React from "react";
 import "./css/Homepage.css";
 import { useNavigate } from "react-router-dom";
-import MovieDetails from "../components/movieDetails";
-
 
 const subscriptionTiers = [
   {
@@ -23,10 +21,7 @@ const subscriptionTiers = [
 ];
 
 const Homepage: React.FC = () => {
-  const imageNames = Array.from(
-    { length: 18 },
-    (_, index) => `${index + 1}.jpg`
-  );
+  const imageNames = Array.from({ length: 18 }, (_, index) => `${index + 1}.jpg`);
   const images = imageNames.map((name, idx) => (
     <img
       key={idx}
@@ -43,58 +38,65 @@ const Homepage: React.FC = () => {
     .slice(0, 3);
 
   return (
-    
-      <div className="page-container">
-        <header className="header">
-          <div className="logo">CineNiche</div>
-        </header>
+    <div className="page-container">
+      {/* Header */}
+      <header className="header">
+        <div className="logo">CineNiche</div>
+      </header>
 
-        <div className="matrix-container">
-          {images}
-          <div className="overlay">
-            <h1>Independent, unique movies all in one place</h1>
-            <p>Plan starts at $3.99 monthly</p>
-            <div className="buttons">
-              <button
-                className="sign-in"
-                onClick={() => navigate("/login", { state: { mode: "login" } })}
-              >
-                Sign in
-              </button>
-              <button
-                className="register"
-                onClick={() => navigate("/register")}
-              >
-                Register
-              </button>
-            </div>
+      {/* Background Matrix */}
+          <h1>Unlimited, Independent Movies & Originals</h1>
+          <p>Enjoy hundreds of titles anytime, anywhere. Starting at just $3.99/month.</p>
+            <button className="sign-in" onClick={() => navigate('/login', { state: { mode: 'login' } })}>
+              Sign In
+            </button>
+            <button className="register" onClick={() => navigate('/register')}>
+              Get Started
+            </button>
+        </div>
+
+      {/* Welcome Section */}
+      <section className="welcome-section">
+        <h2>Welcome to CineNiche</h2>
+        <p>Experience a world of cinema with curated collections of independent films, cult classics, and hidden gems. Discover new favorites every week, and enjoy exclusive CineNiche Originals.</p>
+      </section>
+
+      {/* Dummy Data Sections */}
+      <section className="features-section">
+        <div className="feature-box">
+          <h3>Watch Anywhere</h3>
+          <p>Stream on your phone, tablet, laptop, and TV without paying more.</p>
+        </div>
+        <div className="feature-box">
+          <h3>Curated for You</h3>
+          <p>Handpicked titles from global creators and indie directors.</p>
+        </div>
+        <div className="feature-box">
+          <h3>No Ads</h3>
+          <p>Enjoy uninterrupted movie experiences with our premium plan.</p>
+        </div>
+      </section>
+
+      {/* Subscription Tiers */}
+      <section className="tiers-container">
+        {randomTiers.map((tier) => (
+          <div key={tier.title} className="tier-box">
+            <h2>{tier.title}</h2>
+            <p className="price">{tier.price}</p>
+            <ul>
+              {tier.features.map((feature) => (
+                <li key={`${tier.title}-${feature}`}>{feature}</li>
+              ))}
+            </ul>
           </div>
-        </div>
+        ))}
+      </section>
 
-        <div className="tiers-container">
-          {randomTiers.map((tier) => (
-            <div key={tier.title} className="tier-box">
-              <h2>{tier.title}</h2>
-              <p className="price">{tier.price}</p>
-              <ul>
-                {tier.features.map((feature) => (
-                  <li key={`${tier.title}-${feature}`}>{feature}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        <div>
-          <MovieDetails />
-        </div>
-
-        {/* Footer */}
-        <footer className="footer">
-          <p>&copy; 2025 CineNiche. All rights reserved.</p>
-        </footer>
-      </div>
-    
+      {/* Footer */}
+      <footer className="footer">
+        <p>&copy; 2025 CineNiche. All rights reserved.</p>
+      </footer>
+    </div>
   );
 };
 
