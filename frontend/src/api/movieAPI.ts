@@ -9,16 +9,16 @@ const API_URL = `https://localhost:5000/Movie`;
 
 export const fetchMovies = async (
   pageSize: number,
-  pageNumber: number,
+  pageNum: number,
   selectedCategories: string[]
 ): Promise<FetchMoviesResponse> => {
   try {
     const categoryParams = selectedCategories
-      .map((cat) => `categories=${encodeURIComponent(cat)}`)
+      .map((cat) => `types=${encodeURIComponent(cat)}`)
       .join("&");
 
     const response = await fetch(
-      `${API_URL}/GetAdminMovies?pageSize=${pageSize}&pageNumber=${pageNumber}${
+      `${API_URL}/GetAdminMovies?pageSize=${pageSize}&pageNumber=${pageNum}${
         selectedCategories.length ? `&${categoryParams}` : ""
       }`,
       {

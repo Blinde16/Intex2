@@ -18,6 +18,7 @@ namespace RootkitAuth.API.Controllers
         {
             _movieContext = temp;
         }
+        [Authorize(Roles = "AuthenticatedCustomer,Admin")]
         [HttpGet("GetMovies")]
         public IActionResult GetMovies([FromQuery] string? afterId, [FromQuery] string[]? containers)
         {
@@ -43,6 +44,7 @@ namespace RootkitAuth.API.Controllers
                 brews = movies
             });
         }
+        [Authorize(Roles = "Admin")]
         [HttpGet("GetAdminMovies")]
         public IActionResult GetMovies(int pageSize = 10, int pageNum = 1, [FromQuery] List<string>? types = null)
         {
@@ -67,7 +69,7 @@ namespace RootkitAuth.API.Controllers
             
             return Ok(returnMovies);
         }
-
+        [Authorize(Roles = "AuthenticatedCustomer, Admin")]
         [HttpGet("GetCategoryTypes")]
         public IActionResult GetCategoryTypes()
         {
@@ -78,6 +80,7 @@ namespace RootkitAuth.API.Controllers
             
             return Ok(categoryTypes);
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost("AddMovie")]
         public IActionResult AddMovie([FromBody] Movie newMovie)
         {
@@ -85,7 +88,7 @@ namespace RootkitAuth.API.Controllers
             _movieContext.SaveChanges();
             return Ok(newMovie);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPut("UpdateMovie/{showId}")]
         public IActionResult UpdateMovie(string showId, [FromBody] Movie updatedMovie)
         {
@@ -141,7 +144,7 @@ namespace RootkitAuth.API.Controllers
 
             return Ok(existingMovie);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete("DeleteMovie/{showId}")]
         public IActionResult DeleteMovie(string showId)
         {
@@ -155,7 +158,8 @@ namespace RootkitAuth.API.Controllers
 
             return NoContent();
         }
-		 [HttpGet("GetMovieById/{show_id}")]
+        [Authorize(Roles = "AuthenticatedCustomer, Admin")]
+        [HttpGet("GetMovieById/{show_id}")]
         public IActionResult GetMovieById(string show_id)
         {
             var movie = _movieContext.movies_titles.FirstOrDefault(m => m.show_id == show_id);

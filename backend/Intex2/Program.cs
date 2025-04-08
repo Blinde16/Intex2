@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using RootkitAuth.API.Data;
 using RootkitAuth.API.Services;
 
@@ -31,8 +32,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddTransient<IEmailSender<IdentityUser>, DummyEmailSender>(); 
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -102,8 +106,65 @@ app.MapGet("/pingauth", (ClaimsPrincipal user) =>
         return Results.Unauthorized();
     }
 
-    var email = user.FindFirstValue(ClaimTypes.Email) ?? "unknown@example.com"; // Ensure it's never null
-    return Results.Json(new { email = email }); // Return as JSON
+    var email = user.FindFirstValue(ClaimTypes.Email) ?? "unknown@example.com";
+    var roles = user.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
+
+    return Results.Json(new
+    {
+        email,
+        roles
+    });
 }).RequireAuthorization();
 
+//  SEED ROLES & ASSIGN USERS 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await CreateRolesAndAssignUsers(services);
+}
+
 app.Run();
+
+// ------------------ Role/User Seeding Function ------------------
+
+static async Task CreateRolesAndAssignUsers(IServiceProvider serviceProvider)
+{
+    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+    string[] roles = { "Admin", "AuthenticatedCustomer" };
+
+    foreach (var roleName in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(roleName))
+        {
+            await roleManager.CreateAsync(new IdentityRole(roleName));
+        }
+    }
+
+    // Seed admin user
+    var adminEmail = "admin@rootkit.com";
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    if (adminUser == null)
+    {
+        adminUser = new IdentityUser { UserName = adminEmail, Email = adminEmail };
+        var result = await userManager.CreateAsync(adminUser, "Admin123!");
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(adminUser, "Admin");
+        }
+    }
+
+    // Seed customer user
+    var customerEmail = "user@rootkit.com";
+    var customerUser = await userManager.FindByEmailAsync(customerEmail);
+    if (customerUser == null)
+    {
+        customerUser = new IdentityUser { UserName = customerEmail, Email = customerEmail };
+        var result = await userManager.CreateAsync(customerUser, "Customer123!");
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(customerUser, "AuthenticatedCustomer");
+        }
+    }
+}
