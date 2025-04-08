@@ -1,7 +1,10 @@
-import React from "react";
+
 import "./css/PrivacyPolicy.css";
+import Header from "../components/Header";
 const PrivacyPolicy = () => {
   return (
+    <>
+    <Header />
     <div className="container">
       <h1>Privacy Policy</h1>
       <p>
@@ -166,6 +169,7 @@ const PrivacyPolicy = () => {
         </p>
       </section>
     </div>
+    </>
   );
 };
 

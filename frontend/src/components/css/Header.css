@@ -1,6 +1,6 @@
 .header-bar {
   width: 100%;
-  background-color: #1e1e1e;
+  background-color: #1e1822;
   color: white;
   padding: 1rem 1.5rem;
   position: sticky;
@@ -33,7 +33,7 @@
 
 .admin-button,
 .logout-button {
-  background-color: #1e1e1e;
+  background-color: #1e1822;
   color: white;
   outline: white;
   padding: 0.5rem 1rem;
