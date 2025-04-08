@@ -31,16 +31,7 @@ function MoviePage() {
 
           {/* Main Content */}
           <div className="col-md-9 movie-list-area">
-            {/* Future Recommendations */}
-            {[1, 2, 3, 4, 5].map((num) => (
-              <div
-                key={`recommendation-${num}`}
-                className="recommendation-placeholder mb-4"
-              >
-                🎥 Recommender {num} Placeholder
-              </div>
-            ))}
-
+      
             {/* Infinite Scroll Movie List */}
             <MovieList selectedContainers={selectedContainers} />
           </div>

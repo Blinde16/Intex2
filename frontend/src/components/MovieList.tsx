@@ -10,6 +10,8 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
   const [hasMore, setHasMore] = useState<boolean>(true);
   const isInitialLoad = useRef(true);
 
+  const navigate = useNavigate();
+
   const fetchMovies = async () => {
     if (loading || !hasMore) return;
     setLoading(true);
@@ -27,10 +29,7 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
 
     try {
       const response = await fetch(url, { credentials: "include" });
-
-      if (!response.ok) {
-        throw new Error(`Error fetching movies: ${response.statusText}`);
-      }
+      if (!response.ok) throw new Error(`Error fetching movies: ${response.statusText}`);
 
       const data = await response.json();
 
@@ -52,13 +51,16 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
     }
   };
 
+  // When filters change
   useEffect(() => {
     setMovieList([]);
     setHasMore(true);
     isInitialLoad.current = true;
     fetchMovies();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedContainers]);
 
+  // Infinite scroll
   useEffect(() => {
     const handleScroll = () => {
       if (
@@ -76,7 +78,7 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [movieList, hasMore, selectedContainers]); // ❌ Problem: these dependencies
+  }, [movieList, hasMore, selectedContainers]);
 
   const getPosterUrl = (title: string) => {
     const cleanTitle = title
@@ -90,29 +92,38 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
   };
 
   return (
-    <>
+    <div>
+      {/* Adventure Section at the top */}
       <Adventure />
-      {movieList.map((m) => (
-        <div id="rootbeerCard" className="card" key={m.show_id}>
-          <h2 className="card-title">{m.title}</h2>
-          <div className="card-body">
-            <ul className="list-group list-group-flush">
-              <li className="list-group-item">
-                <strong>Release Year:</strong> {m.release_year}
-              </li>
-              <li className="list-group-item">
-                <strong>Description:</strong> {m.description}
-              </li>
-            </ul>
+      {/* Movie grid */}
+      <div className="movie-grid">
+        {movieList.map((m) => (
+          <div
+            key={m.show_id}
+            className="movie-card"
+            onClick={() => navigate(`/movie/${m.show_id}`)}
+          >
+            <img
+              src={getPosterUrl(m.title)}
+              alt={m.title}
+              className="movie-poster"
+              onError={(e) =>
+                (e.currentTarget.src =
+                  "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=")
+              }
+            />
+            <div className="movie-info">
+              <h3>{m.title}</h3>
+              <p>{m.release_year}</p>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
 
+      {/* Status indicators */}
       {loading && <p style={{ textAlign: "center" }}>Loading...</p>}
-      {!hasMore && (
-        <p style={{ textAlign: "center" }}>No more movies to show.</p>
-      )}
-    </>
+      {!hasMore && <p style={{ textAlign: "center" }}>No more movies to show.</p>}
+    </div>
   );
 }
 
