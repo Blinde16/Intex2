@@ -54,7 +54,16 @@ function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
+      let data = null;
+
+      try {
+        const contentLength = response.headers.get("content-length");
+        if (contentLength && parseInt(contentLength, 10) > 0) {
+          data = await response.json();
+        }
+      } catch (err) {
+        console.error("JSON parse error:", err);
+      }
 
       if (response.status === 200 && data.requires2FA) {
         // Redirect to 2FA page and pass the email along

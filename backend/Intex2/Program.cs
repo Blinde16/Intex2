@@ -38,6 +38,8 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 
 builder.Services.AddTransient<IEmailSender<IdentityUser>, DummyEmailSender>(); 
 
+builder.Services.AddTransient<IUserTwoFactorTokenProvider<IdentityUser>, PhoneNumberTokenProvider<IdentityUser>>();
+
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Password settings
@@ -50,6 +52,11 @@ builder.Services.Configure<IdentityOptions>(options =>
     // Claims settings
     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
     options.ClaimsIdentity.UserNameClaimType = ClaimTypes.Email;
+
+    // ✅ Tell ASP.NET to use short codes for "Email"
+    options.Tokens.ProviderMap["Email"] = new TokenProviderDescriptor(
+        typeof(PhoneNumberTokenProvider<IdentityUser>)
+    );
 });
 
 
