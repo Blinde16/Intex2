@@ -1,0 +1,12 @@
+/* Make all text on the page white */
+body {
+    color: white;
+    background-color: black;  /* Optional: For better contrast */
+    font-family: Arial, sans-serif;  /* Optional: Set a clean font */
+  }
+  
+  /* If you want to target specific elements, you can use the following styles */
+  h1, h2, h3, p, a {
+    color: white;  /* Ensures headings, paragraphs, and links are white */
+  }
+  

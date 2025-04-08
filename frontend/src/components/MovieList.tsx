@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Movie } from "../types/Movie";
 import { useNavigate } from "react-router-dom";
 import './css/movielist.css';
-import Adventure from "./Adventure";
+//import Adventure from "./Adventure";
 
 function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
   const [movieList, setMovieList] = useState<Movie[]>([]);
