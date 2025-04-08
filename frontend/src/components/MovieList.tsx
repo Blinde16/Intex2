@@ -106,13 +106,15 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
                 <strong>Description:</strong> {m.description}
               </li>
             </ul>
+           </div>
           </div>
-        </div>
-      ))}
-      <div ref={loaderRef} style={{ height: "50px", textAlign: "center" }}>
-        {hasMore ? "Loading more..." : "No more movies 👀"}
       </div>
-    </>
+
+      {loading && <p style={{ textAlign: "center" }}>Loading...</p>}
+      {!hasMore && (
+        <p style={{ textAlign: "center" }}>No more movies to show.</p>
+      )}
+    </div>
   );
 }
 

@@ -66,3 +66,4 @@ npm-debug.log*
 yarn-error.log*
 *.tsbuildinfo
 /pictures
+/backend/Intex2/Identity.sqlite

@@ -41,7 +41,7 @@ const images = imageNames.map((name, idx) => (
           <button className="sign-in" onClick={() => navigate('/login', { state: { mode: 'login' } })}>
             Sign in
           </button>
-          <button className="register" onClick={() => navigate('/login', { state: { mode: 'register' } })}>
+          <button className="register" onClick={() => navigate('/register')}>
             Register
           </button>
 
