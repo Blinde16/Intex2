@@ -21,68 +21,80 @@ namespace RootkitAuth.API.Controllers
             _movieContext = temp;
         }
         [Authorize(Roles = "AuthenticatedCustomer,Admin")]
-        [HttpGet("GetMovies")]
-        public IActionResult GetMovies([FromQuery] string? afterId, [FromQuery] string[]? containers, [FromQuery] string[]? genres)
+        [Authorize(Roles = "AuthenticatedCustomer,Admin")]
+[HttpGet("GetMovies")]
+public IActionResult GetMovies(
+    [FromQuery] string? afterId,
+    [FromQuery] string[]? containers,
+    [FromQuery] string[]? genres,
+    [FromQuery] string? title // ✅ NEW
+)
+{
+    int pageSize = 10;
+
+    IQueryable<Movie> query = _movieContext.movies_titles.OrderBy(m => m.show_id);
+
+    if (!string.IsNullOrEmpty(afterId))
+    {
+        query = query.Where(m => string.Compare(m.show_id, afterId) > 0);
+    }
+
+    if (containers != null && containers.Length > 0)
+    {
+        query = query.Where(m => containers.Contains(m.type));
+    }
+
+    if (genres != null && genres.Length > 0)
+    {
+        var parameter = System.Linq.Expressions.Expression.Parameter(typeof(Movie), "m");
+        System.Linq.Expressions.Expression? genrePredicate = null;
+
+        foreach (var genre in genres)
         {
-            int pageSize = 10;
+            var propertyName = genre
+                .Replace(" ", "_")
+                .Replace("-", "_")
+                .Replace("'", "")
+                .Replace(",", "")
+                .Replace(".", "")
+                .Replace("?", "")
+                .Replace("!", "")
+                .Replace(":", "")
+                .Replace("&", "")
+                .Replace("#", "")
+                .Replace("/", "_");
 
-            IQueryable<Movie> query = _movieContext.movies_titles.OrderBy(m => m.show_id);
+            var property = System.Linq.Expressions.Expression.Property(parameter, propertyName);
+            var one = System.Linq.Expressions.Expression.Constant((byte?)1, typeof(byte?));
+            var equals = System.Linq.Expressions.Expression.Equal(property, one);
 
-            if (!string.IsNullOrEmpty(afterId))
-            {
-                query = query.Where(m => string.Compare(m.show_id, afterId) > 0);
-            }
-
-            if (containers != null && containers.Length > 0)
-            {
-                query = query.Where(m => containers.Contains(m.type));
-            }
-
-            if (genres != null && genres.Length > 0)
-            {
-                var parameter = System.Linq.Expressions.Expression.Parameter(typeof(Movie), "m");
-                System.Linq.Expressions.Expression? genrePredicate = null;
-
-                foreach (var genre in genres)
-                {
-                    var propertyName = genre
-                        .Replace(" ", "_")
-                        .Replace("-", "_")
-                        .Replace("'", "")
-                        .Replace(",", "")
-                        .Replace(".", "")
-                        .Replace("?", "")
-                        .Replace("!", "")
-                        .Replace(":", "")
-                        .Replace("&", "")
-                        .Replace("#", "")
-                        .Replace("/", "_");
-
-                    var property = System.Linq.Expressions.Expression.Property(parameter, propertyName);
-                    var one = System.Linq.Expressions.Expression.Constant((byte?)1, typeof(byte?)); // FIXED
-                    var equals = System.Linq.Expressions.Expression.Equal(property, one);
-
-                    genrePredicate = genrePredicate == null
-                        ? equals
-                        : System.Linq.Expressions.Expression.OrElse(genrePredicate, equals);
-                }
-
-                if (genrePredicate != null)
-                {
-                    var lambda = System.Linq.Expressions.Expression.Lambda<Func<Movie, bool>>(genrePredicate, parameter);
-                    query = query.Where(lambda);
-                }
-            }
-
-            var movies = query
-                .AsEnumerable()
-                .GroupBy(m => m.show_id)
-                .Select(g => g.First())
-                .Take(pageSize)
-                .ToList();
-
-            return Ok(new { brews = movies });
+            genrePredicate = genrePredicate == null
+                ? equals
+                : System.Linq.Expressions.Expression.OrElse(genrePredicate, equals);
         }
+
+        if (genrePredicate != null)
+        {
+            var lambda = System.Linq.Expressions.Expression.Lambda<Func<Movie, bool>>(genrePredicate, parameter);
+            query = query.Where(lambda);
+        }
+    }
+
+        if (!string.IsNullOrWhiteSpace(title))
+        {
+            query = query.Where(m => m.title != null && EF.Functions.Like(m.title.ToLower(), $"%{title.ToLower()}%"));
+        }
+
+        var movies = query
+            .AsEnumerable()
+            .GroupBy(m => m.show_id)
+            .Select(g => g.First())
+            .Take(pageSize)
+            .ToList();
+
+        return Ok(new { brews = movies });
+    }
+
         [Authorize(Roles = "Admin")]
         [HttpGet("GetAdminMovies")]
         public IActionResult GetMovies(int pageSize = 10, int pageNum = 1, [FromQuery] List<string>? types = null)

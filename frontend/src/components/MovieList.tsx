@@ -8,10 +8,12 @@ function MovieList({
   selectedContainers,
   selectedType,
   selectedGenres,
+  searchTerm, // ✅ Add this prop
 }: {
   selectedContainers: string[];
   selectedType: string | null;
   selectedGenres: string[];
+  searchTerm: string; // ✅ Add this type
 }) {
   const [movieList, setMovieList] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -47,6 +49,10 @@ function MovieList({
 
     if (selectedType) {
       params.append("type", selectedType);
+    }
+
+    if (searchTerm.trim()) {
+      params.append("title", searchTerm.trim()); // ✅ Add search term to query params
     }
 
     if (movieList.length > 0) {
@@ -85,7 +91,7 @@ function MovieList({
     isInitialLoad.current = true;
     fetchMovies();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedContainers, selectedType, selectedGenres]);
+  }, [selectedContainers, selectedType, selectedGenres, searchTerm]); // ✅ Add searchTerm dependency
 
   useEffect(() => {
     const handleScroll = () => {
@@ -104,7 +110,7 @@ function MovieList({
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [movieList, hasMore, selectedContainers, selectedType, selectedGenres]);
+  }, [movieList, hasMore, selectedContainers, selectedType, selectedGenres, searchTerm]);
 
   return (
     <div>
