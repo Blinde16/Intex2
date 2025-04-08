@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import "./css/Header.css";
 import Logout from "./Logout";
-import AuthorizeView, { AuthorizedUser } from "./AuthorizeView";
+import AuthorizeView from "./AuthorizeView";
 
 function Header() {
   return (
@@ -24,6 +24,7 @@ function Header() {
           </div>
         </div>
         </>
+
   );
 }
 

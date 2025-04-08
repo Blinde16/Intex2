@@ -10,11 +10,11 @@ export interface Movie {
   duration: string;
   description: string;
   genre: string;
-
   Action: boolean;
   Adventure: boolean;
   Anime_Series_International_TV_Shows: boolean;
   British_TV_Shows_Docuseries_International_TV_Shows: boolean;
+  Children_Family_Movies: boolean;
   Children: boolean;
   Comedies: boolean;
   Comedies_Dramas_International_Movies: boolean;
@@ -45,7 +45,8 @@ export interface Movie {
   Thrillers: boolean;
 }
 
-export const GENRES: (keyof Omit<Movie, 
+export const GENRES: (keyof Omit<
+  Movie,
   | "show_id"
   | "type"
   | "title"
@@ -89,9 +90,5 @@ export const GENRES: (keyof Omit<Movie,
   "TV_Comedies",
   "TV_Dramas",
   "Talk_Shows_TV_Comedies",
-  "Thrillers"
+  "Thrillers",
 ];
-
-
-
-
