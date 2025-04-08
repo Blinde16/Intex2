@@ -45,119 +45,116 @@ const AdminPage = () => {
 
   return (
     <>
-    <Header/>
-    <AuthorizeView>
-      <div className="container py-4">
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <h1>Admin Page</h1>
-          <Logout>
-            Logout <AuthorizedUser value="email" />
-          </Logout>
-        </div>
+      <Header />
+      <AuthorizeView>
+        <div className="container py-4">
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h1>Admin Page</h1>
+          </div>
 
-        <button
-          className="btn btn-success mb-3"
-          onClick={() => {
-            setAddingNew(true);
-            setEditingMovie(null);
-          }}
-        >
-          Add New Movie
-        </button>
-
-        {addingNew && (
-          <NewMovieForm
-            onSuccess={() => {
-              setAddingNew(false);
-              getMovies();
-            }}
-            onCancel={() => setAddingNew(false)}
-          />
-        )}
-
-        {editingMovie && (
-          <EditMovieForm
-            movie={editingMovie}
-            onSuccess={() => {
+          <button
+            className="btn btn-success mb-3"
+            onClick={() => {
+              setAddingNew(true);
               setEditingMovie(null);
-              getMovies();
             }}
-            onCancel={() => setEditingMovie(null)}
-          />
-        )}
+          >
+            Add New Movie
+          </button>
 
-        {error && <div className="alert alert-danger">{error}</div>}
+          {addingNew && (
+            <NewMovieForm
+              onSuccess={() => {
+                setAddingNew(false);
+                getMovies();
+              }}
+              onCancel={() => setAddingNew(false)}
+            />
+          )}
 
-        <table className="table table-striped table-bordered table-sm">
-          <thead className="table-light">
-            <tr>
-              <th>ID</th>
-              <th>Type</th>
-              <th>Title</th>
-              <th>Director</th>
-              <th>Cast</th>
-              <th>Country</th>
-              <th>Year</th>
-              <th>Rating</th>
-              <th>Duration</th>
-              <th>Genres</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Array.isArray(movies) && movies.length > 0 ? (
-              movies.map((p) => (
-                <tr key={p.show_id}>
-                  <td>{p.show_id}</td>
-                  <td>{p.type ?? "—"}</td>
-                  <td>{p.title ?? "—"}</td>
-                  <td>{p.director ?? "—"}</td>
-                  <td>{p.cast ?? "—"}</td>
-                  <td>{p.country ?? "—"}</td>
-                  <td>{p.release_year}</td>
-                  <td>{p.rating ?? "—"}</td>
-                  <td>{p.duration ?? "—"}</td>
-                  <td>{GENRES.filter((genre) => p[genre]).join(", ")}</td>
-                  <td>
-                    <button
-                      className="btn btn-primary btn-sm w-100 mb-1"
-                      onClick={() => {
-                        setEditingMovie(p);
-                        setAddingNew(false);
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="btn btn-danger btn-sm w-100"
-                      onClick={() => handleDelete(p.show_id)}
-                    >
-                      Delete
-                    </button>
+          {editingMovie && (
+            <EditMovieForm
+              movie={editingMovie}
+              onSuccess={() => {
+                setEditingMovie(null);
+                getMovies();
+              }}
+              onCancel={() => setEditingMovie(null)}
+            />
+          )}
+
+          {error && <div className="alert alert-danger">{error}</div>}
+
+          <table className="table table-striped table-bordered table-sm">
+            <thead className="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Title</th>
+                <th>Director</th>
+                <th>Cast</th>
+                <th>Country</th>
+                <th>Year</th>
+                <th>Rating</th>
+                <th>Duration</th>
+                <th>Genres</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.isArray(movies) && movies.length > 0 ? (
+                movies.map((p) => (
+                  <tr key={p.show_id}>
+                    <td>{p.show_id}</td>
+                    <td>{p.type ?? "—"}</td>
+                    <td>{p.title ?? "—"}</td>
+                    <td>{p.director ?? "—"}</td>
+                    <td>{p.cast ?? "—"}</td>
+                    <td>{p.country ?? "—"}</td>
+                    <td>{p.release_year}</td>
+                    <td>{p.rating ?? "—"}</td>
+                    <td>{p.duration ?? "—"}</td>
+                    <td>{GENRES.filter((genre) => p[genre]).join(", ")}</td>
+                    <td>
+                      <button
+                        className="btn btn-primary btn-sm w-100 mb-1"
+                        onClick={() => {
+                          setEditingMovie(p);
+                          setAddingNew(false);
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn btn-danger btn-sm w-100"
+                        onClick={() => handleDelete(p.show_id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={11} className="text-center">
+                    No movies found.
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={11} className="text-center">
-                  No movies found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-      <Pagination
-        currentPage={pageNumber}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        onPageChange={setPageNumber}
-        onPageSizeChange={(newSize) => {
-          setPageSize(newSize);
-          setPageNumber(1);
-        }}
-      />
-    </AuthorizeView>
+              )}
+            </tbody>
+          </table>
+        </div>
+        <Pagination
+          currentPage={pageNumber}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          onPageChange={setPageNumber}
+          onPageSizeChange={(newSize) => {
+            setPageSize(newSize);
+            setPageNumber(1);
+          }}
+        />
+      </AuthorizeView>
     </>
   );
 };

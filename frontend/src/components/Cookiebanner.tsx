@@ -36,8 +36,8 @@ const styles: Record<string, React.CSSProperties> = {
     width: "100%",
     backgroundColor: "#1e1822",
     color: "white",
-    padding: "1rem",
-    display: "flex",
+    padding: "40px",
+    display: "block",
     justifyContent: "space-between",
     alignItems: "center",
     zIndex: 9999,
@@ -45,9 +45,9 @@ const styles: Record<string, React.CSSProperties> = {
   button: {
     backgroundColor: "#8C00D7",
     border: "none",
-    padding: "0.5rem 1rem",
     cursor: "pointer",
     color: "white",
+    padding: "10px",
   },
 };
 
