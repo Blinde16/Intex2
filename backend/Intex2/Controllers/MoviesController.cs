@@ -61,8 +61,8 @@ namespace RootkitAuth.API.Controllers
 
             var returnMovies = new
             {
-                Brews = brews,
-                TotalNumProjects = totalNumMovies
+                movies = brews,
+                totalNumberMovies = totalNumMovies
             };
             
             return Ok(returnMovies);

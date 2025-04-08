@@ -23,6 +23,8 @@ const AdminProjectsPage = () => {
         const data = await fetchMovies(pageSize, pageNumber, []);
         setMovies(data.movies ?? []);
         setTotalPages(Math.ceil(data.totalNumberMovies / pageSize));
+        console.log("📦 fetched movies:", data.movies);
+        console.log("📦 total:", data.totalNumberMovies);
       } catch (error) {
         setError((error as Error).message);
       } finally {
@@ -101,7 +103,7 @@ const AdminProjectsPage = () => {
               <th>Release Year</th>
               <th>Rating</th>
               <th>Duration</th>
-              <th>Action</th>
+              <th>Genre</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -118,7 +120,7 @@ const AdminProjectsPage = () => {
                   <td>{p.release_year}</td>
                   <td>{p.rating ?? "—"}</td>
                   <td>{p.duration ?? "—"}</td>
-                  <td>{p.Action === 1 ? "Yes" : "No"}</td>
+                  <td>Genre</td>
                   <td>
                     <button
                       className="btn btn-primary btn-sm w-100 mb-1"
