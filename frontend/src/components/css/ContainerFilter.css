@@ -1,0 +1,83 @@
+.container-filter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-family: 'Inter', sans-serif;
+  color: white;
+  padding: 20px;
+  background-color: #1e1822;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  width: 100%;
+}
+
+.filter-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.clear-button {
+  background-color: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.8rem;
+}
+
+.clear-button:hover {
+  background-color: #8e44ad;
+  border-color: #8e44ad;
+}
+
+.filter-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 15px;
+}
+
+.tag {
+  background-color: #2a2233;
+  color: #ddd;
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+}
+
+.accordion-section {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.container-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.container-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.container-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}

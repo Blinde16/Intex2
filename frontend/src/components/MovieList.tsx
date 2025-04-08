@@ -1,9 +1,20 @@
 import { useEffect, useState, useRef } from "react";
 import { Movie } from "../types/Movie";
 import { useNavigate } from "react-router-dom";
+import Adventure from "./Adventure";
 import "./css/movielist.css";
 
-function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
+function MovieList({
+  selectedContainers,
+  selectedType,
+  selectedGenres,
+  searchTerm, // ✅ Add this prop
+}: {
+  selectedContainers: string[];
+  selectedType: string | null;
+  selectedGenres: string[];
+  searchTerm: string; // ✅ Add this type
+}) {
   const [movieList, setMovieList] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
@@ -11,20 +22,44 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
 
   const navigate = useNavigate();
 
+  const getPosterUrl = (title: string) => {
+    const cleanTitle = title
+      .replace(/[()'":?!,&#.]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    const encodedTitle = encodeURIComponent(cleanTitle);
+    const folderName = encodeURIComponent("Movie Posters");
+    return `https://moviepostersintex2.blob.core.windows.net/movieposter/${folderName}/${encodedTitle}.jpg`;
+  };
+
   const fetchMovies = async () => {
     if (loading || !hasMore) return;
     setLoading(true);
 
-    const containerParams = selectedContainers
-      .map((cont) => `containers=${encodeURIComponent(cont)}`)
-      .join("&");
+    const params = new URLSearchParams();
 
-    const afterIdParam =
-      movieList.length > 0
-        ? `afterId=${movieList[movieList.length - 1].show_id}&`
-        : "";
+    if (selectedContainers.length > 0) {
+      selectedContainers.forEach(container => params.append("containers", container));
+    }
 
-    const url = `https://localhost:5000/Movie/GetMovies?${afterIdParam}${containerParams}`;
+    if (selectedGenres.length > 0) {
+      selectedGenres.forEach(genre => params.append("genres", genre));
+    }
+
+    if (selectedType) {
+      params.append("type", selectedType);
+    }
+
+    if (searchTerm.trim()) {
+      params.append("title", searchTerm.trim()); // ✅ Add search term to query params
+    }
+
+    if (movieList.length > 0) {
+      params.append("afterId", movieList[movieList.length - 1].show_id);
+    }
+
+    const url = `https://localhost:5000/Movie/GetMovies?${params.toString()}`;
 
     try {
       const response = await fetch(url, { credentials: "include" });
@@ -50,16 +85,14 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
     }
   };
 
-  // When filters change
   useEffect(() => {
     setMovieList([]);
     setHasMore(true);
     isInitialLoad.current = true;
     fetchMovies();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedContainers]);
+  }, [selectedContainers, selectedType, selectedGenres, searchTerm]); // ✅ Add searchTerm dependency
 
-  // Infinite scroll
   useEffect(() => {
     const handleScroll = () => {
       if (
@@ -77,24 +110,12 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [movieList, hasMore, selectedContainers]);
-
-  const getPosterUrl = (title: string) => {
-    const cleanTitle = title
-      .replace(/[()'":?!,&#.]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-
-    const encodedTitle = encodeURIComponent(cleanTitle);
-    const folderName = encodeURIComponent("Movie Posters");
-    return `https://moviepostersintex2.blob.core.windows.net/movieposter/${folderName}/${encodedTitle}.jpg`;
-  };
+  }, [movieList, hasMore, selectedContainers, selectedType, selectedGenres, searchTerm]);
 
   return (
     <div>
-      {/* Adventure Section at the top */}
       
-      {/* Movie grid */}
+
       <div className="movie-grid">
         {movieList.map((m) => (
           <div
@@ -119,9 +140,10 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
         ))}
       </div>
 
-      {/* Status indicators */}
       {loading && <p style={{ textAlign: "center" }}>Loading...</p>}
-      {!hasMore && <p style={{ textAlign: "center" }}>No more movies to show.</p>}
+      {!hasMore && !loading && (
+        <p style={{ textAlign: "center" }}>No more movies to show.</p>
+      )}
     </div>
   );
 }

@@ -11,6 +11,8 @@ namespace RootkitAuth.API.Controllers
     [Route("[controller]")]
     [ApiController]
     [Authorize]
+
+    
     public class MovieController : ControllerBase
     {
         private MovieDbContext _movieContext;
@@ -19,41 +21,80 @@ namespace RootkitAuth.API.Controllers
             _movieContext = temp;
         }
         [Authorize(Roles = "AuthenticatedCustomer,Admin")]
-        [HttpGet("GetMovies")]
-        public IActionResult GetMovies([FromQuery] string? afterId, [FromQuery] string[]? containers)
-        {
-            int pageSize = 10;
+        [Authorize(Roles = "AuthenticatedCustomer,Admin")]
+[HttpGet("GetMovies")]
+public IActionResult GetMovies(
+    [FromQuery] string? afterId,
+    [FromQuery] string[]? containers,
+    [FromQuery] string[]? genres,
+    [FromQuery] string? title // ✅ NEW
+)
+{
+    int pageSize = 10;
 
-            IQueryable<Movie> query = _movieContext.movies_titles
-                .OrderBy(m => m.show_id);
+    IQueryable<Movie> query = _movieContext.movies_titles.OrderBy(m => m.show_id);
 
-            if (!string.IsNullOrEmpty(afterId))
-            {
-                query = query.Where(m => String.Compare(m.show_id, afterId) > 0);
-            }
-
-            if (containers != null && containers.Length > 0)
-            {
-                query = query.Where(m => containers.Contains(m.type));
-            }
+    if (!string.IsNullOrEmpty(afterId))
+    {
+        query = query.Where(m => string.Compare(m.show_id, afterId) > 0);
+    }
 
     if (containers != null && containers.Length > 0)
     {
         query = query.Where(m => containers.Contains(m.type));
     }
-            // ✅ Ensure uniqueness by grouping by show_id
-            var movies = query
-                .AsEnumerable() // switch to LINQ to Objects
-                .GroupBy(m => m.show_id)
-                .Select(g => g.First())
-                .Take(pageSize)
-                .ToList();
 
-            return Ok(new
-            {
-                brews = movies
-            });
+    if (genres != null && genres.Length > 0)
+    {
+        var parameter = System.Linq.Expressions.Expression.Parameter(typeof(Movie), "m");
+        System.Linq.Expressions.Expression? genrePredicate = null;
+
+        foreach (var genre in genres)
+        {
+            var propertyName = genre
+                .Replace(" ", "_")
+                .Replace("-", "_")
+                .Replace("'", "")
+                .Replace(",", "")
+                .Replace(".", "")
+                .Replace("?", "")
+                .Replace("!", "")
+                .Replace(":", "")
+                .Replace("&", "")
+                .Replace("#", "")
+                .Replace("/", "_");
+
+            var property = System.Linq.Expressions.Expression.Property(parameter, propertyName);
+            var one = System.Linq.Expressions.Expression.Constant((byte?)1, typeof(byte?));
+            var equals = System.Linq.Expressions.Expression.Equal(property, one);
+
+            genrePredicate = genrePredicate == null
+                ? equals
+                : System.Linq.Expressions.Expression.OrElse(genrePredicate, equals);
         }
+
+        if (genrePredicate != null)
+        {
+            var lambda = System.Linq.Expressions.Expression.Lambda<Func<Movie, bool>>(genrePredicate, parameter);
+            query = query.Where(lambda);
+        }
+    }
+
+        if (!string.IsNullOrWhiteSpace(title))
+        {
+            query = query.Where(m => m.title != null && EF.Functions.Like(m.title.ToLower(), $"%{title.ToLower()}%"));
+        }
+
+        var movies = query
+            .AsEnumerable()
+            .GroupBy(m => m.show_id)
+            .Select(g => g.First())
+            .Take(pageSize)
+            .ToList();
+
+        return Ok(new { brews = movies });
+    }
+
         [Authorize(Roles = "Admin")]
         [HttpGet("GetAdminMovies")]
         public IActionResult GetMovies(int pageSize = 10, int pageNum = 1, [FromQuery] List<string>? types = null)
@@ -182,6 +223,49 @@ namespace RootkitAuth.API.Controllers
             return Ok(movie);
         }
 		
+        [HttpGet("GetGenreTypes")]
+        public IActionResult GetGenreTypes()
+        {
+            // List of genres based on your database headers
+            var genres = new List<string>
+            {
+                "Action",
+                "Adventure",
+                "Anime Series International TV Shows",
+                "British TV Shows Docuseries International TV Shows",
+                "Children",
+                "Comedies",
+                "Comedies Dramas International Movies",
+                "Comedies International Movies",
+                "Comedies Romantic Movies",
+                "Crime TV Shows Docuseries",
+                "Documentaries",
+                "Documentaries International Movies",
+                "Docuseries",
+                "Dramas",
+                "Dramas International Movies",
+                "Dramas Romantic Movies",
+                "Family Movies",
+                "Fantasy",
+                "Horror Movies",
+                "International Movies Thrillers",
+                "International TV Shows Romantic TV Shows TV Dramas",
+                "Kids' TV",
+                "Language TV Shows",
+                "Musicals",
+                "Nature TV",
+                "Reality TV",
+                "Spirituality",
+                "TV Action",
+                "TV Comedies",
+                "TV Dramas",
+                "Talk Shows TV Comedies",
+                "Thrillers"
+            };
+
+            return Ok(genres);
+        }
+
 
     
 
