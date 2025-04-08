@@ -18,7 +18,7 @@ export const fetchMovies = async (
       .join("&");
 
     const response = await fetch(
-      `https:localhost:5000/Movie/GetAdminMovies?pageSize=${pageSize}&pageNumber=${pageNum}${
+      `https://localhost:5000/Movie/GetAdminMovies?pageSize=${pageSize}&pageNumber=${pageNum}${
         selectedCategories.length ? `&${categoryParams}` : ""
       }`,
       {
@@ -39,7 +39,7 @@ export const fetchMovies = async (
 
 export const addMovie = async (newMovie: Movie): Promise<Movie> => {
   try {
-    const response = await fetch(`https:localhost:5000/Movie/AddMovie`, {
+    const response = await fetch(`https://localhost:5000/Movie/AddMovie`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -65,7 +65,7 @@ export const updateMovie = async (
 ): Promise<Movie> => {
   try {
     const response = await fetch(
-      `https:localhost:5000/Movie/UpdateMovie/${show_id}`,
+      `https://localhost:5000/Movie/UpdateMovie/${show_id}`,
       {
         method: "PUT",
         headers: {
@@ -90,7 +90,7 @@ export const updateMovie = async (
 export const deleteMovie = async (show_id: string): Promise<void> => {
   try {
     const response = await fetch(
-      `https:localhost:5000/Movie/DeleteMovie/${show_id}`,
+      `https://localhost:5000/Movie/DeleteMovie/${show_id}`,
       {
         method: "DELETE",
         credentials: "include", // ✅ send cookie
