@@ -14,8 +14,7 @@ function LoginPage() {
   const navigate = useNavigate();
 
   const location = useLocation();
-  const mode = location.state?.mode || 'login'; // fallback to login if no state
-
+  const mode = location.state?.mode || "login"; // fallback to login if no state
 
   // handle change events for input fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,7 +65,7 @@ function LoginPage() {
         throw new Error(data?.message || "Invalid email or password.");
       }
 
-      navigate("/competition");
+      navigate("/movie");
     } catch (error: any) {
       setError(error.message || "Error logging in.");
       console.error("Fetch attempt failed:", error);
@@ -78,9 +77,9 @@ function LoginPage() {
       <div className="row">
         <div className="card border-0 shadow rounded-3 ">
           <div className="card-body p-4 p-sm-5">
-          <h5 className="card-title text-center mb-5 fw-light fs-5">
-            {mode === 'register' ? 'Register' : 'Sign In'}
-          </h5>
+            <h5 className="card-title text-center mb-5 fw-light fs-5">
+              {mode === "register" ? "Register" : "Sign In"}
+            </h5>
 
             <form onSubmit={handleSubmit}>
               <div className="form-floating mb-3">
@@ -121,13 +120,12 @@ function LoginPage() {
                 </label>
               </div>
               <div className="d-grid mb-2">
-              <button
-                className="btn btn-primary btn-login text-uppercase fw-bold"
-                type="submit"
-              >
-                {mode === 'register' ? 'Register' : 'Sign in'}
-              </button>
-
+                <button
+                  className="btn btn-primary btn-login text-uppercase fw-bold"
+                  type="submit"
+                >
+                  {mode === "register" ? "Register" : "Sign in"}
+                </button>
               </div>
               <hr className="my-4" />
               <div className="d-grid mb-2">
