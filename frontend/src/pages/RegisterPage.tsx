@@ -47,20 +47,20 @@ function Register() {
           password: password,
         }),
       })
-        //.then((response) => response.json())
-        .then((data) => {
-          // handle success or error from the server
-          console.log(data);
-          if (data.ok) setError("Successful registration. Please log in.");
-          else setError("Error registering.");
+        .then((response) => {
+          if (response.ok) {
+            setError("Successful registration. Please log in.");
+          } else {
+            setError("Error registering.");
+          }
         })
         .catch((error) => {
-          // handle network error
           console.error(error);
           setError("Error registering.");
         });
     }
   };
+  
 
   return (
     <div className="container">
@@ -129,5 +129,6 @@ function Register() {
     </div>
   );
 }
+
 
 export default Register;
