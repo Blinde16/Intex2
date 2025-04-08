@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Movie } from "../types/Movie";
 import { useNavigate } from "react-router-dom";
 import './css/movielist.css';
+import Adventure from "./Adventure";
 
 function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
   const [movieList, setMovieList] = useState<Movie[]>([]);
@@ -91,36 +92,27 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
   
 
   return (
-    <div>
-      <div className="movie-grid">
-        {movieList.map((m) => (
-          <div
-            key={m.show_id}
-            className="movie-card"
-            onClick={() => navigate(`/movie/${m.show_id}`)}
-          >
-            <img
-              src={getPosterUrl(m.title)}
-              alt={m.title}
-              className="movie-poster"
-              onError={(e) =>
-                (e.currentTarget.src =
-                  "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=")
-              }
-            />
-            <div className="movie-info">
-              <h3>{m.title}</h3>
-              <p>{m.release_year}</p>
-            </div>
-          </div>
-        ))}
+    <>
+    <Adventure />
+      {movieList.map((m) => (
+        <div id="rootbeerCard" className="card" key={m.show_id}>
+          <h2 className="card-title">{m.title}</h2>
+          <div className="card-body">
+            <ul className="list-group list-group-flush">
+              <li className="list-group-item">
+                <strong>Release Year:</strong> {m.release_year}
+              </li>
+              <li className="list-group-item">
+                <strong>Description:</strong> {m.description}
+              </li>
+            </ul>
+           </div>
+        </div>
+      ))}
+      <div ref={loaderRef} style={{ height: "50px", textAlign: "center" }}>
+        {hasMore ? "Loading more..." : "No more movies 👀"}
       </div>
-
-      {loading && <p style={{ textAlign: "center" }}>Loading...</p>}
-      {!hasMore && (
-        <p style={{ textAlign: "center" }}>No more movies to show.</p>
-      )}
-    </div>
+    </>
   );
 }
 

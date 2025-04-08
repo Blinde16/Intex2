@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import './css/MovieDetails.css'; // Assuming you have a CSS file for styling
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import "./css/MovieDetails.css"; // Assuming you have a CSS file for styling
+import axios from "axios";
 
 interface Movie {
   show_id: string;
