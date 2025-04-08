@@ -8,6 +8,7 @@ import MoviePage from "./pages/MoviePage";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import AdminPage from "./pages/AdminPage";
 import PrivacyPage from "./pages/PrivacyPage";
+import ProductDetail from "./pages/ProductDetail";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/homepage" element={<Homepage />} />
           <Route path="/AdminPage" element={<AdminPage />} />
           <Route path="/PrivacyPage" element={<PrivacyPage />} />
+          <Route path="/movie/:show_id" element={<ProductDetail />} />
         </Routes>
       </Router>
     </>
