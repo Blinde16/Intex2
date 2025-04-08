@@ -18,7 +18,7 @@ export const fetchMovies = async (
       .join("&");
 
     const response = await fetch(
-      `${API_URL}/GetAdminMovies?pageSize=${pageSize}&pageNumber=${pageNum}${
+      `https://localhost:5000/Movie/GetAdminMovies?pageSize=${pageSize}&pageNumber=${pageNum}${
         selectedCategories.length ? `&${categoryParams}` : ""
       }`,
       {
