@@ -51,5 +51,6 @@ namespace RootkitAuth.API.Data
         public byte? TV_Dramas { get; set; }
         public byte? Talk_Shows_TV_Comedies { get; set; }
         public byte? Thrillers { get; set; }
+        
     }
 }

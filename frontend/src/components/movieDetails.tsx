@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import './css/MovieDetails.css'; // Assuming you have a CSS file for styling
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import "./css/MovieDetails.css"; // Assuming you have a CSS file for styling
+import axios from "axios";
 
 interface Movie {
   show_id: string;
@@ -22,28 +22,34 @@ const MovieDetails: React.FC = () => {
   const [userRating, setUserRating] = useState<number>(0);
 
   useEffect(() => {
-    axios.get(`https://localhost:5000/Movie/GetMovieById/s1`, { //${show_id}
-      withCredentials: true
-    })
-    .then(response => {
-      setMovie(response.data);
-    })
-    .catch(error => {
-      console.error('Error fetching movie:', error);
-    });
+    axios
+      .get(`https://localhost:5000/Movie/GetMovieById/s1`, {
+        //${show_id}
+        withCredentials: true,
+      })
+      .then((response) => {
+        setMovie(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching movie:", error);
+      });
   }, [show_id]);
 
   if (!movie) {
-    return <div style={{ color: 'white', textAlign: 'center', marginTop: '40px' }}>Loading...</div>;
+    return (
+      <div style={{ color: "white", textAlign: "center", marginTop: "40px" }}>
+        Loading...
+      </div>
+    );
   }
 
   const encodedTitle = encodeURIComponent(movie.title);
   const imageUrl = `https://moviepostersintex2.blob.core.windows.net/movieposter/Movie Posters/${encodedTitle}.jpg`;
 
   const genreList = Object.entries(movie)
-    .filter(([key, value]) => typeof value === 'number' && value === 1)
-    .map(([key]) => key.replace(/_/g, ' '))
-    .join(', ');
+    .filter(([key, value]) => typeof value === "number" && value === 1)
+    .map(([key]) => key.replace(/_/g, " "))
+    .join(", ");
 
   const handleStarClick = (rating: number) => {
     setUserRating(rating);
@@ -61,7 +67,9 @@ const MovieDetails: React.FC = () => {
       {/* Info */}
       <div className="movie-info">
         <h2>{movie.title}</h2>
-        <p className="meta">{movie.release_year} | {movie.duration} | {movie.rating}</p>
+        <p className="meta">
+          {movie.release_year} | {movie.duration} | {movie.rating}
+        </p>
 
         <div className="overview">
           <h3>Overview</h3>
@@ -69,9 +77,15 @@ const MovieDetails: React.FC = () => {
         </div>
 
         <div className="details">
-          <p><strong>Starring:</strong> {movie.cast}</p>
-          <p><strong>Directed by:</strong> {movie.director}</p>
-          <p><strong>Genre:</strong> {genreList || 'Unknown'}</p>
+          <p>
+            <strong>Starring:</strong> {movie.cast}
+          </p>
+          <p>
+            <strong>Directed by:</strong> {movie.director}
+          </p>
+          <p>
+            <strong>Genre:</strong> {genreList || "Unknown"}
+          </p>
         </div>
 
         <div className="user-rating">
@@ -81,9 +95,12 @@ const MovieDetails: React.FC = () => {
               <span
                 key={star}
                 onClick={() => handleStarClick(star)}
-                style={{ cursor: 'pointer', transform: userRating >= star ? 'scale(1.2)' : 'none' }}
+                style={{
+                  cursor: "pointer",
+                  transform: userRating >= star ? "scale(1.2)" : "none",
+                }}
               >
-                {userRating >= star ? '⭐' : '☆'}
+                {userRating >= star ? "⭐" : "☆"}
               </span>
             ))}
           </div>

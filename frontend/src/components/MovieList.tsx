@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Movie } from "../types/Movie";
 import { useNavigate } from "react-router-dom";
+import Adventure from "./Adventure";
 
 function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
   const [movieList, setMovieList] = useState<Movie[]>([]);
@@ -50,6 +51,7 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
 
   return (
     <>
+    <Adventure />
       {movieList.map((m) => (
         <div id="rootbeerCard" className="card" key={m.show_id}>
           <h2 className="card-title">{m.title}</h2>
