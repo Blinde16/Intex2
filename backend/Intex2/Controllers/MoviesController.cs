@@ -18,6 +18,7 @@ namespace RootkitAuth.API.Controllers
         {
             _movieContext = temp;
         }
+        [Authorize(Roles = "AuthenticatedCustomer,Admin")]
         [HttpGet("GetMovies")]
         public IActionResult GetMovies([FromQuery] string? afterId, [FromQuery] string[]? containers)
         {
@@ -28,7 +29,7 @@ namespace RootkitAuth.API.Controllers
 
             if (!string.IsNullOrEmpty(afterId))
             {
-                query = query.Where(m => string.Compare(m.show_id, afterId) > 0);
+                query = query.Where(m => String.Compare(m.show_id, afterId) > 0);
             }
 
             if (containers != null && containers.Length > 0)
@@ -36,6 +37,10 @@ namespace RootkitAuth.API.Controllers
                 query = query.Where(m => containers.Contains(m.type));
             }
 
+    if (containers != null && containers.Length > 0)
+    {
+        query = query.Where(m => containers.Contains(m.type));
+    }
             // ✅ Ensure uniqueness by grouping by show_id
             var movies = query
                 .AsEnumerable() // switch to LINQ to Objects
@@ -49,9 +54,32 @@ namespace RootkitAuth.API.Controllers
                 brews = movies
             });
         }
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetAdminMovies")]
+        public IActionResult GetMovies(int pageSize = 10, int pageNum = 1, [FromQuery] List<string>? types = null)
+        {
+            var query = _movieContext.movies_titles.AsQueryable();
 
+            if (types != null && types.Any())
+            {
+                query = query.Where(c => types.Contains(c.type ?? string.Empty));
+            }
 
+            var totalNumMovies = query.Count();
+            var brews = query
+                .Skip((pageNum - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
 
+            var returnMovies = new
+            {
+                movies = brews,
+                totalNumberMovies = totalNumMovies
+            };
+            
+            return Ok(returnMovies);
+        }
+        [Authorize(Roles = "AuthenticatedCustomer, Admin")]
         [HttpGet("GetCategoryTypes")]
         public IActionResult GetCategoryTypes()
         {
@@ -62,6 +90,7 @@ namespace RootkitAuth.API.Controllers
             
             return Ok(categoryTypes);
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost("AddMovie")]
         public IActionResult AddMovie([FromBody] Movie newMovie)
         {
@@ -69,7 +98,7 @@ namespace RootkitAuth.API.Controllers
             _movieContext.SaveChanges();
             return Ok(newMovie);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPut("UpdateMovie/{showId}")]
         public IActionResult UpdateMovie(string showId, [FromBody] Movie updatedMovie)
         {
@@ -125,7 +154,7 @@ namespace RootkitAuth.API.Controllers
 
             return Ok(existingMovie);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete("DeleteMovie/{showId}")]
         public IActionResult DeleteMovie(string showId)
         {
@@ -139,7 +168,8 @@ namespace RootkitAuth.API.Controllers
 
             return NoContent();
         }
-		 [HttpGet("GetMovieById/{show_id}")]
+        [Authorize(Roles = "AuthenticatedCustomer, Admin")]
+        [HttpGet("GetMovieById/{show_id}")]
         public IActionResult GetMovieById(string show_id)
         {
             var movie = _movieContext.movies_titles.FirstOrDefault(m => m.show_id == show_id);
