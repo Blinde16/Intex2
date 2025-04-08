@@ -10,6 +10,7 @@ import AdminPage from "./pages/AdminPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import CookieBanner from "./components/Cookiebanner";
 import Verify2FA from "./pages/Verify2FA";
+import ProductDetail from "./pages/ProductDetail";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/AdminPage" element={<AdminPage />} />
           <Route path="/PrivacyPage" element={<PrivacyPage />} />
           <Route path="/verify-2fa" element={<Verify2FA />} />
+          <Route path="/movie/:show_id" element={<ProductDetail />} />
         </Routes>
       </Router>
       <CookieBanner />

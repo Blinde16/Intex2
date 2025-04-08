@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Movie } from "../types/Movie";
 import { useNavigate } from "react-router-dom";
-import Adventure from "./Adventure";
 import "./css/movielist.css";
 
 function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
@@ -94,7 +93,7 @@ function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
   return (
     <div>
       {/* Adventure Section at the top */}
-      <Adventure />
+      
       {/* Movie grid */}
       <div className="movie-grid">
         {movieList.map((m) => (
