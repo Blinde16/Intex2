@@ -71,7 +71,7 @@ export const updateMovie = async (
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include", // ✅ send cookie
+        credentials: "include",
         body: JSON.stringify(updatedMovie),
       }
     );
