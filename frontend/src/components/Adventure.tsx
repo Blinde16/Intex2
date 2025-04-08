@@ -10,12 +10,11 @@ const Adventure: React.FC = () => {
     setLoading(true);
 
     fetch("https://localhost:5000/Movie/adventure", {
-      method: "POST",
+      method: "GET",
       headers: {
-        "Content-Type": "application/json",
+        Accept: "application/json",
       },
       credentials: "include",
-      body: JSON.stringify(movies),
     })
       .then((response) => {
         if (!response.ok) {
