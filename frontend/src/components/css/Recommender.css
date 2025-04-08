@@ -1,0 +1,45 @@
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Flexible, fits screen */
+    gap: 20px;
+    padding: 20px 0;
+  }
+  
+  
+  .movie-card {
+    background-color: #1E1822;
+    border-radius: 10px;
+    overflow: hidden;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid #333;
+  }
+  
+  .movie-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  }
+  
+  .movie-poster {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-bottom: 2px solid #333;
+  }
+  
+  .movie-info {
+    padding: 10px;
+  }
+  
+  .movie-info h3 {
+    color: white;
+    font-size: 1rem;
+    margin: 5px 0;
+  }
+  
+  .movie-info p {
+    color: #aaa;
+    font-size: 0.9rem;
+  }
+  

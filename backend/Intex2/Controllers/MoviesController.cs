@@ -199,7 +199,7 @@ namespace RootkitAuth.API.Controllers
 
         var recommendations = await (from r in _movieContext.user_recommendations
                                      join m in _movieContext.movies_titles on r.Title equals m.title
-                                     where r.User_Id == user.user_id && r.Genre == "Adventure"
+                                     where r.User_Id == user.user_id
                                      select new Movie
                                      {
                                         show_id = m.show_id,
@@ -251,7 +251,7 @@ Thrillers = m.Thrillers,
 
 
                                      })
-                                     .Take(5)
+                                     
                                      .ToListAsync();
 
         return Ok(recommendations);

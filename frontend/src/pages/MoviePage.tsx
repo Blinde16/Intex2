@@ -5,7 +5,7 @@ import Logout from '../components/Logout';
 import MovieList from '../components/MovieList';
 import { useState } from "react";
 import './css/MoviePage.css';
-import Adventure from '../components/Adventure';
+import Adventure from '../components/HomeRecommender';
 
 function MoviePage() {
   const [selectedContainers, setSelectedContainers] = useState<string[]>([]);
