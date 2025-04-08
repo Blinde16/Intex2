@@ -37,7 +37,8 @@ function Register() {
       // clear error message
       setError("");
       // post data to the /register api
-      fetch("https://localhost:5000/register", {
+
+      fetch(`https:localhost:5000/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,7 +61,6 @@ function Register() {
         });
     }
   };
-  
 
   return (
     <div className="container">
@@ -129,6 +129,5 @@ function Register() {
     </div>
   );
 }
-
 
 export default Register;

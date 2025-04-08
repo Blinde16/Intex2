@@ -1,15 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import { Movie } from "../types/Movie";
-import { useNavigate } from "react-router-dom";
 import Adventure from "./Adventure";
-import './css/movielist.css';
+import "./css/movielist.css";
 
 function MovieList({ selectedContainers }: { selectedContainers: string[] }) {
   const [movieList, setMovieList] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
-
-  const navigate = useNavigate();
   const isInitialLoad = useRef(true);
 
   const fetchMovies = async () => {
