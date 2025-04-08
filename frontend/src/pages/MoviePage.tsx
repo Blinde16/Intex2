@@ -5,6 +5,7 @@ import Logout from '../components/Logout';
 import MovieList from '../components/MovieList';
 import { useState } from "react";
 import './css/MoviePage.css';
+import Adventure from '../components/Adventure';
 
 function MoviePage() {
   const [selectedContainers, setSelectedContainers] = useState<string[]>([]);
@@ -12,6 +13,7 @@ function MoviePage() {
   return (
     <AuthorizeView>
       <Header />
+      <Adventure />
       <div className="container-fluid movie-page pt-3">
         {/* Logout Section */}
         <div className="d-flex justify-content-end mb-3">

@@ -10,9 +10,6 @@ function Header() {
         <img src="pictures/logo/CineNiche(2).png" className="header-image" />
         <h1></h1>
         <div className="button-container">
-          <Link to="/AdminPage">
-            <button className="admin-button"> Admin</button>
-          </Link>
           <Link to="/movie">
             <button className="logout-button">Home</button>
           </Link>

@@ -84,13 +84,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.Use(async (context, next) =>
-{
-    context.Response.Headers.Append("Content-Security-Policy",
-        "default-src 'self'; script-src 'self' https://apis.google.com https://cdn.jsdelivr.net 'nonce-random123'; style-src 'self' 'nonce-random123' https://fonts.googleapis.com; img-src 'self' data: https://trusted-image-cdn.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.yourapp.com; frame-src 'self' https://www.youtube.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;");
+// app.Use(async (context, next) =>
+// {
+//     context.Response.Headers.Append("Content-Security-Policy",
+//         "default-src 'self'; script-src 'self' https://apis.google.com https://cdn.jsdelivr.net 'nonce-random123'; style-src 'self' 'nonce-random123' https://fonts.googleapis.com; img-src 'self' data: https://trusted-image-cdn.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.yourapp.com https://localhost:5000; frame-src 'self' https://www.youtube.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;");
 
-    await next();
-});
+//     await next();
+// });
 
 
 app.UseHttpsRedirection();
