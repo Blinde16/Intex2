@@ -60,7 +60,7 @@ function MovieList({
       params.append("afterId", movieList[movieList.length - 1].show_id);
     }
 
-    const url = `https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie/GetMovies?${params.toString()}`;
+    const url = `https://localhost:5000/Movie/GetMovies?${params.toString()}`;
 
     try {
       const response = await fetch(url, { credentials: "include" });

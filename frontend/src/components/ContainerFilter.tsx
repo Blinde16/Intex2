@@ -67,7 +67,7 @@ function ContainerFilter({
     const fetchTypes = async () => {
       try {
         const response = await fetch(
-          "https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie/GetCategoryTypes",
+          "https://localhost:5000/Movie/GetCategoryTypes",
           { credentials: "include" }
         );
         const data = (await response.json()) as string[];
@@ -80,7 +80,7 @@ function ContainerFilter({
     const fetchGenres = async () => {
       try {
         const response = await fetch(
-          "https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie/GetGenreTypes",
+          "https://localhost:5000/Movie/GetGenreTypes",
           { credentials: "include" }
         );
         const data = (await response.json()) as string[];

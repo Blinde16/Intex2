@@ -33,12 +33,9 @@ const ProductDetail: React.FC = () => {
 
     // Fetch movie details
     axios
-      .get(
-        `https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie/GetMovieById/${show_id}`,
-        {
-          withCredentials: true,
-        }
-      )
+      .get(`https://localhost:5000/Movie/GetMovieById/${show_id}`, {
+        withCredentials: true,
+      })
       .then((response) => setMovie(response.data))
       .catch((error) => console.error("Error fetching movie:", error));
 
@@ -65,7 +62,6 @@ const ProductDetail: React.FC = () => {
         console.error("Error fetching user rating:", error);
         setUserRatingLoaded(true);
       });
-
   }, [show_id]);
 
   const submitRating = (rating: number) => {
@@ -161,7 +157,9 @@ const ProductDetail: React.FC = () => {
               {genreList || "Unknown"}
             </p>
             <p>
-              <span className="font-semibold text-foreground">Average Rating:</span>{" "}
+              <span className="font-semibold text-foreground">
+                Average Rating:
+              </span>{" "}
               {averageRating !== null && averageRating !== 0
                 ? `${averageRating.toFixed(2)} / 5`
                 : "No ratings yet"}
