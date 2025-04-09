@@ -11,26 +11,25 @@ namespace RootkitAuth.API.Controllers
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-
-    
     public class MovieController : ControllerBase
     {
         private MovieDbContext _movieContext;
+
         public MovieController(MovieDbContext temp)
         {
             _movieContext = temp;
         }
+
         [Authorize(Roles = "AuthenticatedCustomer,Admin")]
         [HttpGet("GetMovies")]
         public IActionResult GetMovies(
             [FromQuery] string? afterId,
             [FromQuery] string[]? containers,
             [FromQuery] string[]? genres,
-            [FromQuery] string? title // ✅ NEW
+            [FromQuery] string? title
         )
         {
             int pageSize = 10;
-
             IQueryable<Movie> query = _movieContext.movies_titles.OrderBy(m => m.show_id);
 
             if (!string.IsNullOrEmpty(afterId))
@@ -79,20 +78,20 @@ namespace RootkitAuth.API.Controllers
                 }
             }
 
-                if (!string.IsNullOrWhiteSpace(title))
-                {
-                    query = query.Where(m => m.title != null && EF.Functions.Like(m.title.ToLower(), $"%{title.ToLower()}%"));
-                }
-
-                var movies = query
-                    .AsEnumerable()
-                    .GroupBy(m => m.show_id)
-                    .Select(g => g.First())
-                    .Take(pageSize)
-                    .ToList();
-
-                return Ok(new { brews = movies });
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                query = query.Where(m => m.title != null && EF.Functions.Like(m.title.ToLower(), $"%{title.ToLower()}%"));
             }
+
+            var movies = query
+                .AsEnumerable()
+                .GroupBy(m => m.show_id)
+                .Select(g => g.First())
+                .Take(pageSize)
+                .ToList();
+
+            return Ok(new { brews = movies });
+        }
 
         [Authorize(Roles = "Admin")]
         [HttpGet("GetAdminMovies")]
@@ -111,14 +110,9 @@ namespace RootkitAuth.API.Controllers
                 .Take(pageSize)
                 .ToList();
 
-            var returnMovies = new
-            {
-                movies = brews,
-                totalNumberMovies = totalNumMovies
-            };
-            
-            return Ok(returnMovies);
+            return Ok(new { movies = brews, totalNumberMovies = totalNumMovies });
         }
+
         [Authorize(Roles = "AuthenticatedCustomer, Admin")]
         [HttpGet("GetCategoryTypes")]
         public IActionResult GetCategoryTypes()
@@ -127,9 +121,10 @@ namespace RootkitAuth.API.Controllers
                 .Select(c => c.type)
                 .Distinct()
                 .ToList();
-            
+
             return Ok(categoryTypes);
         }
+
         [Authorize(Roles = "Admin")]
         [HttpPost("AddMovie")]
         public IActionResult AddMovie([FromBody] Movie newMovie)
@@ -138,6 +133,7 @@ namespace RootkitAuth.API.Controllers
             _movieContext.SaveChanges();
             return Ok(newMovie);
         }
+
         [Authorize(Roles = "Admin")]
         [HttpPut("UpdateMovie/{showId}")]
         public IActionResult UpdateMovie(string showId, [FromBody] Movie updatedMovie)
@@ -188,12 +184,13 @@ namespace RootkitAuth.API.Controllers
             existingMovie.TV_Dramas = updatedMovie.TV_Dramas;
             existingMovie.Talk_Shows_TV_Comedies = updatedMovie.Talk_Shows_TV_Comedies;
             existingMovie.Thrillers = updatedMovie.Thrillers;
-            
+
             _movieContext.movies_titles.Update(existingMovie);
             _movieContext.SaveChanges();
 
             return Ok(existingMovie);
         }
+
         [Authorize(Roles = "Admin")]
         [HttpDelete("DeleteMovie/{showId}")]
         public IActionResult DeleteMovie(string showId)
@@ -208,6 +205,7 @@ namespace RootkitAuth.API.Controllers
 
             return NoContent();
         }
+
         [Authorize(Roles = "AuthenticatedCustomer, Admin")]
         [HttpGet("GetMovieById/{show_id}")]
         public IActionResult GetMovieById(string show_id)
@@ -215,192 +213,136 @@ namespace RootkitAuth.API.Controllers
             var movie = _movieContext.movies_titles.FirstOrDefault(m => m.show_id == show_id);
 
             if (movie == null)
-            {
                 return NotFound(new { message = "Movie not found" });
-            }
 
             return Ok(movie);
         }
-		[Authorize(Roles = "AuthenticatedCustomer, Admin")]
+
+        [Authorize(Roles = "AuthenticatedCustomer, Admin")]
         [HttpGet("GetGenreTypes")]
         public IActionResult GetGenreTypes()
         {
-            // List of genres based on your database headers
             var genres = new List<string>
             {
-                "Action",
-                "Adventure",
-                "Anime Series International TV Shows",
-                "British TV Shows Docuseries International TV Shows",
-                "Children",
-                "Comedies",
-                "Comedies Dramas International Movies",
-                "Comedies International Movies",
-                "Comedies Romantic Movies",
-                "Crime TV Shows Docuseries",
-                "Documentaries",
-                "Documentaries International Movies",
-                "Docuseries",
-                "Dramas",
-                "Dramas International Movies",
-                "Dramas Romantic Movies",
-                "Family Movies",
-                "Fantasy",
-                "Horror Movies",
+                "Action", "Adventure", "Anime Series International TV Shows",
+                "British TV Shows Docuseries International TV Shows", "Children",
+                "Comedies", "Comedies Dramas International Movies",
+                "Comedies International Movies", "Comedies Romantic Movies",
+                "Crime TV Shows Docuseries", "Documentaries",
+                "Documentaries International Movies", "Docuseries", "Dramas",
+                "Dramas International Movies", "Dramas Romantic Movies",
+                "Family Movies", "Fantasy", "Horror Movies",
                 "International Movies Thrillers",
                 "International TV Shows Romantic TV Shows TV Dramas",
-                "Kids' TV",
-                "Language TV Shows",
-                "Musicals",
-                "Nature TV",
-                "Reality TV",
-                "Spirituality",
-                "TV Action",
-                "TV Comedies",
-                "TV Dramas",
-                "Talk Shows TV Comedies",
-                "Thrillers"
+                "Kids' TV", "Language TV Shows", "Musicals", "Nature TV",
+                "Reality TV", "Spirituality", "TV Action", "TV Comedies",
+                "TV Dramas", "Talk Shows TV Comedies", "Thrillers"
             };
 
             return Ok(genres);
         }
 
-
-    
-
         [Authorize(Roles = "AuthenticatedCustomer, Admin")]
         [HttpGet("adventure")]
-            public async Task<IActionResult> GetAdventureRecommendations()
+        public async Task<IActionResult> GetAdventureRecommendations()
+        {
+            var userEmail = User.Identity.Name;
+            var user = await _movieContext.movies_users.FirstOrDefaultAsync(u => u.email == userEmail);
+
+            if (user == null)
+                return NotFound("User not found");
+
+            var recommendations = await (from r in _movieContext.user_recommendations
+                                         join m in _movieContext.movies_titles on r.Title equals m.title
+                                         where r.User_Id == user.user_id
+                                         select m).ToListAsync();
+
+            return Ok(recommendations);
+        }
+
+        [Authorize(Roles = "AuthenticatedCustomer, Admin")]
+        [HttpGet("GetAverageRating/{showId}")]
+        public async Task<IActionResult> GetAverageRating(string showId)
+        {
+            var averageRating = await _movieContext.movies_ratings
+                .Where(r => r.show_id == showId)
+                .AverageAsync(r => (double?)r.rating) ?? 0;
+
+            return Ok(new { showId, averageRating = Math.Round(averageRating, 1) });
+        }
+
+        [Authorize(Roles = "AuthenticatedCustomer, Admin")]
+        [HttpPost("RateMovie")]
+        public async Task<IActionResult> RateMovie([FromBody] RateMovieRequest request)
+        {
+            var userEmail = User.Identity?.Name;
+            var user = await _movieContext.movies_users
+                .FirstOrDefaultAsync(u => u.email.ToLower() == userEmail.ToLower());
+
+            if (user == null)
+                return Unauthorized(new { message = "User not found." });
+
+            var userId = user.user_id;
+            var existingRating = await _movieContext.movies_ratings
+                .FirstOrDefaultAsync(r => r.user_id == userId && r.show_id.ToLower() == request.show_id.ToLower());
+
+            if (existingRating != null)
             {
-                var userEmail = User.Identity.Name;
+                existingRating.rating = (byte)request.rating;
+                _movieContext.movies_ratings.Update(existingRating);
+            }
+            else
+            {
+                var newRating = new MoviesRating
+                {
+                    user_id = userId,
+                    show_id = request.show_id,
+                    rating = (byte)request.rating
+                };
 
-                var user = await _movieContext.movies_users
-                    .FirstOrDefaultAsync(u => u.email == userEmail);
-
-                if (user == null)
-                    return NotFound("User not found");
-
-                var recommendations = await (from r in _movieContext.user_recommendations
-                                            join m in _movieContext.movies_titles on r.Title equals m.title
-                                            where r.User_Id == user.user_id
-                                            select new Movie
-                                            {
-                                                show_id = m.show_id,
-                                                type = m.type,
-                                                title = m.title,
-                                                director = m.director,
-                                                cast = m.cast,
-                                                country = m.country,
-                                        
-                                                release_year = m.release_year,
-                                                rating = m.rating,
-                                                duration = m.duration,
-                                                
-                                                description = m.description,
-                                                Action = m.Action,
-                                                Adventure = m.Adventure,
-                                                Anime_Series_International_TV_Shows = m.Anime_Series_International_TV_Shows,
-                                                British_TV_Shows_Docuseries_International_TV_Shows = m.British_TV_Shows_Docuseries_International_TV_Shows,
-                                                Children = m.Children,
-                                                Comedies = m.Comedies,
-                                                Comedies_Dramas_International_Movies = m.Comedies_Dramas_International_Movies,
-                                                Comedies_International_Movies = m.Comedies_International_Movies,
-                                                Comedies_Romantic_Movies = m.Comedies_Romantic_Movies,
-                                                Crime_TV_Shows_Docuseries = m.Crime_TV_Shows_Docuseries,
-                                                Documentaries = m.Documentaries,
-                                                Documentaries_International_Movies = m.Documentaries_International_Movies,
-                                                Docuseries = m.Docuseries,
-                                                Dramas = m.Dramas,
-                                                Dramas_International_Movies = m.Dramas_International_Movies,
-                                                Dramas_Romantic_Movies = m.Dramas_Romantic_Movies,
-                                                Family_Movies = m.Family_Movies,
-                                                Fantasy = m.Fantasy,
-                                                Horror_Movies = m.Horror_Movies,
-                                                International_Movies_Thrillers = m.International_Movies_Thrillers,
-                                                International_TV_Shows_Romantic_TV_Shows_TV_Dramas = m.International_TV_Shows_Romantic_TV_Shows_TV_Dramas,
-                                                Kids_TV = m.Kids_TV,
-                                                Language_TV_Shows = m.Language_TV_Shows,
-                                                Musicals = m.Musicals,
-                                                Nature_TV = m.Nature_TV,
-                                                Reality_TV = m.Reality_TV,
-                                                Spirituality = m.Spirituality,
-                                                TV_Action = m.TV_Action,
-                                                TV_Comedies = m.TV_Comedies,
-                                                TV_Dramas = m.TV_Dramas,
-                                                Talk_Shows_TV_Comedies = m.Talk_Shows_TV_Comedies,
-                                                Thrillers = m.Thrillers,
-                                            })                                           
-                                            .ToListAsync();
-                return Ok(recommendations);
+                _movieContext.movies_ratings.Add(newRating);
             }
 
+            await _movieContext.SaveChangesAsync();
 
-                [HttpGet("recommendations/{show_id}")]
-                public async Task<IActionResult> GetSimilarMovies(string show_id)
-                {
-                    // Get all recommendation titles based on the given show_id
-                    var recommendedTitles = await _movieContext.movie_recommendations
-                        .Where(r => r.Show_Id == show_id)
-                        .Select(r => r.Title)
-                        .ToListAsync();
+            return Ok(new { message = "Rating submitted successfully." });
+        }
 
-                    if (recommendedTitles == null || !recommendedTitles.Any())
-                        return NotFound("No recommendations found for this show_id");
+        [Authorize(Roles = "AuthenticatedCustomer, Admin")]
+        [HttpGet("GetUserRating/{showId}")]
+        public async Task<IActionResult> GetUserRating(string showId)
+        {
+            var userEmail = User.Identity?.Name;
+            var user = await _movieContext.movies_users
+                .FirstOrDefaultAsync(u => u.email.ToLower() == userEmail.ToLower());
 
-                    // Join with movie_titles to get full movie details
-                    var similarMovies = await _movieContext.movies_titles
-                        .Where(m => recommendedTitles.Contains(m.title))
-                        .Select(m => new Movie
-                        {
-                            show_id = m.show_id,
-                            type = m.type,
-                            title = m.title,
-                            director = m.director,
-                            cast = m.cast,
-                            country = m.country,
-                            release_year = m.release_year,
-                            rating = m.rating,
-                            duration = m.duration,
-                            description = m.description,
-                            Action = m.Action,
-                            Adventure = m.Adventure,
-                            Anime_Series_International_TV_Shows = m.Anime_Series_International_TV_Shows,
-                            British_TV_Shows_Docuseries_International_TV_Shows = m.British_TV_Shows_Docuseries_International_TV_Shows,
-                            Children = m.Children,
-                            Comedies = m.Comedies,
-                            Comedies_Dramas_International_Movies = m.Comedies_Dramas_International_Movies,
-                            Comedies_International_Movies = m.Comedies_International_Movies,
-                            Comedies_Romantic_Movies = m.Comedies_Romantic_Movies,
-                            Crime_TV_Shows_Docuseries = m.Crime_TV_Shows_Docuseries,
-                            Documentaries = m.Documentaries,
-                            Documentaries_International_Movies = m.Documentaries_International_Movies,
-                            Docuseries = m.Docuseries,
-                            Dramas = m.Dramas,
-                            Dramas_International_Movies = m.Dramas_International_Movies,
-                            Dramas_Romantic_Movies = m.Dramas_Romantic_Movies,
-                            Family_Movies = m.Family_Movies,
-                            Fantasy = m.Fantasy,
-                            Horror_Movies = m.Horror_Movies,
-                            International_Movies_Thrillers = m.International_Movies_Thrillers,
-                            International_TV_Shows_Romantic_TV_Shows_TV_Dramas = m.International_TV_Shows_Romantic_TV_Shows_TV_Dramas,
-                            Kids_TV = m.Kids_TV,
-                            Language_TV_Shows = m.Language_TV_Shows,
-                            Musicals = m.Musicals,
-                            Nature_TV = m.Nature_TV,
-                            Reality_TV = m.Reality_TV,
-                            Spirituality = m.Spirituality,
-                            TV_Action = m.TV_Action,
-                            TV_Comedies = m.TV_Comedies,
-                            TV_Dramas = m.TV_Dramas,
-                            Talk_Shows_TV_Comedies = m.Talk_Shows_TV_Comedies,
-                            Thrillers = m.Thrillers
-                        })
-                        .ToListAsync();
+            if (user == null)
+                return Unauthorized(new { message = "User not found." });
 
-                    return Ok(similarMovies);
-                }
+            var userId = user.user_id;
+            var existingRating = await _movieContext.movies_ratings
+                .FirstOrDefaultAsync(r => r.user_id == userId && r.show_id.ToLower() == showId.ToLower());
 
-                    
-                }
+            return Ok(new { userRating = existingRating?.rating });
+        }
 
-                    }
+        [Authorize(Roles = "AuthenticatedCustomer, Admin")]
+        [HttpGet("recommendations/{show_id}")]
+        public async Task<IActionResult> GetSimilarMovies(string show_id)
+        {
+            var recommendedTitles = await _movieContext.movie_recommendations
+                .Where(r => r.Show_Id == show_id)
+                .Select(r => r.Title)
+                .ToListAsync();
+
+            if (!recommendedTitles.Any())
+                return NotFound("No recommendations found for this show_id");
+
+            var similarMovies = await _movieContext.movies_titles
+                .Where(m => recommendedTitles.Contains(m.title))
+                .ToListAsync();
+
+            return Ok(similarMovies);
+        }
+    }
+}
