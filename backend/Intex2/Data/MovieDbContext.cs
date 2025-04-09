@@ -15,6 +15,8 @@ public class MovieDbContext: DbContext
 
     public DbSet<UserReq> user_recommendations {get; set;}
 
+    public DbSet<MovieReq> movie_recommendations {get; set;}
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Movie>().ToTable("movies_titles");

@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Movie } from "../types/Movie";
 import { useNavigate } from "react-router-dom";
-import Adventure from "./Adventure";
 import "./css/movielist.css";
 
 function MovieList({
@@ -40,11 +39,13 @@ function MovieList({
     const params = new URLSearchParams();
 
     if (selectedContainers.length > 0) {
-      selectedContainers.forEach(container => params.append("containers", container));
+      selectedContainers.forEach((container) =>
+        params.append("containers", container)
+      );
     }
 
     if (selectedGenres.length > 0) {
-      selectedGenres.forEach(genre => params.append("genres", genre));
+      selectedGenres.forEach((genre) => params.append("genres", genre));
     }
 
     if (selectedType) {
@@ -63,7 +64,8 @@ function MovieList({
 
     try {
       const response = await fetch(url, { credentials: "include" });
-      if (!response.ok) throw new Error(`Error fetching movies: ${response.statusText}`);
+      if (!response.ok)
+        throw new Error(`Error fetching movies: ${response.statusText}`);
 
       const data = await response.json();
 
@@ -110,12 +112,17 @@ function MovieList({
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [movieList, hasMore, selectedContainers, selectedType, selectedGenres, searchTerm]);
+  }, [
+    movieList,
+    hasMore,
+    selectedContainers,
+    selectedType,
+    selectedGenres,
+    searchTerm,
+  ]);
 
   return (
     <div>
-      
-
       <div className="movie-grid">
         {movieList.map((m) => (
           <div

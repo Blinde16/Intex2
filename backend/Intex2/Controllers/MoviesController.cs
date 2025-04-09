@@ -340,6 +340,74 @@ Thrillers = m.Thrillers,
 
         return Ok(recommendations);
     }
+
+
+[HttpGet("recommendations/{show_id}")]
+public async Task<IActionResult> GetSimilarMovies(string show_id)
+{
+    // Get all recommendation titles based on the given show_id
+    var recommendedTitles = await _movieContext.movie_recommendations
+        .Where(r => r.Show_Id == show_id)
+        .Select(r => r.Title)
+        .ToListAsync();
+
+    if (recommendedTitles == null || !recommendedTitles.Any())
+        return NotFound("No recommendations found for this show_id");
+
+    // Join with movie_titles to get full movie details
+    var similarMovies = await _movieContext.movies_titles
+        .Where(m => recommendedTitles.Contains(m.title))
+        .Select(m => new Movie
+        {
+            show_id = m.show_id,
+            type = m.type,
+            title = m.title,
+            director = m.director,
+            cast = m.cast,
+            country = m.country,
+            release_year = m.release_year,
+            rating = m.rating,
+            duration = m.duration,
+            description = m.description,
+            Action = m.Action,
+            Adventure = m.Adventure,
+            Anime_Series_International_TV_Shows = m.Anime_Series_International_TV_Shows,
+            British_TV_Shows_Docuseries_International_TV_Shows = m.British_TV_Shows_Docuseries_International_TV_Shows,
+            Children = m.Children,
+            Comedies = m.Comedies,
+            Comedies_Dramas_International_Movies = m.Comedies_Dramas_International_Movies,
+            Comedies_International_Movies = m.Comedies_International_Movies,
+            Comedies_Romantic_Movies = m.Comedies_Romantic_Movies,
+            Crime_TV_Shows_Docuseries = m.Crime_TV_Shows_Docuseries,
+            Documentaries = m.Documentaries,
+            Documentaries_International_Movies = m.Documentaries_International_Movies,
+            Docuseries = m.Docuseries,
+            Dramas = m.Dramas,
+            Dramas_International_Movies = m.Dramas_International_Movies,
+            Dramas_Romantic_Movies = m.Dramas_Romantic_Movies,
+            Family_Movies = m.Family_Movies,
+            Fantasy = m.Fantasy,
+            Horror_Movies = m.Horror_Movies,
+            International_Movies_Thrillers = m.International_Movies_Thrillers,
+            International_TV_Shows_Romantic_TV_Shows_TV_Dramas = m.International_TV_Shows_Romantic_TV_Shows_TV_Dramas,
+            Kids_TV = m.Kids_TV,
+            Language_TV_Shows = m.Language_TV_Shows,
+            Musicals = m.Musicals,
+            Nature_TV = m.Nature_TV,
+            Reality_TV = m.Reality_TV,
+            Spirituality = m.Spirituality,
+            TV_Action = m.TV_Action,
+            TV_Comedies = m.TV_Comedies,
+            TV_Dramas = m.TV_Dramas,
+            Talk_Shows_TV_Comedies = m.Talk_Shows_TV_Comedies,
+            Thrillers = m.Thrillers
+        })
+        .ToListAsync();
+
+    return Ok(similarMovies);
+}
+
+    
 }
 
     }
