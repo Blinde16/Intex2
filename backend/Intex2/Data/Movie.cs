@@ -9,7 +9,7 @@ namespace RootkitAuth.API.Data
 
         [Required]
         public string type { get; set; }
-
+        [Required]
         public string title { get; set; }
         public string? director { get; set; }
         public string? cast { get; set; }

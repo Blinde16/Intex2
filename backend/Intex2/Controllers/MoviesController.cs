@@ -147,8 +147,25 @@ namespace RootkitAuth.API.Controllers
         [HttpPost("AddMovie")]
         public IActionResult AddMovie([FromBody] Movie newMovie)
         {
+            // Only generate if not provided
+            if (string.IsNullOrWhiteSpace(newMovie.show_id))
+                {
+                    var maxIdNum = _movieContext.movies_titles
+                        .Where(m => m.show_id.StartsWith("s"))
+                        .AsEnumerable() // 👈 Forces evaluation in memory (switches from SQL to LINQ-to-Objects)
+                        .Select(m =>
+                        {
+                            var numPart = m.show_id.Substring(1);
+                            return int.TryParse(numPart, out var n) ? n : 0;
+                        })
+                        .DefaultIfEmpty(0)
+                        .Max();
+
+                    newMovie.show_id = $"s{maxIdNum + 1}";
+                }
             _movieContext.movies_titles.Add(newMovie);
             _movieContext.SaveChanges();
+
             return Ok(newMovie);
         }
         [Authorize(Roles = "Admin")]
@@ -500,22 +517,24 @@ namespace RootkitAuth.API.Controllers
         return Ok(similarMovies);
     }
     
-    [Authorize(Roles = "Admin")]
     [HttpPost("UploadPoster")]
-    public async Task<IActionResult> UploadPoster([FromForm] IFormFile image, [FromForm] string title)
+    public async Task<IActionResult> UploadPoster([FromForm] IFormFile image, [FromForm] string filename) // Changed parameter name to 'filename'
     {
-        if (image == null || string.IsNullOrWhiteSpace(title))
-            return BadRequest("Missing image or title");
+        if (image == null || string.IsNullOrWhiteSpace(filename)) // Using 'filename'
+        {
+            return BadRequest("Missing image or filename");
+        }
+
+        // Sanitize the filename on the backend for extra security
+        var cleanFilename = Regex.Replace(filename, @"[^a-zA-Z0-9\s-]", "").Trim();
+        cleanFilename = Regex.Replace(cleanFilename, @"\s+", "-"); // Replace spaces with hyphens for filename safety
 
         var blobServiceClient = new BlobServiceClient(_config.GetConnectionString("AzureBlobStorage"));
         var containerClient = blobServiceClient.GetBlobContainerClient("movieposter");
         await containerClient.CreateIfNotExistsAsync();
         await containerClient.SetAccessPolicyAsync(PublicAccessType.Blob);
 
-        var cleanTitle = Regex.Replace(title, @"[()'\":?!,&#.]", " ");
-        cleanTitle = Regex.Replace(cleanTitle, @"\s+", " ").Trim();
-
-        var blobName = $"Movie Posters/{cleanTitle}.jpg";
+        var blobName = $"Movie Posters/{cleanFilename}.jpg"; // Use the sanitized filename
         var blobClient = containerClient.GetBlobClient(blobName);
 
         using var stream = image.OpenReadStream();
