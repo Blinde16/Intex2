@@ -29,3 +29,13 @@ body {
   text-align: center;
   margin-top: 10px;
 }
+
+.login-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.login-page-wrapper > .flex {
+  flex: 1;
+}
