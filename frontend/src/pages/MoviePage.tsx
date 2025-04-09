@@ -8,7 +8,6 @@ import './css/MoviePage.css';
 import Adventure from '../components/HomeRecommender';
 import StickyFooter from '../components/StickyFooter';
 
-
 function MoviePage() {
   const [selectedContainers, setSelectedContainers] = useState<string[]>([]);
   const [selectedType, setSelectedType] = useState<string | null>(null);
@@ -56,3 +55,4 @@ function MoviePage() {
 }
 
 export default MoviePage;
+

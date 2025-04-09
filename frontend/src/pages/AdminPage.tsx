@@ -7,6 +7,7 @@ import EditMovieForm from "../components/EditMovieForm";
 import AuthorizeView from "../components/AuthorizeView";
 import Header from "../components/Header";
 import "./css/AdminPage.css";
+import Footer from "../components/Footer";
 
 
 const AdminPage = () => {
@@ -156,6 +157,7 @@ const AdminPage = () => {
           }}
         />
       </AuthorizeView>
+      <Footer />
     </>
   );
 };

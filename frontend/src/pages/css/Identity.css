@@ -166,3 +166,13 @@ body {
     }
   }
   
+  .register-page-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .register-page-wrapper > .flex {
+    flex: 1;
+  }
+  
