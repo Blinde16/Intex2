@@ -35,7 +35,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
-    
+
 builder.Services.AddTransient<IEmailSender<IdentityUser>, DummyEmailSender>();
 
 builder.Services.Configure<IdentityOptions>(options =>
@@ -69,7 +69,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:3000", "http://localhost:5173") // Replace with your frontend URL
+            policy.WithOrigins("http://localhost:3000", "http://localhost:5173","https://lemon-desert-004da941e.6.azurestaticapps.net") // Replace with your frontend URL
                 .AllowCredentials() // Required to allow cookies
                 .AllowAnyMethod()
                 .AllowAnyHeader();
@@ -85,13 +85,13 @@ if (app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-// app.Use(async (context, next) =>
-// {
-//     context.Response.Headers.Append("Content-Security-Policy",
-//         "default-src 'self'; script-src 'self' https://apis.google.com https://cdn.jsdelivr.net 'nonce-random123'; style-src 'self' 'nonce-random123' https://fonts.googleapis.com; img-src 'self' data: https://trusted-image-cdn.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.yourapp.com https://localhost:5000; frame-src 'self' https://www.youtube.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;");
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("Content-Security-Policy",
+        "default-src 'self'; script-src 'self' https://apis.google.com https://cdn.jsdelivr.net 'nonce-random123'; style-src 'self' 'nonce-random123' https://fonts.googleapis.com; img-src 'self' data: https://trusted-image-cdn.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.yourapp.com https://localhost:5000; frame-src 'self' https://www.youtube.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;");
 
-//     await next();
-// });
+    await next();
+});
 
 
 app.UseHttpsRedirection();
@@ -141,7 +141,7 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     await CreateRolesAndAssignUsers(services);
-    //await PromoteMovieUsersToIdentity(services); // 👈 Add this line
+    await PromoteMovieUsersToIdentity(services); // 👈 Add this line
 }
 
 
@@ -190,55 +190,55 @@ static async Task CreateRolesAndAssignUsers(IServiceProvider serviceProvider)
         }
     }
 }
-// static async Task PromoteMovieUsersToIdentity(IServiceProvider serviceProvider)
-// {
-//     using var scope = serviceProvider.CreateScope();
-//     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-//     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-//     var dbContext = scope.ServiceProvider.GetRequiredService<MovieDbContext>();
+static async Task PromoteMovieUsersToIdentity(IServiceProvider serviceProvider)
+{
+    using var scope = serviceProvider.CreateScope();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var dbContext = scope.ServiceProvider.GetRequiredService<MovieDbContext>();
 
-//     // Ensure the AuthenticatedCustomer role exists
-//     var roleExists = await roleManager.RoleExistsAsync("AuthenticatedCustomer");
-//     if (!roleExists)
-//     {
-//         await roleManager.CreateAsync(new IdentityRole("AuthenticatedCustomer"));
-//     }
+    // Ensure the AuthenticatedCustomer role exists
+    var roleExists = await roleManager.RoleExistsAsync("AuthenticatedCustomer");
+    if (!roleExists)
+    {
+        await roleManager.CreateAsync(new IdentityRole("AuthenticatedCustomer"));
+    }
 
-//     // Get all unique emails from movies_users table
-//     var movieUserEmails = dbContext.movies_users
-//         .Select(mu => mu.email)
-//         .Distinct()
-//         .ToList();
+    // Get all unique emails from movies_users table
+    var movieUserEmails = dbContext.movies_users
+        .Select(mu => mu.email)
+        .Distinct()
+        .ToList();
 
-//     foreach (var email in movieUserEmails)
-//     {
-//         if (string.IsNullOrWhiteSpace(email)) continue;
+    foreach (var email in movieUserEmails)
+    {
+        if (string.IsNullOrWhiteSpace(email)) continue;
 
-//         var user = await userManager.FindByEmailAsync(email);
-//         if (user == null)
-//         {
-//             user = new IdentityUser
-//             {
-//                 UserName = email,
-//                 Email = email
-//             };
+        var user = await userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            user = new IdentityUser
+            {
+                UserName = email,
+                Email = email
+            };
 
-//             var result = await userManager.CreateAsync(user, "SuperPurpleFresh7"); // You can change this default password
+            var result = await userManager.CreateAsync(user, "SuperPurpleFresh7"); // You can change this default password
 
-//             if (!result.Succeeded)
-//             {
-//                 Console.WriteLine($"❌ Failed to create user {email}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
-//                 continue;
-//             }
-//         }
+            if (!result.Succeeded)
+            {
+                Console.WriteLine($"❌ Failed to create user {email}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                continue;
+            }
+        }
 
-//         // Add to role if not already in it
-//         var inRole = await userManager.IsInRoleAsync(user, "AuthenticatedCustomer");
-//         if (!inRole)
-//         {
-//             await userManager.AddToRoleAsync(user, "AuthenticatedCustomer");
-//         }
+        // Add to role if not already in it
+        var inRole = await userManager.IsInRoleAsync(user, "AuthenticatedCustomer");
+        if (!inRole)
+        {
+            await userManager.AddToRoleAsync(user, "AuthenticatedCustomer");
+        }
 
-//         Console.WriteLine($"✅ {email} is now an AuthenticatedCustomer");
-//     }
-// }
+        Console.WriteLine($"✅ {email} is now an AuthenticatedCustomer");
+    }
+}

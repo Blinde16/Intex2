@@ -46,7 +46,7 @@ const ProductDetail: React.FC = () => {
   const imageUrl = `https://moviepostersintex2.blob.core.windows.net/movieposter/Movie Posters/${encodedTitle}.jpg`;
 
   const genreList = Object.entries(movie)
-    .filter(([key, value]) => typeof value === "number" && value === 1)
+    .filter(([, value]) => typeof value === "number" && value === 1)
     .map(([key]) => key.replace(/_/g, " "))
     .join(", ");
 

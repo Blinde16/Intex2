@@ -4,7 +4,6 @@ import "./css/ContainerFilter.css";
 function ContainerFilter({
   selectedType,
   setSelectedType,
-  selectedGenres,
   setSelectedGenres,
   clearAllFilters,
 }: {
@@ -15,7 +14,7 @@ function ContainerFilter({
   clearAllFilters: () => void;
 }) {
   const [types, setTypes] = useState<string[]>([]);
-  const [genres, setGenres] = useState<string[]>([]);
+  const [_, setGenres] = useState<string[]>([]);
   const [selectedGeneralGenres, setSelectedGeneralGenres] = useState<string[]>(
     []
   );

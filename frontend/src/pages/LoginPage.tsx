@@ -11,7 +11,7 @@ function LoginPage() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const mode = location.state?.mode || "login";
+  location.state?.mode || "login";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, type, checked, value } = e.target;
