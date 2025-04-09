@@ -1,22 +1,18 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./Identity.css";
+import "./css/Identity.css";
 import "@fortawesome/fontawesome-free/css/all.css";
 
 function LoginPage() {
-  // state variables for email and passwords
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [rememberme, setRememberme] = useState<boolean>(false);
-
-  // state variable for error messages
   const [error, setError] = useState<string>("");
+
   const navigate = useNavigate();
-
   const location = useLocation();
-  const mode = location.state?.mode || "login"; // fallback to login if no state
+  const mode = location.state?.mode || "login";
 
-  // handle change events for input fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, type, checked, value } = e.target;
     if (type === "checkbox") {
@@ -28,14 +24,9 @@ function LoginPage() {
     }
   };
 
-  const handleRegisterClick = () => {
-    navigate("/register");
-  };
-
-  // handle submit event for the form
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(""); // Clear any previous errors
+    setError("");
 
     if (!email || !password) {
       setError("Please fill in all fields.");
@@ -49,14 +40,13 @@ function LoginPage() {
     try {
       const response = await fetch(loginUrl, {
         method: "POST",
-        credentials: "include", // ✅ Ensures cookies are sent & received
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
 
-      // Ensure we only parse JSON if there is content
-      let data = null;
       const contentLength = response.headers.get("content-length");
+      let data = null;
       if (contentLength && parseInt(contentLength, 10) > 0) {
         data = await response.json();
       }
@@ -68,87 +58,86 @@ function LoginPage() {
       navigate("/movie");
     } catch (error: any) {
       setError(error.message || "Error logging in.");
-      console.error("Fetch attempt failed:", error);
     }
   };
 
   return (
-    <div className="container">
-      <div className="row">
-        <div className="card border-0 shadow rounded-3 ">
-          <div className="card-body p-4 p-sm-5">
-            <h5 className="card-title text-center mb-5 fw-light fs-5">
-              {mode === "register" ? "Register" : "Sign In"}
-            </h5>
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="bg-white/5 backdrop-blur-md rounded-xl shadow-xl p-8 w-full max-w-md border border-white/10">
+        <h2 className="text-center text-3xl font-extrabold text-white mb-6">
+          Sign In
+        </h2>
 
-            <form onSubmit={handleSubmit}>
-              <div className="form-floating mb-3">
-                <input
-                  className="form-control"
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={email}
-                  onChange={handleChange}
-                />
-                <label htmlFor="email">Email address</label>
-              </div>
-              <div className="form-floating mb-3">
-                <input
-                  className="form-control"
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={password}
-                  onChange={handleChange}
-                />
-                <label htmlFor="password">Password</label>
-              </div>
-
-              <div className="form-check mb-3">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  value=""
-                  id="rememberme"
-                  name="rememberme"
-                  checked={rememberme}
-                  onChange={handleChange}
-                />
-                <label className="form-check-label" htmlFor="rememberme">
-                  Remember password
-                </label>
-              </div>
-              <div className="d-grid mb-2">
-                <button
-                  className="btn btn-primary btn-login text-uppercase fw-bold"
-                  type="submit"
-                >
-                  {mode === "register" ? "Register" : "Sign in"}
-                </button>
-              </div>
-              <hr className="my-4" />
-              <div className="d-grid mb-2">
-                <button
-                  className="btn btn-google btn-login text-uppercase fw-bold"
-                  type="button"
-                >
-                  <i className="fa-brands fa-google me-2"></i> Sign in with
-                  Google
-                </button>
-              </div>
-              <div className="d-grid mb-2">
-                <button
-                  className="btn btn-facebook btn-login text-uppercase fw-bold"
-                  type="button"
-                >
-                  <i className="fa-brands fa-facebook-f me-2"></i> Sign in with
-                  Facebook
-                </button>
-              </div>
-            </form>
-            {error && <p className="error">{error}</p>}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label htmlFor="email" className="block text-sm text-gray-300 mb-1">
+              Email address
+            </label>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              value={email}
+              onChange={handleChange}
+              className="w-full rounded-md bg-white/10 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent py-3 px-4 transition"
+              placeholder="you@example.com"
+            />
           </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm text-gray-300 mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              value={password}
+              onChange={handleChange}
+              className="w-full rounded-md bg-white/10 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent py-3 px-4 transition"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <div className="flex items-center text-sm text-gray-400">
+            <input
+              id="rememberme"
+              name="rememberme"
+              type="checkbox"
+              checked={rememberme}
+              onChange={handleChange}
+              className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+            />
+            <label htmlFor="rememberme" className="ml-2">
+              Remember password
+            </label>
+          </div>
+
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-[#7e22ce] to-[#a855f7] text-white py-3 rounded-md hover:from-[#9333ea] hover:to-[#a855f7] transition shadow-lg"
+          >
+            Sign in
+          </button>
+        </form>
+
+        <div className="my-6 border-t border-gray-700"></div>
+
+        <div className="space-y-3">
+          <button
+            type="button"
+            className="w-full flex items-center justify-center bg-purple-800/30 text-white py-3 rounded-md hover:bg-purple-800/50 transition"
+          >
+            <i className="fa-brands fa-google me-2"></i> Sign in with Google
+          </button>
+          <button
+            type="button"
+            className="w-full flex items-center justify-center bg-purple-800/30 text-white py-3 rounded-md hover:bg-purple-800/50 transition"
+          >
+            <i className="fa-brands fa-facebook-f me-2"></i> Sign in with Facebook
+          </button>
         </div>
       </div>
     </div>

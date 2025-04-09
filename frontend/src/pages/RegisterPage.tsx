@@ -1,133 +1,97 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./css/Identity.css";
 
-function Register() {
-  // state variables for email and passwords
+function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // state variable for error messages
-  const [error, setError] = useState("");
+  const handleRegister = (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const handleLoginClick = () => {
+    if (!email || !password || !confirmPassword) {
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    console.log("Register with:", email, password);
     navigate("/login");
   };
 
-  // handle change events for input fields
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (name === "email") setEmail(value);
-    if (name === "password") setPassword(value);
-    if (name === "confirmPassword") setConfirmPassword(value);
-  };
-
-  // handle submit event for the form
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // validate email and passwords
-    if (!email || !password || !confirmPassword) {
-      setError("Please fill in all fields.");
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Please enter a valid email address.");
-    } else if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-    } else {
-      // clear error message
-      setError("");
-      // post data to the /register api
-
-      fetch(`https://localhost:5000/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      })
-        .then((response) => {
-          if (response.ok) {
-            setError("Successful registration. Please log in.");
-          } else {
-            setError("Error registering.");
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-          setError("Error registering.");
-        });
-    }
-  };
-
   return (
-    <div className="container">
-      <div className="row">
-        <div className="card border-0 shadow rounded-3 ">
-          <div className="card-body p-4 p-sm-5">
-            <h5 className="card-title text-center mb-5 fw-light fs-5">
-              Register
-            </h5>
-            <form onSubmit={handleSubmit}>
-              <div className="form-floating mb-3">
-                <input
-                  className="form-control"
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={email}
-                  onChange={handleChange}
-                />
-                <label htmlFor="email">Email address</label>
-              </div>
-              <div className="form-floating mb-3">
-                <input
-                  className="form-control"
-                  type="password"
-                  id="password"
-                  name="password"
-                  value={password}
-                  onChange={handleChange}
-                />
-                <label htmlFor="password">Password</label>
-              </div>
-              <div className="form-floating mb-3">
-                <input
-                  className="form-control"
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={confirmPassword}
-                  onChange={handleChange}
-                />
-                <label htmlFor="confirmPassword">Confirm Password</label>
-              </div>
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="bg-white/5 backdrop-blur-md rounded-xl shadow-xl p-8 w-full max-w-md border border-white/10">
+        <h2 className="text-center text-3xl font-extrabold text-white mb-6">
+          Register
+        </h2>
 
-              <div className="d-grid mb-2">
-                <button
-                  className="btn btn-primary btn-login text-uppercase fw-bold"
-                  type="submit"
-                >
-                  Register
-                </button>
-              </div>
-              <div className="d-grid mb-2">
-                <button
-                  className="btn btn-primary btn-login text-uppercase fw-bold"
-                  onClick={handleLoginClick}
-                >
-                  Go to Login
-                </button>
-              </div>
-            </form>
-            <strong>{error && <p className="error">{error}</p>}</strong>
+        <form onSubmit={handleRegister} className="space-y-5">
+          {error && <div className="text-red-500 text-sm">{error}</div>}
+
+          <div>
+            <label htmlFor="email" className="block text-sm text-gray-300 mb-1">
+              Email address
+            </label>
+            <input
+              className="w-full rounded-md bg-white/10 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent py-3 px-4 transition"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
-        </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm text-gray-300 mb-1">
+              Password
+            </label>
+            <input
+              className="w-full rounded-md bg-white/10 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent py-3 px-4 transition"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="confirmPassword" className="block text-sm text-gray-300 mb-1">
+              Confirm Password
+            </label>
+            <input
+              className="w-full rounded-md bg-white/10 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent py-3 px-4 transition"
+              type="password"
+              placeholder="••••••••"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-[#7e22ce] to-[#a855f7] text-white py-3 rounded-md hover:from-[#9333ea] hover:to-[#a855f7] transition shadow-lg"
+          >
+            Register
+          </button>
+        </form>
+
+        <p className="mt-6 text-sm text-gray-400 text-center">
+          Already have an account?{" "}
+          <a href="/login" className="text-purple-400 hover:text-purple-300 transition">
+            Sign In
+          </a>
+        </p>
       </div>
     </div>
   );
 }
 
-export default Register;
+export default RegisterPage;
