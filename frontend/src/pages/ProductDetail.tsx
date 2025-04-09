@@ -33,9 +33,12 @@ const ProductDetail: React.FC = () => {
 
     // Fetch movie details
     axios
-      .get(`https://localhost:5000/Movie/GetMovieById/${show_id}`, {
-        withCredentials: true,
-      })
+      .get(
+        `https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie/GetMovieById/${show_id}`,
+        {
+          withCredentials: true,
+        }
+      )
       .then((response) => setMovie(response.data))
       .catch((error) => console.error("Error fetching movie:", error));
 
@@ -112,7 +115,7 @@ const ProductDetail: React.FC = () => {
   const imageUrl = `https://moviepostersintex2.blob.core.windows.net/movieposter/Movie Posters/${encodedTitle}.jpg`;
 
   const genreList = Object.entries(movie)
-    .filter(([key, value]) => typeof value === "number" && value === 1)
+    .filter(([, value]) => typeof value === "number" && value === 1)
     .map(([key]) => key.replace(/_/g, " "))
     .join(", ");
 

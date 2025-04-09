@@ -37,7 +37,7 @@ const AdminPage = () => {
       await deleteMovie(id);
       getMovies();
     } catch (err) {
-      console.error("Delete failed", err);
+      console.error("Delete failed again", err);
       alert("Delete failed.");
     }
   };

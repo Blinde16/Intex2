@@ -1,6 +1,5 @@
 import React, { useState, useEffect, createContext } from "react";
 import { Navigate } from "react-router-dom";
-
 const UserContext = createContext<User | null>(null);
 
 interface User {
@@ -43,10 +42,13 @@ function AuthorizeView(props: { children: React.ReactNode }) {
       }
     }
 
-    fetchWithRetry("https://localhost:5000/pingauth", {
-      method: "GET",
-      credentials: "include",
-    });
+    fetchWithRetry(
+      "https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/pingauth",
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
   }, []);
 
   if (loading) {

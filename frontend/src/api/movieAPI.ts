@@ -5,8 +5,6 @@ interface FetchMoviesResponse {
   totalNumberMovies: number;
 }
 
-const API_URL = `https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie`;
-
 export const fetchMovies = async (
   pageSize: number,
   pageNum: number,
@@ -18,7 +16,7 @@ export const fetchMovies = async (
       .join("&");
 
     const response = await fetch(
-      `https://localhost:5000/Movie/GetAdminMovies?pageSize=${pageSize}&pageNumber=${pageNum}${
+      `https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie/GetAdminMovies?pageSize=${pageSize}&pageNumber=${pageNum}${
         selectedCategories.length ? `&${categoryParams}` : ""
       }`,
       {
@@ -39,14 +37,17 @@ export const fetchMovies = async (
 
 export const addMovie = async (newMovie: Movie): Promise<Movie> => {
   try {
-    const response = await fetch(`https://localhost:5000/Movie/AddMovie`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include", // ✅ send cookie
-      body: JSON.stringify(newMovie),
-    });
+    const response = await fetch(
+      `https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie/AddMovie`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // ✅ send cookie
+        body: JSON.stringify(newMovie),
+      }
+    );
 
     if (!response.ok) {
       throw new Error("failed to add Movie");
@@ -65,7 +66,7 @@ export const updateMovie = async (
 ): Promise<Movie> => {
   try {
     const response = await fetch(
-      `https://localhost:5000/Movie/UpdateMovie/${show_id}`,
+      `https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie/UpdateMovie/${show_id}`,
       {
         method: "PUT",
         headers: {
@@ -90,7 +91,7 @@ export const updateMovie = async (
 export const deleteMovie = async (show_id: string): Promise<void> => {
   try {
     const response = await fetch(
-      `https://localhost:5000/Movie/DeleteMovie/${show_id}`,
+      `https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie/DeleteMovie/${show_id}`,
       {
         method: "DELETE",
         credentials: "include", // ✅ send cookie

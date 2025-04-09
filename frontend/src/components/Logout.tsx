@@ -5,13 +5,16 @@ function Logout(props: { children: React.ReactNode }) {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("https://localhost:5000/logout", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        "https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/logout",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.ok) {
         navigate("/login");
