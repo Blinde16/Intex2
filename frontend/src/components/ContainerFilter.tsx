@@ -4,7 +4,6 @@ import "./css/ContainerFilter.css";
 function ContainerFilter({
   selectedType,
   setSelectedType,
-  selectedGenres,
   setSelectedGenres,
   clearAllFilters,
 }: {
@@ -15,8 +14,10 @@ function ContainerFilter({
   clearAllFilters: () => void;
 }) {
   const [types, setTypes] = useState<string[]>([]);
-  const [genres, setGenres] = useState<string[]>([]);
-  const [selectedGeneralGenres, setSelectedGeneralGenres] = useState<string[]>([]);
+  const [_, setGenres] = useState<string[]>([]);
+  const [selectedGeneralGenres, setSelectedGeneralGenres] = useState<string[]>(
+    []
+  );
   const [isTypeOpen, setIsTypeOpen] = useState(true);
   const [isGenreOpen, setIsGenreOpen] = useState(true);
 
@@ -29,21 +30,21 @@ function ContainerFilter({
       "Comedies_International_Movies",
       "Comedies_Romantic_Movies",
       "Talk_Shows_TV_Comedies",
-      "TV_Comedies"
+      "TV_Comedies",
     ],
     Crime: ["Crime_TV_Shows_Docuseries"],
     Documentary: [
       "Documentaries",
       "Documentaries_International_Movies",
       "Docuseries",
-      "British_TV_Shows_Docuseries_International_TV_Shows"
+      "British_TV_Shows_Docuseries_International_TV_Shows",
     ],
     Drama: [
       "Dramas",
       "Dramas_International_Movies",
       "Dramas_Romantic_Movies",
       "International_TV_Shows_Romantic_TV_Shows_TV_Dramas",
-      "TV_Dramas"
+      "TV_Dramas",
     ],
     Family: ["Family_Movies", "Children", "Kids_TV"],
     Fantasy: ["Fantasy"],
@@ -52,20 +53,23 @@ function ContainerFilter({
       "International_Movies_Thrillers",
       "International_TV_Shows_Romantic_TV_Shows_TV_Dramas",
       "British_TV_Shows_Docuseries_International_TV_Shows",
-      "Anime_Series_International_TV_Shows"
+      "Anime_Series_International_TV_Shows",
     ],
     Musical: ["Musicals"],
     Nature: ["Nature_TV"],
     Reality: ["Reality_TV"],
     Spiritual: ["Spirituality"],
     Thriller: ["Thrillers", "International_Movies_Thrillers"],
-    Other: []
+    Other: [],
   };
 
   useEffect(() => {
     const fetchTypes = async () => {
       try {
-        const response = await fetch("https://localhost:5000/Movie/GetCategoryTypes", { credentials: "include" });
+        const response = await fetch(
+          "https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie/GetCategoryTypes",
+          { credentials: "include" }
+        );
         const data = (await response.json()) as string[];
         setTypes([...new Set(data)]);
       } catch (error) {
@@ -75,7 +79,10 @@ function ContainerFilter({
 
     const fetchGenres = async () => {
       try {
-        const response = await fetch("https://localhost:5000/Movie/GetGenreTypes", { credentials: "include" });
+        const response = await fetch(
+          "https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie/GetGenreTypes",
+          { credentials: "include" }
+        );
         const data = (await response.json()) as string[];
         setGenres(data);
       } catch (error) {
@@ -87,27 +94,39 @@ function ContainerFilter({
     fetchGenres();
   }, []);
 
-  const handleGeneralGenreChange = ({ target }: { target: HTMLInputElement }) => {
+  const handleGeneralGenreChange = ({
+    target,
+  }: {
+    target: HTMLInputElement;
+  }) => {
     const generalGenre = target.value;
 
     let updatedGeneralGenres = [...selectedGeneralGenres];
     if (selectedGeneralGenres.includes(generalGenre)) {
-      updatedGeneralGenres = updatedGeneralGenres.filter((g) => g !== generalGenre);
+      updatedGeneralGenres = updatedGeneralGenres.filter(
+        (g) => g !== generalGenre
+      );
     } else {
       updatedGeneralGenres.push(generalGenre);
     }
 
     setSelectedGeneralGenres(updatedGeneralGenres);
 
-    const expanded = updatedGeneralGenres.flatMap((general) => genreBinMap[general] || []);
+    const expanded = updatedGeneralGenres.flatMap(
+      (general) => genreBinMap[general] || []
+    );
     setSelectedGenres(expanded);
   };
 
   const removeFilter = (generalGenre: string) => {
-    const updatedGeneralGenres = selectedGeneralGenres.filter((g) => g !== generalGenre);
+    const updatedGeneralGenres = selectedGeneralGenres.filter(
+      (g) => g !== generalGenre
+    );
     setSelectedGeneralGenres(updatedGeneralGenres);
 
-    const expanded = updatedGeneralGenres.flatMap((general) => genreBinMap[general] || []);
+    const expanded = updatedGeneralGenres.flatMap(
+      (general) => genreBinMap[general] || []
+    );
     setSelectedGenres(expanded);
   };
 
@@ -125,13 +144,23 @@ function ContainerFilter({
         {selectedType && (
           <span className="tag">
             {selectedType}
-            <button onClick={() => setSelectedType(null)} style={{ marginLeft: "4px", cursor: "pointer" }}>x</button>
+            <button
+              onClick={() => setSelectedType(null)}
+              style={{ marginLeft: "4px", cursor: "pointer" }}
+            >
+              x
+            </button>
           </span>
         )}
         {selectedGeneralGenres.map((general) => (
           <span key={general} className="tag">
             {general}
-            <button onClick={() => removeFilter(general)} style={{ marginLeft: "4px", cursor: "pointer" }}>x</button>
+            <button
+              onClick={() => removeFilter(general)}
+              style={{ marginLeft: "4px", cursor: "pointer" }}
+            >
+              x
+            </button>
           </span>
         ))}
         {!selectedType && selectedGeneralGenres.length === 0 && (
@@ -140,7 +169,10 @@ function ContainerFilter({
       </div>
 
       <div className="accordion-section">
-        <div className="accordion-header" onClick={() => setIsTypeOpen(!isTypeOpen)}>
+        <div
+          className="accordion-header"
+          onClick={() => setIsTypeOpen(!isTypeOpen)}
+        >
           <h5>Type</h5>
           <span>{isTypeOpen ? "▲" : "▼"}</span>
         </div>
@@ -164,26 +196,30 @@ function ContainerFilter({
       </div>
 
       <div className="accordion-section">
-        <div className="accordion-header" onClick={() => setIsGenreOpen(!isGenreOpen)}>
+        <div
+          className="accordion-header"
+          onClick={() => setIsGenreOpen(!isGenreOpen)}
+        >
           <h5>Genres</h5>
           <span>{isGenreOpen ? "▲" : "▼"}</span>
         </div>
         {isGenreOpen && (
           <div className="container-list">
-            {Object.keys(genreBinMap).map((general) => (
-              genreBinMap[general].length > 0 && (
-                <label key={`general-${general}`} className="container-item">
-                  <input
-                    type="checkbox"
-                    value={general}
-                    checked={selectedGeneralGenres.includes(general)}
-                    onChange={handleGeneralGenreChange}
-                    className="container-checkbox"
-                  />
-                  {general}
-                </label>
-              )
-            ))}
+            {Object.keys(genreBinMap).map(
+              (general) =>
+                genreBinMap[general].length > 0 && (
+                  <label key={`general-${general}`} className="container-item">
+                    <input
+                      type="checkbox"
+                      value={general}
+                      checked={selectedGeneralGenres.includes(general)}
+                      onChange={handleGeneralGenreChange}
+                      className="container-checkbox"
+                    />
+                    {general}
+                  </label>
+                )
+            )}
           </div>
         )}
       </div>

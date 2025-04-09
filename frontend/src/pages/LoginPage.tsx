@@ -12,7 +12,7 @@ function LoginPage() {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const mode = location.state?.mode || "login";
+  location.state?.mode || "login";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, type, checked, value } = e.target;
@@ -35,8 +35,8 @@ function LoginPage() {
     }
 
     const loginUrl = rememberme
-      ? "https://localhost:5000/login?useCookies=true"
-      : "https://localhost:5000/login?useSessionCookies=true";
+      ? "https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/login?useCookies=true"
+      : "https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/login?useSessionCookies=true";
 
     try {
       const response = await fetch(loginUrl, {

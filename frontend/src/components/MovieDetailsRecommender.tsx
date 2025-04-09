@@ -26,7 +26,7 @@ const MovieRecommendation: React.FC<Props> = ({ show_id }) => {
     const fetchRecommendations = async () => {
       try {
         const response = await fetch(
-          `https://localhost:5000/Movie/recommendations/${show_id}`,
+          `https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie/recommendations/${show_id}`,
           {
             method: "GET",
             headers: {

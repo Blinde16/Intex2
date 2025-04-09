@@ -15,9 +15,9 @@ function Header() {
           <Link to="/AdminPage">
             <button className="logout-button">Admin</button>
           </Link>
-        <Logout>
-          <Link to="/">
-            <button className="logout-button"> Logout</button>
+          <Logout>
+            <Link to="/">
+              <button className="logout-button"> Logout</button>
             </Link>
           </Logout>
         </div>

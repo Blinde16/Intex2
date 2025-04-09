@@ -18,19 +18,94 @@ interface Movie {
   [key: string]: any;
 }
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
+
 const ProductDetail: React.FC = () => {
   const { show_id } = useParams<{ show_id: string }>();
   const [movie, setMovie] = useState<Movie | null>(null);
   const [userRating, setUserRating] = useState<number>(0);
+  const [averageRating, setAverageRating] = useState<number | null>(null);
+  const [userRatingLoaded, setUserRatingLoaded] = useState<boolean>(false);
 
   useEffect(() => {
+    if (!show_id) return;
+
+    // ✅ Reset states when changing movie
+    setUserRating(0);
+    setUserRatingLoaded(false);
+
+    // Fetch movie details
     axios
-      .get(`https://localhost:5000/Movie/GetMovieById/${show_id}`, {
-        withCredentials: true,
-      })
+      .get(
+        `https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie/GetMovieById/${show_id}`,
+        {
+          withCredentials: true,
+        }
+      )
       .then((response) => setMovie(response.data))
       .catch((error) => console.error("Error fetching movie:", error));
+
+    // Fetch average rating
+    axios
+      .get(`${apiUrl}/Movie/GetAverageRating/${show_id}`, {
+        withCredentials: true,
+      })
+      .then((response) => setAverageRating(Number(response.data.averageRating)))
+      .catch((error) => console.error("Error fetching average rating:", error));
+
+    // Fetch user's previous rating
+    axios
+      .get(`${apiUrl}/Movie/GetUserRating/${show_id}`, {
+        withCredentials: true,
+      })
+      .then((response) => {
+        if (response.data && response.data.userRating !== null) {
+          setUserRating(response.data.userRating);
+        }
+        setUserRatingLoaded(true);
+      })
+      .catch((error) => {
+        console.error("Error fetching user rating:", error);
+        setUserRatingLoaded(true);
+      });
+
   }, [show_id]);
+
+  const submitRating = (rating: number) => {
+    axios
+      .post(
+        `${apiUrl}/Movie/RateMovie`,
+        {
+          show_id: show_id,
+          rating: rating,
+        },
+        { withCredentials: true }
+      )
+      .then((response) => {
+        console.log("Rating submitted successfully:", response.data);
+        // Refresh average rating after submit
+        axios
+          .get(`${apiUrl}/Movie/GetAverageRating/${show_id}`, {
+            withCredentials: true,
+          })
+          .then((response) =>
+            setAverageRating(Number(response.data.averageRating))
+          )
+          .catch((error) =>
+            console.error("Error fetching average rating:", error)
+          );
+      })
+      .catch((error) => {
+        console.error("Error submitting rating:", error);
+      });
+  };
+
+  const handleStarClick = (rating: number) => {
+    setUserRating(rating);
+    submitRating(rating);
+    console.log(`User rated: ${rating} stars`);
+  };
 
   if (!movie) {
     return (
@@ -44,16 +119,10 @@ const ProductDetail: React.FC = () => {
   const imageUrl = `https://moviepostersintex2.blob.core.windows.net/movieposter/Movie Posters/${encodedTitle}.jpg`;
 
   const genreList = Object.entries(movie)
-    .filter(([key, value]) => typeof value === "number" && value === 1)
+    .filter(([, value]) => typeof value === "number" && value === 1)
     .map(([key]) => key.replace(/_/g, " "))
     .join(", ");
 
-  const handleStarClick = (rating: number) => {
-    setUserRating(rating);
-    console.log(`User rated: ${rating} stars`);
-  };
-
-  console.log("Current show_id:", show_id);
   return (
     <div className="bg-background min-h-screen text-foreground">
       {/* Header */}
@@ -95,28 +164,39 @@ const ProductDetail: React.FC = () => {
               <span className="font-semibold text-foreground">Genre:</span>{" "}
               {genreList || "Unknown"}
             </p>
+            <p>
+              <span className="font-semibold text-foreground">Average Rating:</span>{" "}
+              {averageRating !== null && averageRating !== 0
+                ? `${averageRating.toFixed(2)} / 5`
+                : "No ratings yet"}
+            </p>
           </div>
 
           {/* Star Rating */}
           <div>
             <p className="font-semibold mb-2 text-foreground">Your Rating:</p>
-            <div className="flex space-x-1 text-yellow-400 text-2xl cursor-pointer">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <span
-                  key={star}
-                  onClick={() => handleStarClick(star)}
-                  className={`transition-transform ${userRating >= star ? "scale-125" : ""}`}
-                >
-                  {userRating >= star ? "⭐" : "☆"}
-                </span>
-              ))}
-            </div>
+            {userRatingLoaded ? (
+              <div className="flex space-x-1 text-yellow-400 text-2xl cursor-pointer">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <span
+                    key={star}
+                    onClick={() => handleStarClick(star)}
+                    className={`transition-transform ${
+                      userRating >= star ? "scale-125" : ""
+                    }`}
+                  >
+                    {userRating >= star ? "⭐" : "☆"}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground">Loading your rating...</p>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Placeholder Sections (Now at the bottom!) */}
-
+      {/* Placeholder Sections */}
       <MovieRecommendation show_id={show_id!} />
       <div className="space-y-8 max-w-7xl mx-auto px-8 pb-12">
         {["User Reviews", "Trailers & Behind the Scenes"].map(

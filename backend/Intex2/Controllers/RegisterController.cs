@@ -31,6 +31,14 @@ namespace RootkitAuth.API.Controllers
 
             var result = await _userManager.CreateAsync(user, model.Password);
 
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "AuthenticatedCustomer");
+
+                // You can also sign them in or return a success response
+                return Ok(new { message = "User registered and assigned role." });
+            }
+
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
