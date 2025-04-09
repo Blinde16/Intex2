@@ -1,13 +1,12 @@
 import { Link } from "react-router-dom";
 import "./css/Header.css";
 import Logout from "./Logout";
-import AuthorizeView from "./AuthorizeView";
 
 function Header() {
   return (
     <>
       <div className="header-bar">
-        <img src="pictures/logo/CineNiche(2).png" className="header-image" />
+        <img src="/logo.png" className="header-image" />
         <h1></h1>
         <div className="button-container">
           <Link to="/movie">

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import '../App.css'; // Import your CSS file for styling
 
 const COOKIE_NAME = "cookie_consent";
 
@@ -20,35 +21,13 @@ const CookieBanner: React.FC = () => {
   if (!showBanner) return null;
 
   return (
-    <div style={styles.banner}>
+    <div className="cookie-banner">
       <span>This site uses cookies to enhance your experience.</span>
-      <button onClick={acceptCookies} style={styles.button}>
+      <button onClick={acceptCookies} className="cookie-button">
         Accept
       </button>
     </div>
   );
-};
-
-const styles: Record<string, React.CSSProperties> = {
-  banner: {
-    position: "fixed",
-    bottom: 0,
-    width: "100%",
-    backgroundColor: "#1e1822",
-    color: "white",
-    padding: "40px",
-    display: "block",
-    justifyContent: "space-between",
-    alignItems: "center",
-    zIndex: 9999,
-  },
-  button: {
-    backgroundColor: "#8C00D7",
-    border: "none",
-    cursor: "pointer",
-    color: "white",
-    padding: "10px",
-  },
 };
 
 export default CookieBanner;
