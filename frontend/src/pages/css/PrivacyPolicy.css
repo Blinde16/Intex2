@@ -4,7 +4,6 @@ body {
   color: #f0f6fc; /* Light text for contrast */
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
-  padding: 2rem;
   line-height: 1.7;
 }
 
@@ -35,7 +34,6 @@ p,
 a {
   color: #c9d1d9;
   font-size: 1rem;
-  margin-bottom: 1rem;
 }
 
 a {

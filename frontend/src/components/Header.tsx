@@ -17,7 +17,7 @@ function Header() {
           </Link>
           <Logout>
             <Link to="/">
-              <button className="logout-button"> Logout</button>
+              <button className="logout-button-1"> Logout</button>
             </Link>
           </Logout>
         </div>
