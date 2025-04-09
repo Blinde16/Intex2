@@ -1,14 +1,15 @@
 .sticky-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: #0d1117;
-  color: #c9d1d9;
-  text-align: center;
-  padding: 0.75rem 1rem;
-  font-size: 0.85rem;
-  border-top: 1px solid #2d2d2d;
-  z-index: 999; /* make sure it stays above all content */
-  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.3);
-}
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #0d1117;
+    color: #c9d1d9;
+    text-align: center;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    border-top: 1px solid #2d2d2d;
+    z-index: 999; /* make sure it stays above all content */
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.3);
+  }
+  

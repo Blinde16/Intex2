@@ -11,7 +11,7 @@ using RootkitAuth.API.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Optionally test connection here
-var connStr = builder.Configuration.GetConnectionString("AzureSqlDb");
+var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
 using (SqlConnection conn = new SqlConnection(connStr))
 {
     conn.Open();
@@ -25,10 +25,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<MovieDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("AzureSqlDb")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("AzureSqlDb")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddAuthorization();
 

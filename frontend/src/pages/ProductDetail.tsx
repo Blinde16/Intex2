@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import Header from "../components/Header";
 import axios from "axios";
 import MovieRecommendation from "../components/MovieDetailsRecommender";
+import Footer from "../components/Footer";
 
 interface Movie {
   show_id: string;
@@ -16,6 +17,9 @@ interface Movie {
   description?: string;
   [key: string]: any;
 }
+
+const apiUrl = import.meta.env.VITE_API_URL;
+
 
 const ProductDetail: React.FC = () => {
   const { show_id } = useParams<{ show_id: string }>();
@@ -44,7 +48,7 @@ const ProductDetail: React.FC = () => {
 
     // Fetch average rating
     axios
-      .get(`https://localhost:5000/Movie/GetAverageRating/${show_id}`, {
+      .get(`${apiUrl}/Movie/GetAverageRating/${show_id}`, {
         withCredentials: true,
       })
       .then((response) => setAverageRating(Number(response.data.averageRating)))
@@ -52,7 +56,7 @@ const ProductDetail: React.FC = () => {
 
     // Fetch user's previous rating
     axios
-      .get(`https://localhost:5000/Movie/GetUserRating/${show_id}`, {
+      .get(`${apiUrl}/Movie/GetUserRating/${show_id}`, {
         withCredentials: true,
       })
       .then((response) => {
@@ -71,7 +75,7 @@ const ProductDetail: React.FC = () => {
   const submitRating = (rating: number) => {
     axios
       .post(
-        "https://localhost:5000/Movie/RateMovie",
+        `${apiUrl}/Movie/RateMovie`,
         {
           show_id: show_id,
           rating: rating,
@@ -82,7 +86,7 @@ const ProductDetail: React.FC = () => {
         console.log("Rating submitted successfully:", response.data);
         // Refresh average rating after submit
         axios
-          .get(`https://localhost:5000/Movie/GetAverageRating/${show_id}`, {
+          .get(`${apiUrl}/Movie/GetAverageRating/${show_id}`, {
             withCredentials: true,
           })
           .then((response) =>
@@ -209,6 +213,7 @@ const ProductDetail: React.FC = () => {
           )
         )}
       </div>
+      <Footer />
     </div>
   );
 };

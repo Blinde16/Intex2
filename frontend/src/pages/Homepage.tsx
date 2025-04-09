@@ -1,6 +1,7 @@
 import React from 'react';
 import './css/Homepage.css';
 import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
 
 const subscriptionTiers = [
   { title: 'Basic Plan', price: '$3.99/month', features: ['1 Screen', 'SD Quality', 'Limited Catalog'] },
@@ -83,11 +84,7 @@ const Homepage: React.FC = () => {
           </div>
         ))}
       </section>
-
-      {/* Footer */}
-      <footer className="footer">
-        <p>&copy; 2025 CineNiche. All rights reserved.</p>
-      </footer>
+      <Footer />
     </div>
   );
 };
