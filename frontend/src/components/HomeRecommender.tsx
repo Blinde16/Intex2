@@ -56,7 +56,6 @@ const Adventure: React.FC = () => {
     }
   
     // Define character groups
-    const separators = /[&:/-]/g; // symbols that separate words
     const removals = /[()'".,?!#"]/g; // symbols to completely remove
   
     let cleanTitle = title
