@@ -5,7 +5,7 @@ import MovieList from '../components/MovieList';
 import SearchBar from '../components/SearchBar'; // ✅ Add this import
 import { useState } from "react";
 import './css/MoviePage.css';
-import Adventure from '../components/Adventure';
+import Adventure from '../components/HomeRecommender';
 
 function MoviePage() {
   const [selectedContainers, setSelectedContainers] = useState<string[]>([]);
