@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Movie, GENRES } from "../types/Movie";
 import { addMovie } from "../api/movieAPI";
 import AuthorizeView, { AuthorizedUser } from "./AuthorizeView";
@@ -16,7 +16,7 @@ interface NewMovieFormProps {
 
 const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
   const [formData, setFormData] = useState<MovieFormData>(() => ({
-    show_id: "",
+    show_id: "", //Insert sid here!,
     type: "",
     title: "",
     director: "",
@@ -38,14 +38,29 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
     ),
   }));
 
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "release_year" ? parseInt(value) : value,
+      [name]:
+        name === "release_year"
+          ? parseInt(value) || 0
+          : typeof value === "string"
+            ? value
+            : value,
     }));
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setImageFile(e.target.files[0]);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -53,12 +68,53 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
 
     const { genre, ...movieData } = formData;
 
-    const finalPayload = {
-      ...movieData,
-      release_year: Number(formData.release_year),
-    };
+    // ✅ Frontend title cleaning for filename
+    const cleanTitleForFilename = movieData.title
+      .replace(/[()'"`:?!,&#.]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
 
-    await addMovie(finalPayload as Movie);
+    const res = await fetch("https://localhost:5000/Movie/AddMovie", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...movieData,
+        release_year: Number(movieData.release_year),
+        ...GENRES.reduce(
+          (acc, g) => ({ ...acc, [g]: formData[g] }),
+          {} as Record<string, number>
+        ),
+      }),
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error("Backend error:", errorText);
+      alert("Failed to add movie: " + errorText);
+      return;
+    }
+
+    // ✅ Upload poster image with cleaned title as filename base
+    if (imageFile) {
+      const uploadData = new FormData();
+      uploadData.append("image", imageFile);
+      uploadData.append("filename", cleanTitleForFilename); // Send cleaned title as filename base
+
+      const posterRes = await fetch(
+        "https://localhost:5000/Movie/UploadPoster",
+        {
+          method: "POST",
+          body: uploadData,
+          credentials: "include",
+        }
+      );
+
+      if (!posterRes.ok) {
+        alert("Movie details added, but poster failed to upload");
+      }
+    }
+
     onSuccess();
   };
 
@@ -149,6 +205,15 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
           />
         </div>
 
+        <h4 className="mt-4 mb-2 font-semibold">🎬 Movie Poster</h4>
+        <input
+          className="form-control mb-4"
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          ref={imageInputRef}
+        />
+
         <h4 className="mt-4 mb-2 font-semibold">🎭 Select Genre</h4>
         <select
           name="genre"
@@ -159,10 +224,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
               ...formData,
               genre: e.target.value,
               ...GENRES.reduce(
-                (acc, g) => {
-                  acc[g] = g === e.target.value ? 1 : 0;
-                  return acc;
-                },
+                (acc, g) => ({ ...acc, [g]: g === e.target.value ? 1 : 0 }),
                 {} as Record<string, number>
               ),
             })

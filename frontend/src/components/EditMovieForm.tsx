@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Movie, GENRES } from "../types/Movie";
 import { updateMovie } from "../api/movieAPI";
 import AuthorizeView, { AuthorizedUser } from "./AuthorizeView";
 import Logout from "./Logout";
 
 export type MovieFormData = Movie & {
-  genre?: (typeof GENRES)[number] | ""; // UI only
+  genre?: (typeof GENRES)[number] | "";
 };
 
 interface EditMovieFormProps {
@@ -15,26 +15,50 @@ interface EditMovieFormProps {
 }
 
 const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
-  const [formData, setFormData] = useState<MovieFormData>((): MovieFormData => {
+  const [formData, setFormData] = useState<MovieFormData>(() => {
     const initialGenre = GENRES.find((g) => movie[g] === 1);
     return {
       ...movie,
-      genre: initialGenre ?? "", // ✅ now allowed
+      genre: initialGenre ?? "",
     };
   });
+
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const [posterRemoved, setPosterRemoved] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => {
-      // handle numeric field properly
       if (name === "release_year") {
         return { ...prev, [name]: parseInt(value) || 0 };
       }
-
       return { ...prev, [name]: value };
     });
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setImageFile(e.target.files[0]);
+    }
+  };
+
+  const handlePosterDelete = async () => {
+    const res = await fetch("https://localhost:5000/Movie/DeletePoster", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ filename: formData.show_id }),
+      credentials: "include",
+    });
+
+    if (res.ok) {
+      alert("Poster deleted");
+      setPosterRemoved(true);
+    } else {
+      alert("Failed to delete poster.");
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,8 +71,41 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
       release_year: Number(formData.release_year),
     };
 
+    // ✅ Update movie
     await updateMovie(formData.show_id, finalPayload);
+
+    // ✅ Upload poster image if selected
+    if (imageFile) {
+      const uploadData = new FormData();
+      uploadData.append("image", imageFile);
+      uploadData.append("filename", formData.title); // now using show_id as filename
+
+      const posterRes = await fetch(
+        "https://localhost:5000/Movie/UploadPoster",
+        {
+          method: "POST",
+          body: uploadData,
+          credentials: "include",
+        }
+      );
+
+      if (!posterRes.ok) {
+        alert("Movie updated, but poster failed to upload");
+      }
+    }
+
     onSuccess();
+  };
+
+  const getPosterUrl = (title: string) => {
+    const cleanTitle = title
+      .replace(/[()'":?!,&#.]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    const encodedTitle = encodeURIComponent(cleanTitle);
+    const folderName = encodeURIComponent("Movie Posters");
+    return `https://moviepostersintex2.blob.core.windows.net/movieposter/${folderName}/${encodedTitle}.jpg`;
   };
 
   return (
@@ -137,6 +194,49 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
             placeholder="Description"
           />
         </div>
+
+        {/* Show current poster */}
+        {!posterRemoved && (
+          <div className="mb-4 mt-4">
+            <h4 className="mt-6 font-semibold">🎞️ Current Poster</h4>
+            <img
+              src={getPosterUrl(formData.title)}
+              alt="Current poster"
+              className="w-40 h-auto rounded border border-gray-300 mb-2"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).style.display = "none";
+              }}
+            />
+            <button
+              type="button"
+              onClick={handlePosterDelete}
+              className="btn btn-danger mt-2"
+            >
+              🗑️ Remove Poster
+            </button>
+          </div>
+        )}
+
+        {/* Show new poster preview */}
+        {imageFile && (
+          <div className="mb-4">
+            <h4 className="mb-2 font-semibold">📂 New Image Preview</h4>
+            <img
+              src={URL.createObjectURL(imageFile)}
+              alt="New Poster Preview"
+              className="max-h-64 rounded shadow border"
+            />
+          </div>
+        )}
+
+        <h4 className="mt-4 mb-2 font-semibold">🎬 Upload New Poster</h4>
+        <input
+          className="form-control mb-4"
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          ref={imageInputRef}
+        />
 
         <h4 className="mt-4 mb-2 font-semibold">🎭 Select Genre</h4>
         <select

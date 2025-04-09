@@ -17,48 +17,65 @@ const Pagination = ({
 
   const getPagesToShow = () => {
     const pages: (number | string)[] = [];
-    const start = Math.max(2, currentPage - 2);
-    const end = Math.min(safePageCount - 1, currentPage + 2);
 
-    pages.push(1);
-    if (start > 2) pages.push("...");
+    if (safePageCount <= 5) {
+      for (let i = 1; i <= safePageCount; i++) {
+        pages.push(i);
+      }
+    } else {
+      let start = Math.max(1, currentPage - 2);
+      let end = Math.min(safePageCount, currentPage + 2);
 
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
+      if (currentPage <= 3) {
+        start = 1;
+        end = 5;
+      } else if (currentPage >= safePageCount - 2) {
+        start = safePageCount - 4;
+        end = safePageCount;
+      }
+
+      if (start > 1) {
+        pages.push(1, "...");
+      }
+
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+
+      if (end < safePageCount) {
+        pages.push("...", safePageCount);
+      }
     }
-
-    if (end < safePageCount - 1) pages.push("...");
-    if (safePageCount > 1) pages.push(safePageCount);
 
     return pages;
   };
 
   return (
-    <div className="flex items-center justify-center mt-4 gap-2 flex-wrap">
-      {/* Previous (jump 5 pages back) */}
+    <div className="flex flex-wrap items-center justify-center mt-4 gap-2 text-sm">
+      {/* Previous Page */}
       <button
+        onClick={() => onPageChange(Math.max(1, currentPage - 1))}
         disabled={currentPage === 1}
-        onClick={() => onPageChange(Math.max(1, currentPage - 5))}
         className="px-2 py-1 border rounded"
       >
-        Previous
+        ◀ Prev
       </button>
 
-      {/* Page number buttons */}
+      {/* Page Number Buttons */}
       {getPagesToShow().map((page, index) =>
         page === "..." ? (
-          <span key={index} className="px-2 text-gray-500">
+          <span key={`ellipsis-${index}`} className="px-2 text-gray-500">
             ...
           </span>
         ) : (
           <button
-            key={page}
+            key={`page-${page}`}
             onClick={() => onPageChange(Number(page))}
             disabled={currentPage === page}
             className={`px-3 py-1 border rounded ${
               currentPage === page
-                ? "bg-blue-500 text-white"
-                : "bg-white text-black"
+                ? "bg-blue-600 text-white"
+                : "hover:bg-blue-100"
             }`}
           >
             {page}
@@ -66,38 +83,35 @@ const Pagination = ({
         )
       )}
 
-      {/* Next (jump 5 pages forward) */}
+      {/* Next Page */}
       <button
+        onClick={() => onPageChange(Math.min(safePageCount, currentPage + 1))}
         disabled={currentPage === safePageCount}
-        onClick={() =>
-          onPageChange(Math.min(safePageCount, currentPage + 5))
-        }
         className="px-2 py-1 border rounded"
       >
-        Next
+        Next ▶
       </button>
 
-      {/* Page size dropdown */}
-      <label className="ml-4 text-sm">
-        Items per page:{" "}
+      {/* Page Size Selector */}
+      <div className="ml-4">
+        <label className="mr-2">Items per page:</label>
         <select
           value={pageSize}
           onChange={(e) => {
-            const newSize = Number(e.target.value);
-            onPageSizeChange(newSize);
-            onPageChange(1); // Reset to page 1 when page size changes
+            onPageSizeChange(Number(e.target.value));
+            onPageChange(1); // reset to first page
           }}
-          className="ml-2 border rounded px-1 py-0.5"
+          className="border rounded px-1 py-0.5"
         >
-          <option value="100">100</option>
-          <option value="250">250</option>
-          <option value="500">500</option>
+          <option value={50}>50</option>
+          <option value={100}>100</option>
+          <option value={250}>250</option>
+          <option value={500}>500</option>
+          <option value={1000}>1000</option>
         </select>
-      </label>
+      </div>
     </div>
   );
 };
 
 export default Pagination;
-
-
