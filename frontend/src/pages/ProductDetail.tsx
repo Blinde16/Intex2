@@ -21,14 +21,24 @@ const ProductDetail: React.FC = () => {
   const { show_id } = useParams<{ show_id: string }>();
   const [movie, setMovie] = useState<Movie | null>(null);
   const [userRating, setUserRating] = useState<number>(0);
+  const [averageRating, setAverageRating] = useState<number | null>(null); // ✅ NEW
 
   useEffect(() => {
+    // Fetch movie details
     axios
       .get(`https://localhost:5000/Movie/GetMovieById/${show_id}`, {
         withCredentials: true,
       })
       .then((response) => setMovie(response.data))
       .catch((error) => console.error("Error fetching movie:", error));
+
+    // Fetch average rating ✅ NEW
+    axios
+      .get(`https://localhost:5000/Movie/GetAverageRating/${show_id}`, {
+        withCredentials: true,
+      })
+      .then((response) => setAverageRating(response.data.averageRating))
+      .catch((error) => console.error("Error fetching average rating:", error));
   }, [show_id]);
 
   if (!movie) {
@@ -53,6 +63,7 @@ const ProductDetail: React.FC = () => {
   };
 
   console.log("Current show_id:", show_id);
+
   return (
     <div className="bg-background min-h-screen text-foreground">
       {/* Header */}
@@ -94,6 +105,10 @@ const ProductDetail: React.FC = () => {
               <span className="font-semibold text-foreground">Genre:</span>{" "}
               {genreList || "Unknown"}
             </p>
+            <p>
+              <span className="font-semibold text-foreground">Average Rating:</span>{" "}
+              {Number(averageRating ?? 0) !== 0 ? `${(averageRating ?? 0).toFixed(1)} / 5` : "No rated yet"}
+            </p>
           </div>
 
           {/* Star Rating */}
@@ -115,7 +130,6 @@ const ProductDetail: React.FC = () => {
       </div>
 
       {/* Placeholder Sections (Now at the bottom!) */}
-
       <MovieRecommendation show_id={show_id!} />
       <div className="space-y-8 max-w-7xl mx-auto px-8 pb-12">
         {["User Reviews", "Trailers & Behind the Scenes"].map(

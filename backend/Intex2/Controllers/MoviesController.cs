@@ -407,6 +407,18 @@ public async Task<IActionResult> GetSimilarMovies(string show_id)
     return Ok(similarMovies);
 }
 
+    [Authorize(Roles = "AuthenticatedCustomer, Admin")]
+    [HttpGet("GetAverageRating/{showId}")]
+    public async Task<IActionResult> GetAverageRating(string showId)
+    {
+        var averageRating = await _movieContext.movies_ratings
+            .Where(r => r.show_id == showId)
+            .AverageAsync(r => (double?)r.rating) ?? 0;
+
+        return Ok(new { showId, averageRating = Math.Round(averageRating, 1) }); // rounding for UI friendliness
+    }
+
+
     
 }
 
