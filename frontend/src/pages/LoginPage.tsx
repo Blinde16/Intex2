@@ -62,7 +62,7 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="flex items-center justify-center py-12">
       <div className="bg-white/5 backdrop-blur-md rounded-xl shadow-xl p-8 w-full max-w-md border border-white/10">
         <h2 className="text-center text-3xl font-extrabold text-white mb-6">
           Sign In
