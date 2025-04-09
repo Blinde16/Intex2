@@ -10,6 +10,7 @@
     border: 1px solid #888;
     font-size: 0.95rem;
     transition: border-color 0.3s, box-shadow 0.3s;
+    color:#000000;
   }
   
   .search-input:focus {
@@ -18,19 +19,19 @@
     outline: none;
   }
   
-  .clear-button {
+  .search-clear-button {
     position: absolute;
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: #888;
+    color: #000000;
     font-size: 1.2rem;
     cursor: pointer;
   }
   
-  .clear-button:hover {
+  .search-clear-button:hover {
     color: #e74c3c;
   }
   

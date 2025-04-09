@@ -27,7 +27,7 @@ const Homepage: React.FC = () => {
     <div className="page-container">
       {/* Header */}
       <header className="header">
-        <div className="logo"><img className="logo-img" src="public/logo.png" alt="Intex Logo" /></div>
+        <div className="logo"><img className="logo-img" src="/logo.png" alt="Intex Logo" /></div>
       </header>
 
       {/* Background Matrix */}

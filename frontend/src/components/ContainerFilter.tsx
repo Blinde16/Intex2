@@ -20,7 +20,6 @@ function ContainerFilter({
   const [isTypeOpen, setIsTypeOpen] = useState(true);
   const [isGenreOpen, setIsGenreOpen] = useState(true);
 
-  // ✅ Manual bins: general category -> specific genres
   const genreBinMap: { [bin: string]: string[] } = {
     Action: ["Action", "TV_Action"],
     Adventure: ["Adventure"],
@@ -60,7 +59,7 @@ function ContainerFilter({
     Reality: ["Reality_TV"],
     Spiritual: ["Spirituality"],
     Thriller: ["Thrillers", "International_Movies_Thrillers"],
-    Other: [] // fallback
+    Other: []
   };
 
   useEffect(() => {
@@ -88,7 +87,6 @@ function ContainerFilter({
     fetchGenres();
   }, []);
 
-  // ✅ Handle general genre selection
   const handleGeneralGenreChange = ({ target }: { target: HTMLInputElement }) => {
     const generalGenre = target.value;
 
@@ -101,12 +99,10 @@ function ContainerFilter({
 
     setSelectedGeneralGenres(updatedGeneralGenres);
 
-    // Expand to specific genres
     const expanded = updatedGeneralGenres.flatMap((general) => genreBinMap[general] || []);
     setSelectedGenres(expanded);
   };
 
-  // ✅ Individual tag removal
   const removeFilter = (generalGenre: string) => {
     const updatedGeneralGenres = selectedGeneralGenres.filter((g) => g !== generalGenre);
     setSelectedGeneralGenres(updatedGeneralGenres);
@@ -123,12 +119,8 @@ function ContainerFilter({
     <div className="container-filter">
       <div className="filter-header">
         <h4>Filters</h4>
-        <button className="clear-button" onClick={clearAllFilters}>
-          Clear Filters
-        </button>
       </div>
 
-      {/* Summary tag */}
       <div className="filter-summary">
         {selectedType && (
           <span className="tag">
@@ -147,7 +139,6 @@ function ContainerFilter({
         )}
       </div>
 
-      {/* Accordion - Type */}
       <div className="accordion-section">
         <div className="accordion-header" onClick={() => setIsTypeOpen(!isTypeOpen)}>
           <h5>Type</h5>
@@ -172,7 +163,6 @@ function ContainerFilter({
         )}
       </div>
 
-      {/* Accordion - Genres */}
       <div className="accordion-section">
         <div className="accordion-header" onClick={() => setIsGenreOpen(!isGenreOpen)}>
           <h5>Genres</h5>
@@ -196,6 +186,12 @@ function ContainerFilter({
             ))}
           </div>
         )}
+      </div>
+
+      <div className="filter-controls-bottom">
+        <button className="clear-button" onClick={clearAllFilters}>
+          Clear Filters
+        </button>
       </div>
     </div>
   );
