@@ -13,6 +13,6 @@ namespace RootkitAuth.API.Data
         public string show_id { get; set; }
 
         [Required]
-        public int rating { get; set; }
+        public byte rating { get; set; }
     }
 }

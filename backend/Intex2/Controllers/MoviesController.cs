@@ -418,6 +418,87 @@ public async Task<IActionResult> GetSimilarMovies(string show_id)
         return Ok(new { showId, averageRating = Math.Round(averageRating, 1) }); // rounding for UI friendliness
     }
 
+    [Authorize(Roles = "AuthenticatedCustomer, Admin")]
+    [HttpPost("RateMovie")]
+    public async Task<IActionResult> RateMovie([FromBody] RateMovieRequest request)
+    {
+        // Get the logged-in user's email from claims
+        var userEmail = User.Identity?.Name;
+
+        // Find the user in the movies_users table
+        var user = await _movieContext.movies_users
+            .FirstOrDefaultAsync(u => u.email.ToLower() == userEmail.ToLower());
+
+        if (user == null)
+            return Unauthorized(new { message = "User not found." });
+
+        var userId = user.user_id;
+
+        // Check if the user already has a rating for this movie
+        var existingRating = await _movieContext.movies_ratings
+            .FirstOrDefaultAsync(r =>
+                r.user_id == userId &&
+                r.show_id.ToLower() == request.show_id.ToLower()
+            );
+
+        if (existingRating != null)
+        {
+            // ✅ Update existing rating
+            existingRating.rating = (byte)request.rating; // Ensure byte type
+            _movieContext.movies_ratings.Update(existingRating);
+        }
+        else
+        {
+            // ✅ Insert new rating
+            var newRating = new MoviesRating
+            {
+                user_id = userId,
+                show_id = request.show_id,
+                rating = (byte)request.rating
+            };
+
+            _movieContext.movies_ratings.Add(newRating);
+        }
+
+        await _movieContext.SaveChangesAsync();
+
+        return Ok(new { message = "Rating submitted successfully." });
+    }
+
+    [Authorize(Roles = "AuthenticatedCustomer, Admin")]
+    [HttpGet("GetUserRating/{showId}")]
+    public async Task<IActionResult> GetUserRating(string showId)
+    {
+        var userEmail = User.Identity?.Name;
+
+        // Find the user in movies_users table
+        var user = await _movieContext.movies_users
+            .FirstOrDefaultAsync(u => u.email.ToLower() == userEmail.ToLower());
+
+        if (user == null)
+            return Unauthorized(new { message = "User not found." });
+
+        var userId = user.user_id;
+
+        var existingRating = await _movieContext.movies_ratings
+            .FirstOrDefaultAsync(r =>
+                r.user_id == userId &&
+                r.show_id.ToLower() == showId.ToLower()
+            );
+
+        if (existingRating != null)
+        {
+            return Ok(new { userRating = existingRating.rating });
+        }
+        else
+        {
+            return Ok(new { userRating = (int?)null });
+        }
+    }
+
+
+
+
 
     
 }
