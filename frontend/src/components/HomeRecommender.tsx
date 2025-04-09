@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Movie } from "../types/Movie";
 import "./css/Recommender.css"; // bring in the custom CSS
+import { useNavigate } from "react-router-dom";
 
 const genreFields = [
   "action",
@@ -41,6 +42,8 @@ const Adventure: React.FC = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("https://localhost:5000/Movie/adventure", {
@@ -132,6 +135,7 @@ const Adventure: React.FC = () => {
                     alt={movie.title}
                     className="movie-poster"
                     onError={(e) => (e.currentTarget.style.display = "none")}
+                    onClick={() => navigate(`/movie/${movie.show_id}`)}
                   />
                   <div className="movie-info">
                     <h3>{movie.title}</h3>
