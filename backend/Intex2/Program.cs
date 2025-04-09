@@ -69,7 +69,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:3000", "http://localhost:5173","https://lemon-desert-004da941e.6.azurestaticapps.net") // Replace with your frontend URL
+            policy.WithOrigins("http://localhost:3000", "http://localhost:5173","https://jolly-water-06ab1181e.6.azurestaticapps.net") // Replace with your frontend URL
                 .AllowCredentials() // Required to allow cookies
                 .AllowAnyMethod()
                 .AllowAnyHeader();
