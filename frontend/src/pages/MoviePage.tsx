@@ -6,6 +6,7 @@ import SearchBar from '../components/SearchBar';
 import { useState } from "react";
 import './css/MoviePage.css';
 import Adventure from '../components/HomeRecommender';
+import StickyFooter from '../components/StickyFooter';
 
 function MoviePage() {
   const [selectedContainers, setSelectedContainers] = useState<string[]>([]);
@@ -22,32 +23,36 @@ function MoviePage() {
 
   return (
     <AuthorizeView>
-      <Header />
-      <Adventure />
-      <div className="movie-page">
-        <div className="page-layout">
-          <div className="filter-sidebar">
-            <ContainerFilter
-              selectedType={selectedType}
-              setSelectedType={setSelectedType}
-              selectedGenres={selectedGenres}
-              setSelectedGenres={setSelectedGenres}
-              clearAllFilters={clearAllFilters}
-            />
-          </div>
-          <div className="movie-list-area">
-            <SearchBar setSearchTerm={setSearchTerm} />
-            <MovieList
-              selectedContainers={selectedContainers}
-              selectedType={selectedType}
-              selectedGenres={selectedGenres}
-              searchTerm={searchTerm}
-            />
+      <div className="movie-page-wrapper">
+        <Header />
+        <Adventure />
+        <div className="movie-page-content">
+          <div className="page-layout">
+            <div className="filter-sidebar">
+              <ContainerFilter
+                selectedType={selectedType}
+                setSelectedType={setSelectedType}
+                selectedGenres={selectedGenres}
+                setSelectedGenres={setSelectedGenres}
+                clearAllFilters={clearAllFilters}
+              />
+            </div>
+            <div className="movie-list-area">
+              <SearchBar setSearchTerm={setSearchTerm} />
+              <MovieList
+                selectedContainers={selectedContainers}
+                selectedType={selectedType}
+                selectedGenres={selectedGenres}
+                searchTerm={searchTerm}
+              />
+            </div>
           </div>
         </div>
+        <StickyFooter /> {/* ✅ Always visible at the bottom of the screen */}
       </div>
     </AuthorizeView>
   );
 }
 
 export default MoviePage;
+

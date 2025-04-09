@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import Header from "../components/Header";
 import axios from "axios";
 import MovieRecommendation from "../components/MovieDetailsRecommender";
+import Footer from "../components/Footer";
 
 interface Movie {
   show_id: string;
@@ -132,6 +133,7 @@ const ProductDetail: React.FC = () => {
           )
         )}
       </div>
+      <Footer />
     </div>
   );
 };
