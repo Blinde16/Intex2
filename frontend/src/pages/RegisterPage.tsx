@@ -9,7 +9,7 @@ function RegisterPage() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email || !password || !confirmPassword) {
@@ -22,8 +22,31 @@ function RegisterPage() {
       return;
     }
 
-    console.log("Register with:", email, password);
-    navigate("/login");
+    try {
+      const response = await fetch("https://localhost:5000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // ⚠️ IMPORTANT for cookies
+        body: JSON.stringify({
+          email,
+          password,
+          force2FA: true, // optional, but useful if needed
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData?.message || "Registration failed.");
+        return;
+      }
+
+      navigate("/login", { state: { email } });
+    } catch (err) {
+      console.error("Register failed:", err);
+      setError("Registration error.");
+    }
   };
 
   return (
@@ -50,7 +73,10 @@ function RegisterPage() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm text-gray-300 mb-1">
+            <label
+              htmlFor="password"
+              className="block text-sm text-gray-300 mb-1"
+            >
               Password
             </label>
             <input
@@ -63,7 +89,10 @@ function RegisterPage() {
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm text-gray-300 mb-1">
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm text-gray-300 mb-1"
+            >
               Confirm Password
             </label>
             <input
@@ -85,7 +114,10 @@ function RegisterPage() {
 
         <p className="mt-6 text-sm text-gray-400 text-center">
           Already have an account?{" "}
-          <a href="/login" className="text-purple-400 hover:text-purple-300 transition">
+          <a
+            href="/login"
+            className="text-purple-400 hover:text-purple-300 transition"
+          >
             Sign In
           </a>
         </p>

@@ -35,8 +35,8 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
-
-builder.Services.AddTransient<IEmailSender<IdentityUser>, DummyEmailSender>(); 
+    
+builder.Services.AddTransient<IEmailSender<IdentityUser>, DummyEmailSender>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -82,6 +82,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseHsts();
 }
 
 // app.Use(async (context, next) =>
