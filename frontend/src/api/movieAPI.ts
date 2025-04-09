@@ -7,24 +7,24 @@ interface FetchMoviesResponse {
 export const fetchMovies = async (
   pageSize: number,
   pageNum: number,
-  selectedCategories: string[]
+  selectedCategories: string[],
+  searchTerm: string
 ): Promise<FetchMoviesResponse> => {
   try {
     const categoryParams = selectedCategories
       .map((cat) => `types=${encodeURIComponent(cat)}`)
       .join("&");
 
-    const response = await fetch(
-      `https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie/GetAdminMovies?pageSize=${pageSize}&pageNumber=${pageNum}${
-        selectedCategories.length ? `&${categoryParams}` : ""
-      }`,
-      {
-        credentials: "include", // ✅ send cookie with request
-      }
-    );
+    const url = `https://localhost:5000/Movie/GetAdminMovies?pageSize=${pageSize}&pageNum=${pageNum}${
+      selectedCategories.length ? `&${categoryParams}` : ""
+    }${searchTerm ? `&searchTerm=${encodeURIComponent(searchTerm)}` : ""}`;
+
+    const response = await fetch(url, {
+      credentials: "include",
+    });
 
     if (!response.ok) {
-      throw new Error("failed to fetch Movies");
+      throw new Error("Failed to fetch Movies");
     }
 
     return await response.json();
@@ -36,17 +36,14 @@ export const fetchMovies = async (
 
 export const addMovie = async (newMovie: Movie): Promise<Movie> => {
   try {
-    const response = await fetch(
-      `https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie/AddMovie`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // ✅ send cookie
-        body: JSON.stringify(newMovie),
-      }
-    );
+    const response = await fetch(`https://localhost:5000/Movie/AddMovie`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // ✅ send cookie
+      body: JSON.stringify(newMovie),
+    });
 
     if (!response.ok) {
       throw new Error("failed to add Movie");
@@ -65,7 +62,7 @@ export const updateMovie = async (
 ): Promise<Movie> => {
   try {
     const response = await fetch(
-      `https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie/UpdateMovie/${show_id}`,
+      `https://localhost:5000/Movie/UpdateMovie/${show_id}`,
       {
         method: "PUT",
         headers: {
@@ -90,7 +87,7 @@ export const updateMovie = async (
 export const deleteMovie = async (show_id: string): Promise<void> => {
   try {
     const response = await fetch(
-      `https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie/DeleteMovie/${show_id}`,
+      `https://localhost:5000/Movie/DeleteMovie/${show_id}`,
       {
         method: "DELETE",
         credentials: "include", // ✅ send cookie

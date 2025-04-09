@@ -8,7 +8,6 @@ import AuthorizeView from "../components/AuthorizeView";
 import Header from "../components/Header";
 import "./css/AdminPage.css";
 
-
 const AdminPage = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
@@ -17,12 +16,23 @@ const AdminPage = () => {
   const [pageSize, setPageSize] = useState<number>(10);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
+
+  // Debounce searchTerm to reduce API spam
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setPageNumber(1); // reset to page 1 when search changes
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [searchTerm]);
 
   const getMovies = async () => {
     try {
-      const data = await fetchMovies(pageSize, pageNumber, []);
+      const data = await fetchMovies(pageSize, pageNumber, [], debouncedSearch);
       setMovies(data.movies);
-      setTotalPages(Math.ceil(data.totalNumberMovies / pageSize)); // 👈 if your API provides total count
+      setTotalPages(Math.ceil(data.totalNumberMovies / pageSize));
     } catch (err) {
       console.error("Failed to fetch movies:", err);
       setError("Failed to load movies. Please try again later.");
@@ -31,7 +41,7 @@ const AdminPage = () => {
 
   useEffect(() => {
     getMovies();
-  }, [pageSize, pageNumber]);
+  }, [pageSize, pageNumber, debouncedSearch]);
 
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this movie?")) return;
@@ -51,6 +61,17 @@ const AdminPage = () => {
         <div className="container py-4">
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h1>Admin Page</h1>
+          </div>
+
+          {/* Search Bar */}
+          <div className="mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search by title, Director, or Cast..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
 
           <button
@@ -144,17 +165,18 @@ const AdminPage = () => {
               )}
             </tbody>
           </table>
+
+          <Pagination
+            currentPage={pageNumber}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            onPageChange={setPageNumber}
+            onPageSizeChange={(newSize) => {
+              setPageSize(newSize);
+              setPageNumber(1);
+            }}
+          />
         </div>
-        <Pagination
-          currentPage={pageNumber}
-          totalPages={totalPages}
-          pageSize={pageSize}
-          onPageChange={setPageNumber}
-          onPageSizeChange={(newSize) => {
-            setPageSize(newSize);
-            setPageNumber(1);
-          }}
-        />
       </AuthorizeView>
     </>
   );
