@@ -1,6 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { Movie, GENRES } from "../types/Movie";
-import { addMovie } from "../api/movieAPI";
 import AuthorizeView, { AuthorizedUser } from "./AuthorizeView";
 import Logout from "./Logout";
 
