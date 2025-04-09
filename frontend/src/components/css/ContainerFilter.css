@@ -1,7 +1,7 @@
 .container-filter {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   font-family: 'Inter', sans-serif;
   color: white;
   padding: 20px;
@@ -9,37 +9,19 @@
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   width: 100%;
+  gap: 12px;
 }
 
 .filter-header {
-  width: 100%;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
-}
-
-.clear-button {
-  background-color: transparent;
-  border: 1px solid #fff;
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s;
-  font-size: 0.8rem;
-}
-
-.clear-button:hover {
-  background-color: #8e44ad;
-  border-color: #8e44ad;
+  width: 100%;
 }
 
 .filter-summary {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
-  margin-bottom: 15px;
 }
 
 .tag {
@@ -48,11 +30,11 @@
   padding: 4px 8px;
   border-radius: 20px;
   font-size: 0.75rem;
+  white-space: nowrap;
 }
 
 .accordion-section {
   width: 100%;
-  margin-bottom: 15px;
 }
 
 .accordion-header {
@@ -80,4 +62,28 @@
   width: 16px;
   height: 16px;
   cursor: pointer;
+}
+
+.filter-controls-bottom {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.clear-button {
+  white-space: nowrap;
+  background-color: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 1rem;
+}
+
+.clear-button:hover {
+  background-color: #8e44ad;
+  border-color: #8e44ad;
 }

@@ -1,24 +1,25 @@
-/* Movie Page general styling */
 .movie-page {
-    background-color: #1E1822;
-    min-height: 100vh;
-    padding: 20px;
-    color: white;
-  }
-  
-  /* Layout container */
-  .movie-page .container {
-    display: flex;
-    gap: 40px;
-  }
-  
-  /* Filter sidebar */
-  .movie-page .filter-sidebar {
-    flex: 0 0 250px;
-  }
-  
-  /* Movie list area */
-  .movie-page .movie-list-area {
-    flex: 1;
-  }
-  
+  background-color: #1E1822;
+  min-height: 100vh;
+  padding: 20px;
+  color: white;
+}
+
+.page-layout {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.filter-sidebar {
+  width: 250px;
+  position: sticky;
+  top: 20px;
+  align-self: flex-start;
+}
+
+.movie-list-area {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 40px;
+}

@@ -31,7 +31,7 @@ function SearchBar({ setSearchTerm }: SearchBarProps) {
         className="search-input"
       />
       {input && (
-        <button className="clear-button" onClick={clearInput}>
+        <button className="search-clear-button" onClick={clearInput}>
           ×
         </button>
       )}

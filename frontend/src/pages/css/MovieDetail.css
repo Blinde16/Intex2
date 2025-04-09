@@ -32,20 +32,22 @@ body {
   }
 }
 
-/* Container */
 .product-detail-container {
   position: relative;
-  max-width: 1100px;
-  margin: 40px auto;
-  padding: 40px;
+  width: 100%;
+  max-width: none; /* ✅ Removed restriction */
+  margin: 0 auto;
+  padding: 40px 60px;
   display: flex;
-  gap: 40px;
-  background: rgba(30, 24, 34, 0.8);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  gap: 60px;
+  background: rgba(30, 24, 34, 0.9);
+  backdrop-filter: blur(12px);
+  border-radius: 0; /* ✅ Optionally remove radius for full-bleed look */
+  box-shadow: none; /* Optional cleaner look */
   animation: fadeIn 0.8s ease forwards;
+  transition: all 0.3s ease;
 }
+
 
 /* === Poster Section === */
 .poster-container {

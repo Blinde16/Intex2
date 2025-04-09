@@ -1,50 +1,75 @@
 .header-bar {
-  width: 100%;
+  width: 100vw; /* ✅ FULL width of the viewport */
   background-color: #1e1822;
   color: white;
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 2rem;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 
-  display: flex; /* Flexbox layout */
-  justify-content: space-between; /* Space between the image/text and buttons */
-  align-items: center; /* Vertically center content */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0; /* ✅ Remove any margins */
+  border: none; /* Clean edge */
 }
 
-.header-bar h1 {
-  margin: 0;
-  font-size: 2rem;
-}
-
+/* Logo clean sizing */
 .header-image {
-  width: 200px;
-  height: 80px;
+  height: 3vw;
+  max-height: 40px;
+  width: auto;
+  object-fit: contain;
   margin-right: 15px;
-  object-fit: cover;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.header-image:hover {
+  transform: scale(1.05);
+  filter: brightness(1.2);
+  cursor: pointer;
 }
 
 .button-container {
   display: flex;
-  justify-content: flex-end; /* Align buttons to the right */
-  gap: 15px; /* Space between the buttons */
+  gap: 12px;
 }
 
-.admin-button,
 .logout-button {
-  background-color: #1e1822;
+  background: linear-gradient(to right, #7e22ce, #a855f7);
   color: white;
-  outline: white;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.2rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease; /* Smooth transition on hover */
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+  box-shadow: 0 2px 6px rgba(168, 85, 247, 0.4);
 }
 
-.admin-button:hover,
 .logout-button:hover {
-  transform: scale(1.1); /* Expand on hover */
-  background-color: #333333; /* Change background color on hover */
+  background: linear-gradient(to right, #9333ea, #a855f7);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.5);
+}
+
+.admin-button {
+  background: linear-gradient(to right, #a855f7, #7e22ce);
+  color: white;
+  padding: 0.5rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+  box-shadow: 0 2px 6px rgba(168, 85, 247, 0.4);
+}
+
+.admin-button:hover {
+  background: linear-gradient(to right, #9333ea, #a855f7);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.5);
 }
