@@ -42,13 +42,10 @@ function AuthorizeView(props: { children: React.ReactNode }) {
       }
     }
 
-    fetchWithRetry(
-      "https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/pingauth",
-      {
-        method: "GET",
-        credentials: "include",
-      }
-    );
+    fetchWithRetry("https://localhost:5000/pingauth", {
+      method: "GET",
+      credentials: "include",
+    });
   }, []);
 
   if (loading) {

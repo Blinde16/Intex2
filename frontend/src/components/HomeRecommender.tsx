@@ -46,16 +46,13 @@ const Adventure: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(
-      "https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie/adventure",
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-        },
-        credentials: "include",
-      }
-    )
+    fetch("https://localhost:5000/Movie/adventure", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+      credentials: "include",
+    })
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
