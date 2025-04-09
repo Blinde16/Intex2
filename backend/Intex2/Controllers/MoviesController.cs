@@ -96,7 +96,7 @@ namespace RootkitAuth.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet("GetAdminMovies")]
-        public IActionResult GetMovies(int pageSize = 10, int pageNum = 1, [FromQuery] List<string>? types = null)
+        public IActionResult GetMovies(int pageSize = 10, int pageNum = 1, [FromQuery] List<string>? types = null, string? searchTerm = null)
         {
             var query = _movieContext.movies_titles.AsQueryable();
 
@@ -105,20 +105,28 @@ namespace RootkitAuth.API.Controllers
                 query = query.Where(c => types.Contains(c.type ?? string.Empty));
             }
 
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var lowered = searchTerm.ToLower();
+                query = query.Where(c =>
+                    (c.title ?? "").ToLower().Contains(lowered) ||
+                    (c.director ?? "").ToLower().Contains(lowered) ||
+                    (c.cast ?? "").ToLower().Contains(lowered));
+            }
+
             var totalNumMovies = query.Count();
             var brews = query
                 .Skip((pageNum - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
 
-            var returnMovies = new
+            return Ok(new
             {
                 movies = brews,
                 totalNumberMovies = totalNumMovies
-            };
-            
-            return Ok(returnMovies);
+            });
         }
+
         [Authorize(Roles = "AuthenticatedCustomer, Admin")]
         [HttpGet("GetCategoryTypes")]
         public IActionResult GetCategoryTypes()

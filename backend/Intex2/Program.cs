@@ -197,14 +197,20 @@ static async Task PromoteMovieUsersToIdentity(IServiceProvider serviceProvider)
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var dbContext = scope.ServiceProvider.GetRequiredService<MovieDbContext>();
 
-    // Ensure the AuthenticatedCustomer role exists
+    // 👇 Skip if seeding already occurred
+    if (userManager.Users.Any())
+    {
+        Console.WriteLine("✅ Skipping seed: Users already exist.");
+        return;
+    }
+
+    // Ensure the role exists
     var roleExists = await roleManager.RoleExistsAsync("AuthenticatedCustomer");
     if (!roleExists)
     {
         await roleManager.CreateAsync(new IdentityRole("AuthenticatedCustomer"));
     }
 
-    // Get all unique emails from movies_users table
     var movieUserEmails = dbContext.movies_users
         .Select(mu => mu.email)
         .Distinct()
@@ -223,7 +229,7 @@ static async Task PromoteMovieUsersToIdentity(IServiceProvider serviceProvider)
                 Email = email
             };
 
-            var result = await userManager.CreateAsync(user, "SuperPurpleFresh7"); // You can change this default password
+            var result = await userManager.CreateAsync(user, "SuperPurpleFresh7");
 
             if (!result.Succeeded)
             {
@@ -232,7 +238,6 @@ static async Task PromoteMovieUsersToIdentity(IServiceProvider serviceProvider)
             }
         }
 
-        // Add to role if not already in it
         var inRole = await userManager.IsInRoleAsync(user, "AuthenticatedCustomer");
         if (!inRole)
         {
@@ -242,3 +247,4 @@ static async Task PromoteMovieUsersToIdentity(IServiceProvider serviceProvider)
         Console.WriteLine($"✅ {email} is now an AuthenticatedCustomer");
     }
 }
+
