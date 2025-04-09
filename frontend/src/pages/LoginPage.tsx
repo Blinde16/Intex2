@@ -34,8 +34,8 @@ function LoginPage() {
     }
 
     const loginUrl = rememberme
-      ? "https://localhost:5000/login?useCookies=true"
-      : "https://localhost:5000/login?useSessionCookies=true";
+      ? "https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/login?useCookies=true"
+      : "https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/login?useSessionCookies=true";
 
     try {
       const response = await fetch(loginUrl, {
@@ -85,7 +85,10 @@ function LoginPage() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm text-gray-300 mb-1">
+            <label
+              htmlFor="password"
+              className="block text-sm text-gray-300 mb-1"
+            >
               Password
             </label>
             <input
@@ -136,7 +139,8 @@ function LoginPage() {
             type="button"
             className="w-full flex items-center justify-center bg-purple-800/30 text-white py-3 rounded-md hover:bg-purple-800/50 transition"
           >
-            <i className="fa-brands fa-facebook-f me-2"></i> Sign in with Facebook
+            <i className="fa-brands fa-facebook-f me-2"></i> Sign in with
+            Facebook
           </button>
         </div>
       </div>

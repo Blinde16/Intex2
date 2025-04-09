@@ -23,18 +23,21 @@ function RegisterPage() {
     }
 
     try {
-      const response = await fetch("https://localhost:5000/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // ⚠️ IMPORTANT for cookies
-        body: JSON.stringify({
-          email,
-          password,
-          force2FA: true, // optional, but useful if needed
-        }),
-      });
+      const response = await fetch(
+        "https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // ⚠️ IMPORTANT for cookies
+          body: JSON.stringify({
+            email,
+            password,
+            force2FA: true, // optional, but useful if needed
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
