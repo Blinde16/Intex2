@@ -1,25 +1,36 @@
-.movie-page {
-  background-color: #1E1822;
+/* Sticky footer layout setup */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.movie-page-wrapper {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  padding: 20px;
-  color: white;
+  background-color: #1E1822; /* match your theme */
+}
+
+.movie-page-content {
+  flex: 1;
+}
+
+/* Existing styling placeholders (if not already defined in your CSS) */
+.movie-page {
+  padding: 1rem;
 }
 
 .page-layout {
   display: flex;
-  gap: 40px;
-  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 1rem;
 }
 
 .filter-sidebar {
   width: 250px;
-  position: sticky;
-  top: 20px;
-  align-self: flex-start;
 }
 
 .movie-list-area {
   flex: 1;
-  overflow-y: auto;
-  padding-bottom: 40px;
 }

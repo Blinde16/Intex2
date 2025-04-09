@@ -130,8 +130,11 @@ const PrivacyPolicy = () => {
             <li>Lodge a complaint with a data protection authority.</li>
           </ul>
           <p>
-            To exercise any of these rights, please contact us at{" "}
-            <strong>[insert contact email]</strong>.
+            To exercise any of these rights, please contact us at          
+            Email:{" "}
+            <a href="mailto:Cineniche@rights.com" className="email-link">
+              Cineniche@rights.com
+            </a>
           </p>
         </section>
 
@@ -163,7 +166,10 @@ const PrivacyPolicy = () => {
             <strong>CINENICHE Data Protection Officer</strong>
           </p>
           <p>
-            Email: <strong>Cineniche@support.com</strong>
+            Email:{" "}
+            <a href="mailto:Cineniche@support.com" className="email-link">
+              Cineniche@support.com
+            </a>
           </p>
         </section>
       </div>

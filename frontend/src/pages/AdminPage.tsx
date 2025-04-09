@@ -6,6 +6,8 @@ import NewMovieForm from "../components/NewMovieForm";
 import EditMovieForm from "../components/EditMovieForm";
 import AuthorizeView from "../components/AuthorizeView";
 import Header from "../components/Header";
+import "./css/AdminPage.css";
+
 
 const AdminPage = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
