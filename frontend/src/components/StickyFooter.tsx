@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import './css/StickyFooter.css';
+import "./css/StickyFooter.css";
 
 const StickyFooter = () => {
   return (
