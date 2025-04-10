@@ -14,6 +14,10 @@ export const fetchMovies = async (
   selectedGenres: string[] = []
 ): Promise<FetchMoviesResponse> => {
   try {
+    const categoryParams = selectedCategories
+      .map((cat) => `types=${encodeURIComponent(cat)}`)
+      .join("&");
+      
     const params = new URLSearchParams();
     params.append("pageSize", pageSize.toString());
     params.append("pageNum", pageNum.toString());
