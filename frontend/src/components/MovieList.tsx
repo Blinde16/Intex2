@@ -23,13 +23,23 @@ function MovieList({
   const navigate = useNavigate();
 
   const getPosterUrl = (title: string) => {
-    const cleanTitle = title
-      .replace(/[()'":?!,&#.]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-
+    if (!title || title.trim() === "") {
+      return "https://moviepostersintex2.blob.core.windows.net/movieposter/placeholder.jpg";
+    }
+  
+    // Define character groups
+    const removals = /[()'".,?!:\#"]/g; // symbols to completely remove
+  
+    let cleanTitle = title
+      .replace(/\s*([&/])\s*/g, "␣␣") // Step 1: remove spaces around separators, add placeholder for double space
+      .replace(removals, "")             // Step 2: remove decorative characters
+      .replace(/\s+/g, " ")              // Step 3: collapse multiple spaces to single (except placeholders)
+      .replace(/␣␣/g, "  ")              // Step 4: replace placeholder with real double space
+      .trim();                           // Step 5: trim edges
+  
     const encodedTitle = encodeURIComponent(cleanTitle);
     const folderName = encodeURIComponent("Movie Posters");
+  
     return `https://moviepostersintex2.blob.core.windows.net/movieposter/${folderName}/${encodedTitle}.jpg`;
   };
 

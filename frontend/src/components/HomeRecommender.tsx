@@ -59,10 +59,10 @@ const Adventure: React.FC = () => {
     }
   
     // Define character groups
-    const removals = /[()'".,?!#"]/g; // symbols to completely remove
+    const removals = /[()'".,?!:\#"]/g; // symbols to completely remove
   
     let cleanTitle = title
-      .replace(/\s*([&:/-])\s*/g, "␣␣") // Step 1: remove spaces around separators, add placeholder for double space
+      .replace(/\s*([&/])\s*/g, "␣␣") // Step 1: remove spaces around separators, add placeholder for double space
       .replace(removals, "")             // Step 2: remove decorative characters
       .replace(/\s+/g, " ")              // Step 3: collapse multiple spaces to single (except placeholders)
       .replace(/␣␣/g, "  ")              // Step 4: replace placeholder with real double space
@@ -104,7 +104,7 @@ const Adventure: React.FC = () => {
         return (
           <div key={genre} className="carousel-section">
             <h1 className="carousel-title">
-              {genre.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())} Movies You Might Like
+              {genre.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())} you might like…
             </h1>
             <div className="carousel-container">
               <button className="carousel-button left" onClick={() => scroll(containerId, "left")}>‹</button>

@@ -9,7 +9,7 @@ body {
 
 /* Container around content */
 .container {
-  max-width: 900px;
+  max-width: 100dvw;
   margin: 0 auto;
   text-align: left;
 }

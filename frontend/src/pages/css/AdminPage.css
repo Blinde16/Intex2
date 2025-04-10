@@ -1,97 +1,138 @@
+/* Container */
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  h1 {
-    font-size: 2.2rem;
-    font-weight: 600;
-  }
-  
-  button.btn {
-    transition: background-color 0.3s ease, transform 0.2s ease;
-  }
-  
-  button.btn:hover {
-    transform: translateY(-2px);
-  }
-  
-  .table th,
-  .table td {
-    vertical-align: middle;
-    text-align: center;
-  }
-  
-  .table th {
-    background-color: #f8f9fa;
-  }
-  
-  .alert {
-    font-size: 1rem;
-    margin-top: 1rem;
-  }
-  
-  .btn-sm {
-    font-size: 0.875rem;
-    padding: 0.4rem 0.6rem;
-  }
-  
-  button.btn-success {
-    background-color: #198754;
-    border-color: #198754;
-  }
-  
-  button.btn-success:hover {
-    background-color: #157347;
-    border-color: #146c43;
-  }
-  
-  button.btn-danger {
-    background-color: #dc3567;
-    border-color: #dc3545;
-  }
-  
-  button.btn-danger:hover {
-    background-color: #bb2d3b;
-    border-color: #b02a37;
-  }
-  
-  button.btn-primary {
-    background-color: #1e3963;
-    border-color: #0d6efd;
-  }
-  
-  button.btn-primary:hover {
-    background-color: #0b5ed7;
-    border-color: #0a58ca;
-  }
-  
-  /* Pagination Controls (if you're styling beyond Bootstrap) */
-  .pagination {
-    display: flex;
-    justify-content: center;
-    margin: 1.5rem 0;
-  }
-  
-  .pagination .page-item {
-    margin: 0 0.25rem;
-  }
-  
-  .pagination .page-link {
-    color: #0d6efd;
-    transition: background-color 0.2s ease;
-  }
-  
-  .pagination .page-link:hover {
-    background-color: #e9ecef;
-  }
-  
-  /* Form Styling */
-  form .form-control {
-    margin-bottom: 1rem;
-  }
-  
-  form .form-group {
-    margin-bottom: 1rem;
-  }
-  
+
+  margin: 0 auto;
+  padding: 2rem;
+  color: #fff;
+  background-color: #1e1822;
+  border-radius: 12px;
+}
+
+/* Header */
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+/* Table Styles */
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 15px;
+  margin-bottom: 2rem;
+}
+
+.table th,
+.table td {
+  padding: 1rem;
+  text-align: center;
+  vertical-align: middle;
+  background-color: #2a2137;
+  border: none;
+  color: #e0e0e0;
+}
+
+.table th {
+  background-color: #3b2c4d;
+  color: #ffffff;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.table tbody tr:hover td {
+  background-color: #493b59;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+.table td:first-child,
+.table th:first-child {
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+}
+
+.table td:last-child,
+.table th:last-child {
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+/* Action Buttons */
+.btn-sm {
+  padding: 0.5rem 0.8rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  transition: background-color 0.3s, transform 0.2s;
+  width: 100%;
+}
+
+.btn-primary {
+  background: linear-gradient(45deg, #7e22ce, #9333ea);
+  border: none;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(45deg, #9333ea, #7e22ce);
+  transform: translateY(-2px);
+}
+
+.btn-danger {
+  background: linear-gradient(45deg, #dc3545, #f87171);
+  border: none;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(45deg, #f87171, #dc3545);
+  transform: translateY(-2px);
+}
+
+/* Add New Movie Button */
+button.btn-success {
+  background: linear-gradient(45deg, #198754, #22c55e);
+  border: none;
+  color: white;
+}
+
+button.btn-success:hover {
+  background: linear-gradient(45deg, #22c55e, #198754);
+  transform: translateY(-2px);
+}
+
+/* Search Bar */
+input.form-control {
+  background-color: #2a2137;
+  color: #ffffff;
+  border: 1px solid #444;
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+
+input.form-control::placeholder {
+  color: #aaa;
+}
+
+input.form-control:focus {
+  border-color: #7e22ce;
+  outline: none;
+  background-color: #352744;
+}
+
+/* Alert */
+.alert {
+  background-color: #ff4c4c;
+  color: white;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+

@@ -31,13 +31,14 @@ namespace RootkitAuth.API.Controllers
             [FromQuery] string? afterId,
             [FromQuery] string[]? containers,
             [FromQuery] string[]? genres,
-            [FromQuery] string? title // ✅ NEW
+            [FromQuery] string? title
         )
         {
             int pageSize = 10;
 
-            IQueryable<Movie> query = _movieContext.movies_titles.OrderBy(m => m.show_id);
+            var query = _movieContext.movies_titles.AsQueryable();
 
+            // Apply filters
             if (!string.IsNullOrEmpty(afterId))
             {
                 query = query.Where(m => string.Compare(m.show_id, afterId) > 0);
@@ -84,20 +85,36 @@ namespace RootkitAuth.API.Controllers
                 }
             }
 
-                if (!string.IsNullOrWhiteSpace(title))
-                {
-                    query = query.Where(m => m.title != null && EF.Functions.Like(m.title.ToLower(), $"%{title.ToLower()}%"));
-                }
-
-                var movies = query
-                    .AsEnumerable()
-                    .GroupBy(m => m.show_id)
-                    .Select(g => g.First())
-                    .Take(pageSize)
-                    .ToList();
-
-                return Ok(new { brews = movies });
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                query = query.Where(m => m.title != null && EF.Functions.Like(m.title.ToLower(), $"%{title.ToLower()}%"));
             }
+
+            // ✅ Apply rating sorting with secondary sort by rating count
+            var movies = query
+                .GroupJoin(
+                    _movieContext.movies_ratings,
+                    m => m.show_id,
+                    r => r.show_id,
+                    (movie, ratings) => new
+                    {
+                        Movie = movie,
+                        AverageRating = ratings.Any() ? ratings.Average(r => (double)r.rating) : 0,
+                        RatingCount = ratings.Count()
+                    }
+                )
+                .OrderByDescending(x => x.AverageRating)
+                .ThenByDescending(x => x.RatingCount) // ✅ Secondary sort!
+                .Take(pageSize)
+                .Select(x => x.Movie)
+                .AsEnumerable()
+                .GroupBy(m => m.show_id)
+                .Select(g => g.First())
+                .ToList();
+
+            return Ok(new { brews = movies });
+        }
+
 
         [Authorize(Roles = "Admin")]
         [HttpGet("GetAdminMovies")]
@@ -542,6 +559,44 @@ namespace RootkitAuth.API.Controllers
 
         return Ok(new { message = "Image uploaded successfully" });
     }
+
+    [Authorize(Roles = "AuthenticatedCustomer, Admin")]
+    [HttpGet("TopRatedMovies")]
+    public IActionResult GetTopRatedMovies()
+    {
+        var topRated = _movieContext.movies_ratings
+            .GroupBy(r => r.show_id)
+            .Select(g => new
+            {
+                ShowId = g.Key,
+                RatingCount = g.Count(),
+                AverageRating = g.Average(r => r.rating)
+            })
+            .OrderByDescending(g => g.RatingCount)
+            .Take(5)
+            .ToList();
+
+        var movies = _movieContext.movies_titles
+            .Where(m => topRated.Select(r => r.ShowId).Contains(m.show_id))
+            .ToList();
+
+        return Ok(movies);
     }
+
+    [Authorize(Roles = "AuthenticatedCustomer, Admin")]
+    [HttpGet("GetMovieRatingsCount/{showId}")]
+    public IActionResult GetMovieRatingsCount(string showId)
+    {
+        var ratings = _movieContext.movies_ratings
+            .Where(r => r.show_id == showId);
+
+        var count = ratings.Count();
+        var avg = ratings.Any() ? ratings.Average(r => r.rating) : 0;
+
+        return Ok(new { ratingCount = count, averageRating = Math.Round(avg, 1) });
+    }
+
+    }
+    
 }
         

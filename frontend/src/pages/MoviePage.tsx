@@ -7,6 +7,7 @@ import { useState } from "react";
 import './css/MoviePage.css';
 import Adventure from '../components/HomeRecommender';
 import StickyFooter from '../components/StickyFooter';
+import HeroBanner from '../components/HeroBanner';
 
 function MoviePage() {
   const [selectedContainers, setSelectedContainers] = useState<string[]>([]);
@@ -25,6 +26,8 @@ function MoviePage() {
     <AuthorizeView>
       <div className="movie-page-wrapper">
         <Header />
+        <div className="hero-fade-top"></div>
+        <HeroBanner />
         <Adventure />
         <div className="movie-page-content">
           <div className="page-layout">
@@ -48,11 +51,10 @@ function MoviePage() {
             </div>
           </div>
         </div>
-        <StickyFooter /> {/* ✅ Always visible at the bottom of the screen */}
+        <StickyFooter />
       </div>
     </AuthorizeView>
   );
 }
 
 export default MoviePage;
-

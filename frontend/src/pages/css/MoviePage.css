@@ -1,36 +1,172 @@
-/* Sticky footer layout setup */
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
 .movie-page-wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #1E1822; /* match your theme */
+  background-color: #1e1822;
+  color: white;
 }
 
 .movie-page-content {
   flex: 1;
-}
-
-/* Existing styling placeholders (if not already defined in your CSS) */
-.movie-page {
-  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
 }
 
 .page-layout {
   display: flex;
-  gap: 1.5rem;
-  padding: 1rem;
+  width: 100%;
 }
 
 .filter-sidebar {
   width: 250px;
+  padding: 20px;
+  background: rgba(30, 24, 34, 0.8);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .movie-list-area {
   flex: 1;
+  padding: 20px;
+  overflow: hidden;
 }
+
+/* Hero Banner Container */
+.hero-banner-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Hero Banner Scroll */
+.hero-scroll {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.hero-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Individual Hero Slide */
+.hero-banner {
+  position: relative;
+  min-width: 100%;
+  height: 75vh;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(30, 24, 34, 0.85) 30%, rgba(30, 24, 34, 0.4) 60%, rgba(30, 24, 34, 0.85) 100%);
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  max-width: 600px;
+  padding: 40px;
+  z-index: 2;
+}
+
+.hero-title {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.hero-description {
+  font-size: 1.1rem;
+  color: #ddd;
+  margin-bottom: 20px;
+}
+
+.hero-rating {
+  color: #facc15;
+  margin-bottom: 20px;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.hero-buttons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #7e22ce;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.hero-buttons button:hover {
+  background: #9333ea;
+}
+
+/* Scroll Arrows */
+.hero-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 2.5rem;
+  color: white;
+  background: rgba(0, 0, 0, 0.4);
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 3;
+  transition: background 0.3s;
+}
+
+.hero-arrow.left {
+  left: 20px;
+}
+
+.hero-arrow.right {
+  right: 20px;
+}
+
+.hero-arrow:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* Fade Separator */
+.hero-fade-bottom {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(to bottom, rgba(30, 24, 34, 0) 0%, #1e1822 100%);
+  z-index: 2;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-description {
+    font-size: 0.95rem;
+  }
+
+  .hero-buttons button {
+    padding: 8px 16px;
+  }
+
+  .hero-arrow {
+    font-size: 2rem;
+    padding: 8px;
+  }
+}
+

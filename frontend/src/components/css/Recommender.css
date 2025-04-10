@@ -1,5 +1,5 @@
 .recommender-wrapper {
-  width: 100%;
+  width: 100vw;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
@@ -7,24 +7,28 @@
 }
 
 .carousel-section {
-  margin-bottom: 40px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  margin-left: 30px;
+  margin-right: 30px;
   width: 100%;
-  max-width: 1100px; /* Constrain max width */
+  max-width: 100vw; /* Constrain max width */
 }
 
 .carousel-title {
   font-size: 1.5rem;
+  text-align: left;
   font-weight: 700;
-  color: white;
-  margin-bottom: 12px;
-  padding-left: 8px;
+  color: rgb(235, 221, 242);
+  margin-bottom: 6px;
+  padding-left: 15px;
 }
 
 .carousel-container {
   position: relative;
   display: flex;
   align-items: center;
-  width: 100%;
+  width: 100vw;
 }
 
 .carousel-button {
@@ -60,7 +64,7 @@
   scroll-behavior: smooth;
   scrollbar-width: none;
   padding: 10px 20px; /* Keep the padding so content doesn't touch edges */
-  width: 100%;
+  width: 100vw;
 }
 
 .carousel-scroll::-webkit-scrollbar {

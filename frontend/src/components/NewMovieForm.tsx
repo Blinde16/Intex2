@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
 import { Movie, GENRES } from "../types/Movie";
 import AuthorizeView, { AuthorizedUser } from "./AuthorizeView";
-import Logout from "./Logout";
 
 type MovieFormData = Omit<Movie, keyof typeof GENRES> &
   Record<(typeof GENRES)[number], number> & {
@@ -120,10 +119,6 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
 
   return (
     <AuthorizeView>
-      <Logout>
-        Logout <AuthorizedUser value="email" />
-      </Logout>
-
       <form
         onSubmit={handleSubmit}
         className="bg-white text-black p-4 rounded shadow-lg max-w-3xl mx-auto"
