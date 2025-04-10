@@ -52,33 +52,28 @@ function UserManagement() {
         { credentials: "include" }
       );
 
-      if (!res.ok) {
-        throw new Error("Failed to load users.");
-      }
+      if (!res.ok) throw new Error("Failed to load users.");
 
       const data = await res.json();
 
       if (Array.isArray(data)) {
         setUsers(data);
-        setTotalUsers(data.length < pageSize ? (pageNumber - 1) * pageSize + data.length : pageNumber * pageSize + 1);
+        setTotalUsers(data.length);
       } else if (data.users && typeof data.totalCount === "number") {
         setUsers(data.users);
         setTotalUsers(data.totalCount);
       } else {
-        console.error("Unexpected API response", data);
         setUsers([]);
         setTotalUsers(0);
       }
-
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
       setError("Failed to load users. Please try again later.");
     }
   };
 
   const handleDelete = async (id: string) => {
     if (!window.confirm("Delete this user?")) return;
-    const res = await fetch(`${apiUrl}/api/admin/users/delete/${id}`, {
+    const res = await fetch(`${apiUrl}/register/users/delete/${id}`, {
       method: "DELETE",
       credentials: "include",
     });
@@ -134,21 +129,15 @@ function UserManagement() {
                   <td>{u.email}</td>
                   <td>{u.name}</td>
                   <td>{u.phone}</td>
-                  <td>
-                    {u.city}, {u.state} {u.zip}
-                  </td>
+                  <td>{u.city}, {u.state} {u.zip}</td>
                   <td>{u.roles.join(", ")}</td>
                   <td>{u.twoFactorEnabled ? "✅" : "❌"}</td>
-                  <td>
-                    {[
-                      u.netflix && "Netflix",
-                      u.amazon_Prime && "Prime",
-                      u.disney && "Disney",
-                      u.hulu && "Hulu",
-                    ]
-                      .filter(Boolean)
-                      .join(", ")}
-                  </td>
+                  <td>{[
+                    u.netflix && "Netflix",
+                    u.amazon_Prime && "Prime",
+                    u.disney && "Disney",
+                    u.hulu && "Hulu",
+                  ].filter(Boolean).join(", ")}</td>
                   <td>
                     <button
                       className="btn btn-sm btn-warning me-2"
@@ -167,9 +156,7 @@ function UserManagement() {
               ))
             ) : (
               <tr>
-                <td colSpan={8} className="text-center">
-                  No users found.
-                </td>
+                <td colSpan={8} className="text-center">No users found.</td>
               </tr>
             )}
           </tbody>
