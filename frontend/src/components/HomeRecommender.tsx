@@ -20,7 +20,9 @@ const Adventure: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("https://cineniche-intex2-410-dmage4djbadjbvbw.eastus-01.azurewebsites.net/Movie/adventure", {
+    const apiUrl = import.meta.env.VITE_API_URL;
+  
+    fetch(`${apiUrl}/Movie/adventure`, {
       method: "GET",
       headers: { Accept: "application/json" },
       credentials: "include",
@@ -38,6 +40,7 @@ const Adventure: React.FC = () => {
         setLoading(false);
       });
   }, []);
+  
 
   if (loading) return <div className="p-4 text-white">Loading adventure movies...</div>;
   if (error) return <div className="p-4 text-red-500">{error}</div>;
