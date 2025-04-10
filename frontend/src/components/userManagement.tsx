@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import InfiniteScroll from "react-infinite-scroll-component";
 
 type AdminUser = {
   id: string;
