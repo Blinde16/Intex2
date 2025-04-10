@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 type AdminUser = {
   id: string;
   email: string;
   roles: string[];
   twoFactorEnabled: boolean;
-
-  // Custom user data
   name: string;
   phone: string;
   age: number;
@@ -14,8 +14,6 @@ type AdminUser = {
   city: string;
   state: string;
   zip: number;
-
-  // Subscriptions
   netflix: number;
   amazon_Prime: number;
   disney: number;
@@ -26,45 +24,90 @@ type AdminUser = {
   peacock: number;
 };
 
+const PAGE_SIZE = 10;
+
 function UserManagement() {
   const [users, setUsers] = useState<AdminUser[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const fetchUsers = async () => {
+    const res = await fetch(
+      `https://localhost:5000/register/users?page=${page}&pageSize=${PAGE_SIZE}`,
+      {
+        credentials: "include",
+      }
+    );
+
+    if (!res.ok) {
+      setError("Failed to load users.");
+      return;
+    }
+
+    const data = await res.json();
+    if (data.length < PAGE_SIZE) setHasMore(false);
+
+    setUsers((prev) => [...prev, ...data]);
+    setPage((prev) => prev + 1);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("Delete this user?")) return;
+
+    const res = await fetch(
+      `https://localhost:5000/api/admin/users/delete/${id}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+      }
+    );
+
+    if (res.ok) {
+      setUsers((prev) => prev.filter((u) => u.id !== id));
+    } else {
+      alert("Failed to delete user.");
+    }
+  };
 
   useEffect(() => {
-    fetch("https://localhost:5000/register/users", {
-      credentials: "include",
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch users.");
-        return res.json();
-      })
-      .then((data) => setUsers(data))
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+    fetchUsers();
   }, []);
 
   return (
-    <div className="container mt-5">
-      <h2 className="mb-4">Admin User Management</h2>
+    <div className="container mt-4">
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2>User Management</h2>
+        <button
+          className="btn btn-success"
+          onClick={() => navigate("/admin/users/add")}
+        >
+          ➕ Add User
+        </button>
+      </div>
 
-      {loading && <p>Loading users...</p>}
       {error && <p className="text-danger">{error}</p>}
 
-      {!loading && users.length > 0 && (
+      <InfiniteScroll
+        dataLength={users.length}
+        next={fetchUsers}
+        hasMore={hasMore}
+        loader={<p>Loading more users...</p>}
+        endMessage={<p className="text-muted">No more users to load.</p>}
+      >
         <div className="table-responsive">
-          <table className="table table-striped table-bordered table-hover">
+          <table className="table table-striped table-bordered">
             <thead className="table-dark">
               <tr>
                 <th>Email</th>
                 <th>Name</th>
                 <th>Phone</th>
-                <th>Age</th>
-                <th>Gender</th>
                 <th>Location</th>
-                <th>Roles</th>
+                <th>Role</th>
                 <th>2FA</th>
                 <th>Subscriptions</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -73,8 +116,6 @@ function UserManagement() {
                   <td>{u.email}</td>
                   <td>{u.name}</td>
                   <td>{u.phone}</td>
-                  <td>{u.age}</td>
-                  <td>{u.gender}</td>
                   <td>
                     {u.city}, {u.state} {u.zip}
                   </td>
@@ -85,23 +126,31 @@ function UserManagement() {
                       u.netflix && "Netflix",
                       u.amazon_Prime && "Prime",
                       u.disney && "Disney",
-                      u.paramount && "Paramount",
-                      u.max && "Max",
                       u.hulu && "Hulu",
-                      u.apple_TV && "Apple TV",
-                      u.peacock && "Peacock",
                     ]
                       .filter(Boolean)
                       .join(", ")}
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-sm btn-warning me-2"
+                      onClick={() => navigate(`/admin/users/edit/${u.id}`)}
+                    >
+                      ✏️ Edit
+                    </button>
+                    <button
+                      className="btn btn-sm btn-danger"
+                      onClick={() => handleDelete(u.id)}
+                    >
+                      🗑️ Delete
+                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      )}
-
-      {!loading && users.length === 0 && <p>No users found.</p>}
+      </InfiniteScroll>
     </div>
   );
 }

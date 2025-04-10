@@ -13,7 +13,8 @@ import ProductDetail from "./pages/ProductDetail";
 import NewMoviePage from "./pages/NewMoviePage";
 import EditMoviePage from "./pages/EditMoviePage";
 import UserManagementPage from "./pages/userManagementPage";
-
+import AddUserPage from "./pages/AddUserPage";
+import EditUserPage from "./pages/EditUserPage";
 
 function App() {
   return (
@@ -30,7 +31,9 @@ function App() {
           <Route path="/admin/edit/:movieId" element={<EditMoviePage />} />
           <Route path="/PrivacyPage" element={<PrivacyPage />} />
           <Route path="/movie/:show_id" element={<ProductDetail />} />
-          <Route path="/userManagement" element={<UserManagementPage />} />
+          <Route path="/admin/users" element={<UserManagementPage />} />
+          <Route path="/admin/users/add" element={<AddUserPage />} />
+          <Route path="/admin/users/edit/:id" element={<EditUserPage />} />
         </Routes>
       </Router>
       <CookieBanner />
