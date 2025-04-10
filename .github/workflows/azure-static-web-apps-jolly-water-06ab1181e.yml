@@ -38,9 +38,11 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_JOLLY_WATER_06AB1181E }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "frontend"
-          api_location: "" # Removed, or ensure 'api' folder exists
-          output_location: "dist"
+          app_location: "frontend/dist" # ✅ Point directly to the built output
+          api_location: "" # Blank or optional if you're not using Azure Functions
+          output_location: "." # ✅ Output is already built, so current folder
+          skip_app_build: true # ✅ Skip Azure’s internal build
+          skip_api_build: true # ✅ Skip Azure API build, since you’re not using Functions
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
