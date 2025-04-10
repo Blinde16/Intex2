@@ -58,15 +58,16 @@ const Adventure: React.FC = () => {
       return "https://moviepostersintex2.blob.core.windows.net/movieposter/placeholder.jpg";
     }
   
-    // Define character groups
-    const removals = /[()'".,?!:\#"]/g; // symbols to completely remove
+    const removals = /[()'".,?!:#"\-]/g; // Symbols to remove (basic ones)
   
     let cleanTitle = title
-      .replace(/\s*([&/])\s*/g, "␣␣") // Step 1: remove spaces around separators, add placeholder for double space
-      .replace(removals, "")             // Step 2: remove decorative characters
-      .replace(/\s+/g, " ")              // Step 3: collapse multiple spaces to single (except placeholders)
-      .replace(/␣␣/g, "  ")              // Step 4: replace placeholder with real double space
-      .trim();                           // Step 5: trim edges
+      .normalize("NFKD")                        // Normalize special characters (like smart quotes)
+      .replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "") // Remove smart quotes (single)
+      .replace(/\s*([&/])\s*/g, "␣␣")          // Remove spaces around & and /
+      .replace(removals, "")                    // Remove decorative characters
+      .replace(/\s+/g, " ")                     // Collapse multiple spaces
+      .replace(/␣␣/g, "  ")                    // Replace placeholder with real double space
+      .trim();
   
     const encodedTitle = encodeURIComponent(cleanTitle);
     const folderName = encodeURIComponent("Movie Posters");

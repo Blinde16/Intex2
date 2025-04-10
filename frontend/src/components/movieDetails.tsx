@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import "./css/MovieDetails.css"; // Assuming you have a CSS file for styling
+import "./css/MovieDetails.css";
 import axios from "axios";
 
 interface Movie {
@@ -24,9 +24,7 @@ const MovieDetails: React.FC = () => {
 
   useEffect(() => {
     axios
-      .get(`${apiUrl}/Movie/GetMovieById/${show_id}`, {
-        withCredentials: true,
-      })
+      .get(`${apiUrl}/Movie/GetMovieById/${show_id}`, { withCredentials: true })
       .then((response) => {
         setMovie(response.data);
       })
@@ -35,18 +33,33 @@ const MovieDetails: React.FC = () => {
       });
   }, [show_id]);
 
-  if (!movie) {
-    return (
-      <div style={{ color: "white", textAlign: "center", marginTop: "40px" }}>
-        Loading...
-      </div>
-    );
-  }
+  const getPosterUrl = (title: string) => {
+    if (!title || title.trim() === "") {
+      return "https://moviepostersintex2.blob.core.windows.net/movieposter/placeholder.jpg";
+    }
+  
+    const removals = /[()'".,?!:#"\-]/g; // Symbols to remove (basic ones)
+  
+    let cleanTitle = title
+      .normalize("NFKD")                        // Normalize special characters (like smart quotes)
+      .replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "") // Remove smart quotes (single)
+      .replace(/\s*([&/])\s*/g, "␣␣")          // Remove spaces around & and /
+      .replace(removals, "")                    // Remove decorative characters
+      .replace(/\s+/g, " ")                     // Collapse multiple spaces
+      .replace(/␣␣/g, "  ")                    // Replace placeholder with real double space
+      .trim();
+  
+    const encodedTitle = encodeURIComponent(cleanTitle);
+    const folderName = encodeURIComponent("Movie Posters");
+  
+    return `https://moviepostersintex2.blob.core.windows.net/movieposter/${folderName}/${encodedTitle}.jpg`;
+  };
 
-  const encodedTitle = encodeURIComponent(movie.title);
-  const imageUrl = `https://moviepostersintex2.blob.core.windows.net/movieposter/Movie Posters/${encodedTitle}.jpg`;
+  const imageUrl = movie
+    ? getPosterUrl(movie.title)
+    : "https://moviepostersintex2.blob.core.windows.net/movieposter/placeholder.jpg";
 
-  const genreList = Object.entries(movie)
+  const genreList = Object.entries(movie || {})
     .filter(([, value]) => typeof value === "number" && value === 1)
     .map(([key]) => key.replace(/_/g, " "))
     .join(", ");
@@ -54,8 +67,16 @@ const MovieDetails: React.FC = () => {
   const handleStarClick = (rating: number) => {
     setUserRating(rating);
     console.log(`User rated: ${rating} stars`);
-    // Placeholder: Later you can send this rating to your backend!
+    // Later: send to backend!
   };
+
+  if (!movie) {
+    return (
+      <div style={{ color: "white", textAlign: "center", marginTop: "40px" }}>
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div className="movie-details-container">

@@ -7,43 +7,43 @@ function MovieList({
   selectedContainers,
   selectedType,
   selectedGenres,
-  searchTerm,
+  searchTerm, // ✅ Add this prop
 }: {
   selectedContainers: string[];
   selectedType: string | null;
   selectedGenres: string[];
-  searchTerm: string;
+  searchTerm: string; // ✅ Add this type
 }) {
   const [movieList, setMovieList] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
-  const [resetCounter, setResetCounter] = useState<number>(0);
   const apiUrl = import.meta.env.VITE_API_URL;
+  const isInitialLoad = useRef(true);
 
   const navigate = useNavigate();
-
-  const pageSize = 25; // ✅ Custom page size
 
   const getPosterUrl = (title: string) => {
     if (!title || title.trim() === "") {
       return "https://moviepostersintex2.blob.core.windows.net/movieposter/placeholder.jpg";
     }
-
-    const removals = /[()'".,?!:\#"]/g;
-
+  
+    const removals = /[()'".,?!:#"\-]/g; // Symbols to remove (basic ones)
+  
     let cleanTitle = title
-      .replace(/\s*([&/])\s*/g, "␣␣")
-      .replace(removals, "")
-      .replace(/\s+/g, " ")
-      .replace(/␣␣/g, "  ")
+      .normalize("NFKD")                        // Normalize special characters (like smart quotes)
+      .replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "") // Remove smart quotes (single)
+      .replace(/\s*([&/])\s*/g, "␣␣")          // Remove spaces around & and /
+      .replace(removals, "")                    // Remove decorative characters
+      .replace(/\s+/g, " ")                     // Collapse multiple spaces
+      .replace(/␣␣/g, "  ")                    // Replace placeholder with real double space
       .trim();
-
+  
     const encodedTitle = encodeURIComponent(cleanTitle);
     const folderName = encodeURIComponent("Movie Posters");
-
+  
     return `https://moviepostersintex2.blob.core.windows.net/movieposter/${folderName}/${encodedTitle}.jpg`;
   };
-
+  
   const fetchMovies = async () => {
     if (loading || !hasMore) return;
     setLoading(true);
@@ -65,15 +65,12 @@ function MovieList({
     }
 
     if (searchTerm.trim()) {
-      params.append("title", searchTerm.trim());
+      params.append("title", searchTerm.trim()); // ✅ Add search term to query params
     }
 
     if (movieList.length > 0) {
       params.append("afterId", movieList[movieList.length - 1].show_id);
     }
-
-    // ✅ Add dynamic pageSize param
-    params.append("pageSize", pageSize.toString());
 
     const url = `${apiUrl}/Movie/GetMovies?${params.toString()}`;
 
@@ -84,17 +81,17 @@ function MovieList({
 
       const data = await response.json();
 
-      if (data.brews.length < pageSize) {
+      if (data.brews.length === 0) {
         setHasMore(false);
+      } else {
+        setMovieList((prevMovies) => {
+          const allMovies = [...prevMovies, ...data.brews];
+          const uniqueMovies = Array.from(
+            new Map(allMovies.map((m) => [m.show_id, m])).values()
+          );
+          return uniqueMovies;
+        });
       }
-
-      setMovieList((prevMovies) => {
-        const allMovies = [...prevMovies, ...data.brews];
-        const uniqueMovies = Array.from(
-          new Map(allMovies.map((m) => [m.show_id, m])).values()
-        );
-        return uniqueMovies;
-      });
     } catch (error) {
       console.error("Error fetching movies:", error);
     } finally {
@@ -105,12 +102,10 @@ function MovieList({
   useEffect(() => {
     setMovieList([]);
     setHasMore(true);
-    setResetCounter((prev) => prev + 1);
-  }, [selectedContainers, selectedType, selectedGenres, searchTerm]);
-
-  useEffect(() => {
+    isInitialLoad.current = true;
     fetchMovies();
-  }, [resetCounter]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedContainers, selectedType, selectedGenres, searchTerm]); // ✅ Add searchTerm dependency
 
   useEffect(() => {
     const handleScroll = () => {
@@ -122,9 +117,21 @@ function MovieList({
       }
     };
 
+    if (isInitialLoad.current) {
+      isInitialLoad.current = false;
+      return;
+    }
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [movieList, hasMore]);
+  }, [
+    movieList,
+    hasMore,
+    selectedContainers,
+    selectedType,
+    selectedGenres,
+    searchTerm,
+  ]);
 
   return (
     <div>

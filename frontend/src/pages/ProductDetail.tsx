@@ -20,6 +20,27 @@ interface Movie {
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
+const getPosterUrl = (title: string) => {
+  if (!title || title.trim() === "") {
+    return "https://moviepostersintex2.blob.core.windows.net/movieposter/placeholder.jpg";
+  }
+
+  const removals = /[()'".,?!:#"\-]/g;
+
+  let cleanTitle = title
+    .normalize("NFKD")
+    .replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "") // Remove smart quotes
+    .replace(/\s*([&/])\s*/g, "␣␣") // Remove spaces around & and /
+    .replace(removals, "")
+    .replace(/\s+/g, " ")
+    .replace(/␣␣/g, "  ")
+    .trim();
+
+  const encodedTitle = encodeURIComponent(cleanTitle);
+  const folderName = encodeURIComponent("Movie Posters");
+
+  return `https://moviepostersintex2.blob.core.windows.net/movieposter/${folderName}/${encodedTitle}.jpg`;
+};
 
 const ProductDetail: React.FC = () => {
   const { show_id } = useParams<{ show_id: string }>();
@@ -31,31 +52,21 @@ const ProductDetail: React.FC = () => {
   useEffect(() => {
     if (!show_id) return;
 
-    // ✅ Reset states when changing movie
     setUserRating(0);
     setUserRatingLoaded(false);
 
-    // Fetch movie details
     axios
-      .get(`${apiUrl}/Movie/GetMovieById/${show_id}`, {
-        withCredentials: true,
-      })
+      .get(`${apiUrl}/Movie/GetMovieById/${show_id}`, { withCredentials: true })
       .then((response) => setMovie(response.data))
       .catch((error) => console.error("Error fetching movie:", error));
 
-    // Fetch average rating
     axios
-      .get(`${apiUrl}/Movie/GetAverageRating/${show_id}`, {
-        withCredentials: true,
-      })
+      .get(`${apiUrl}/Movie/GetAverageRating/${show_id}`, { withCredentials: true })
       .then((response) => setAverageRating(Number(response.data.averageRating)))
       .catch((error) => console.error("Error fetching average rating:", error));
 
-    // Fetch user's previous rating
     axios
-      .get(`${apiUrl}/Movie/GetUserRating/${show_id}`, {
-        withCredentials: true,
-      })
+      .get(`${apiUrl}/Movie/GetUserRating/${show_id}`, { withCredentials: true })
       .then((response) => {
         if (response.data && response.data.userRating !== null) {
           setUserRating(response.data.userRating);
@@ -72,29 +83,17 @@ const ProductDetail: React.FC = () => {
     axios
       .post(
         `${apiUrl}/Movie/RateMovie`,
-        {
-          show_id: show_id,
-          rating: rating,
-        },
+        { show_id: show_id, rating: rating },
         { withCredentials: true }
       )
       .then((response) => {
         console.log("Rating submitted successfully:", response.data);
-        // Refresh average rating after submit
         axios
-          .get(`${apiUrl}/Movie/GetAverageRating/${show_id}`, {
-            withCredentials: true,
-          })
-          .then((response) =>
-            setAverageRating(Number(response.data.averageRating))
-          )
-          .catch((error) =>
-            console.error("Error fetching average rating:", error)
-          );
+          .get(`${apiUrl}/Movie/GetAverageRating/${show_id}`, { withCredentials: true })
+          .then((response) => setAverageRating(Number(response.data.averageRating)))
+          .catch((error) => console.error("Error fetching average rating:", error));
       })
-      .catch((error) => {
-        console.error("Error submitting rating:", error);
-      });
+      .catch((error) => console.error("Error submitting rating:", error));
   };
 
   const handleStarClick = (rating: number) => {
@@ -111,8 +110,7 @@ const ProductDetail: React.FC = () => {
     );
   }
 
-  const encodedTitle = encodeURIComponent(movie.title);
-  const imageUrl = `https://moviepostersintex2.blob.core.windows.net/movieposter/Movie Posters/${encodedTitle}.jpg`;
+  const imageUrl = getPosterUrl(movie.title);
 
   const genreList = Object.entries(movie)
     .filter(([, value]) => typeof value === "number" && value === 1)
@@ -121,12 +119,9 @@ const ProductDetail: React.FC = () => {
 
   return (
     <div className="bg-background min-h-screen text-foreground">
-      {/* Header */}
       <Header />
 
-      {/* Main Hero Section: Poster + Info */}
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start gap-10 px-8 py-12 animate-fadeIn">
-        {/* Poster */}
         <div className="flex-shrink-0 rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition duration-500">
           <img
             src={imageUrl}
@@ -135,7 +130,6 @@ const ProductDetail: React.FC = () => {
           />
         </div>
 
-        {/* Movie Info */}
         <div className="flex flex-col justify-start space-y-4 text-left w-full max-w-xl">
           <h1 className="text-5xl font-extrabold">{movie.title}</h1>
           <p className="text-muted-foreground text-sm">
@@ -170,7 +164,6 @@ const ProductDetail: React.FC = () => {
             </p>
           </div>
 
-          {/* Star Rating */}
           <div>
             <p className="font-semibold mb-2 text-foreground">Your Rating:</p>
             {userRatingLoaded ? (
@@ -194,8 +187,8 @@ const ProductDetail: React.FC = () => {
         </div>
       </div>
 
-      {/* Placeholder Sections */}
       <MovieRecommendation show_id={show_id!} />
+
       <div className="space-y-8 max-w-7xl mx-auto px-8 pb-12">
         {["User Reviews", "Trailers & Behind the Scenes"].map(
           (section, index) => (
