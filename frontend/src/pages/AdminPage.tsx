@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { Movie, GENRES } from "../types/Movie";
 import { deleteMovie, fetchMovies } from "../api/movieAPI";
+import { useNavigate } from "react-router-dom";
 import Pagination from "../components/pagination";
-import NewMovieForm from "../components/NewMovieForm";
-import EditMovieForm from "../components/EditMovieForm";
 import AuthorizeView from "../components/AuthorizeView";
 import Header from "../components/Header";
 import "./css/AdminPage.css";
@@ -12,8 +11,6 @@ import ContainerFilter from "../components/ContainerFilter";
 
 const AdminPage = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
-  const [addingNew, setAddingNew] = useState(false);
   const [error, setError] = useState<string>("");
   const [pageSize, setPageSize] = useState<number>(10);
   const [pageNumber, setPageNumber] = useState<number>(1);
@@ -23,6 +20,7 @@ const AdminPage = () => {
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedYear, setSelectedYear] = useState<number | "">("");
+  const navigate = useNavigate();
 
   // Debounce searchTerm to reduce API spam
   useEffect(() => {
@@ -130,34 +128,10 @@ const AdminPage = () => {
 
               <button
                 className="btn btn-success mb-3"
-                onClick={() => {
-                  setAddingNew(true);
-                  setEditingMovie(null);
-                }}
+                onClick={() => navigate("/admin/new")}
               >
                 Add New Movie
               </button>
-
-              {addingNew && (
-                <NewMovieForm
-                  onSuccess={() => {
-                    setAddingNew(false);
-                    getMovies();
-                  }}
-                  onCancel={() => setAddingNew(false)}
-                />
-              )}
-
-              {editingMovie && (
-                <EditMovieForm
-                  movie={editingMovie}
-                  onSuccess={() => {
-                    setEditingMovie(null);
-                    getMovies();
-                  }}
-                  onCancel={() => setEditingMovie(null)}
-                />
-              )}
 
               {error && <div className="alert alert-danger">{error}</div>}
 
@@ -194,10 +168,7 @@ const AdminPage = () => {
                         <td>
                           <button
                             className="btn btn-primary btn-sm w-100 mb-1"
-                            onClick={() => {
-                              setEditingMovie(p);
-                              setAddingNew(false);
-                            }}
+                            onClick={() => navigate(`/admin/edit/${p.show_id}`)}
                           >
                             Edit
                           </button>

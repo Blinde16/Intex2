@@ -17,7 +17,7 @@ export const fetchMovies = async (
     const categoryParams = selectedCategories
       .map((cat) => `types=${encodeURIComponent(cat)}`)
       .join("&");
-      
+
     const params = new URLSearchParams();
     params.append("pageSize", pageSize.toString());
     params.append("pageNum", pageNum.toString());
@@ -84,17 +84,14 @@ export const updateMovie = async (
   updatedMovie: Movie
 ): Promise<Movie> => {
   try {
-    const response = await fetch(
-      `${apiUrl}/Movie/UpdateMovie/${show_id}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(updatedMovie),
-      }
-    );
+    const response = await fetch(`${apiUrl}/Movie/UpdateMovie/${show_id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(updatedMovie),
+    });
 
     if (!response.ok) {
       throw new Error("Failed to update Movie");
@@ -109,13 +106,10 @@ export const updateMovie = async (
 
 export const deleteMovie = async (show_id: string): Promise<void> => {
   try {
-    const response = await fetch(
-      `${apiUrl}/Movie/DeleteMovie/${show_id}`,
-      {
-        method: "DELETE",
-        credentials: "include", // ✅ send cookie
-      }
-    );
+    const response = await fetch(`${apiUrl}/Movie/DeleteMovie/${show_id}`, {
+      method: "DELETE",
+      credentials: "include", // ✅ send cookie
+    });
 
     if (!response.ok) {
       throw new Error("Failed to delete movie");
@@ -124,4 +118,14 @@ export const deleteMovie = async (show_id: string): Promise<void> => {
     console.error("Error deleting movie:", error);
     throw error;
   }
+};
+
+export const fetchMovieById = async (id: string): Promise<Movie> => {
+  const res = await fetch(`${apiUrl}/Movie/GetMovieById/${id}`, {
+    credentials: "include",
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch movie by ID");
+
+  return res.json();
 };
