@@ -11,11 +11,18 @@ namespace RootkitAuth.API.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public RegisterController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        private readonly MovieDbContext _movieContext;
+
+        public RegisterController(
+            UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            MovieDbContext movieDbContext)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _movieContext = movieDbContext;
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterDto model)
@@ -52,5 +59,50 @@ namespace RootkitAuth.API.Controllers
 
             return Ok(new { message = "User registered successfully." });
         }
+            [HttpGet("users")]
+public async Task<IActionResult> GetAllUsers()
+{
+    var identityUsers = _userManager.Users.ToList();
+    var movieUsers = _movieContext.movies_users.ToList();
+
+    var users = new List<AdminUserViewModel>();
+
+    foreach (var identityUser in identityUsers)
+    {
+        var roles = await _userManager.GetRolesAsync(identityUser);
+        var movieUser = movieUsers.FirstOrDefault(mu => mu.email.ToLower() == identityUser.Email.ToLower());
+
+        if (movieUser != null)
+        {
+            users.Add(new AdminUserViewModel
+            {
+                Id = identityUser.Id,
+                Email = identityUser.Email,
+                Roles = roles,
+
+                // Extended data
+                Name = movieUser.name,
+                Phone = movieUser.phone,
+                Age = movieUser.age,
+                Gender = movieUser.gender,
+                City = movieUser.city,
+                State = movieUser.state,
+                Zip = movieUser.zip,
+
+                Netflix = movieUser.Netflix,
+                Amazon_Prime = movieUser.Amazon_Prime,
+                Disney = movieUser.Disney,
+                Paramount = movieUser.Paramount,
+                Max = movieUser.Max,
+                Hulu = movieUser.Hulu,
+                Apple_TV = movieUser.Apple_TV,
+                Peacock = movieUser.Peacock
+            });
+        }
+    }
+
+    return Ok(users);
+}
+
     }
 }

@@ -12,6 +12,8 @@ import CookieBanner from "./components/Cookiebanner";
 import ProductDetail from "./pages/ProductDetail";
 import NewMoviePage from "./pages/NewMoviePage";
 import EditMoviePage from "./pages/EditMoviePage";
+import UserManagementPage from "./pages/userManagementPage";
+
 
 function App() {
   return (
@@ -28,6 +30,7 @@ function App() {
           <Route path="/admin/edit/:movieId" element={<EditMoviePage />} />
           <Route path="/PrivacyPage" element={<PrivacyPage />} />
           <Route path="/movie/:show_id" element={<ProductDetail />} />
+          <Route path="/userManagement" element={<UserManagementPage />} />
         </Routes>
       </Router>
       <CookieBanner />
