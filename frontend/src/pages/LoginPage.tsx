@@ -71,7 +71,10 @@ function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm text-gray-300 mb-1">
+              <label
+                htmlFor="email"
+                className="block text-sm text-gray-300 mb-1"
+              >
                 Email address
               </label>
               <input
@@ -86,7 +89,10 @@ function LoginPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm text-gray-300 mb-1">
+              <label
+                htmlFor="password"
+                className="block text-sm text-gray-300 mb-1"
+              >
                 Password
               </label>
               <input
@@ -126,20 +132,7 @@ function LoginPage() {
 
           <div className="my-6 border-t border-gray-700"></div>
 
-          <div className="space-y-3">
-            <button
-              type="button"
-              className="w-full flex items-center justify-center bg-purple-800/30 text-white py-3 rounded-md hover:bg-purple-800/50 transition"
-            >
-              <i className="fa-brands fa-google me-2"></i> Sign in with Google
-            </button>
-            <button
-              type="button"
-              className="w-full flex items-center justify-center bg-purple-800/30 text-white py-3 rounded-md hover:bg-purple-800/50 transition"
-            >
-              <i className="fa-brands fa-facebook-f me-2"></i> Sign in with Facebook
-            </button>
-          </div>
+          <div className="space-y-3"></div>
         </div>
       </div>
     </div>
@@ -147,4 +140,3 @@ function LoginPage() {
 }
 
 export default LoginPage;
-
