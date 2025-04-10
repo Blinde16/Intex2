@@ -173,6 +173,9 @@ namespace RootkitAuth.API.Controllers
             return Ok(new { movies = brews, totalNumberMovies = totalNumMovies });
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpGet("users")]
+
 
         [Authorize(Roles = "AuthenticatedCustomer, Admin")]
         [HttpGet("GetCategoryTypes")]

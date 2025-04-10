@@ -10,6 +10,7 @@ import AdminPage from "./pages/AdminPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import CookieBanner from "./components/Cookiebanner";
 import ProductDetail from "./pages/ProductDetail";
+import UserManagementPage from "./pages/userManagementPage";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/AdminPage" element={<AdminPage />} />
           <Route path="/PrivacyPage" element={<PrivacyPage />} />
           <Route path="/movie/:show_id" element={<ProductDetail />} />
+          <Route path="/userManagement" element={<UserManagementPage />} />
         </Routes>
       </Router>
       <CookieBanner />
