@@ -78,6 +78,13 @@ const AdminPage = () => {
     setPageNumber(1);
   };
 
+  function getActiveGenres(movie: Movie): string[] {
+    return GENRES.filter(
+      (g) =>
+        movie[g] === 1 || movie[g.toLowerCase() as keyof typeof movie] === 1
+    );
+  }
+
   return (
     <>
       <Header />
@@ -164,7 +171,14 @@ const AdminPage = () => {
                         <td>{p.release_year}</td>
                         <td>{p.rating ?? "—"}</td>
                         <td>{p.duration ?? "—"}</td>
-                        <td>{GENRES.filter((genre) => p[genre]).join(", ")}</td>
+                        <td>
+                          {getActiveGenres(p).map((g) => (
+                            <span key={g} className="badge bg-secondary me-1">
+                              {g.replace(/_/g, " ")}
+                            </span>
+                          ))}
+                        </td>
+
                         <td>
                           <button
                             className="btn btn-primary btn-sm w-100 mb-1"

@@ -1,6 +1,5 @@
 /* Container */
 .container {
-
   margin: 0 auto;
   padding: 2rem;
   color: #fff;
@@ -68,7 +67,9 @@ h1 {
   padding: 0.5rem 0.8rem;
   font-size: 0.85rem;
   border-radius: 6px;
-  transition: background-color 0.3s, transform 0.2s;
+  transition:
+    background-color 0.3s,
+    transform 0.2s;
   width: 100%;
 }
 
@@ -135,4 +136,13 @@ input.form-control:focus {
   margin-top: 1rem;
 }
 
-
+.badge-genre {
+  background-color: #9333ea;
+  color: white;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12px;
+  margin-right: 5px;
+  margin-bottom: 4px;
+  display: inline-block;
+}
