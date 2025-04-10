@@ -1,6 +1,7 @@
 import React, { useState, useEffect, createContext } from "react";
 import { Navigate } from "react-router-dom";
-const UserContext = createContext<User | null>(null);
+export const UserContext = createContext<User | null>(null);
+
 
 interface User {
   email: string;

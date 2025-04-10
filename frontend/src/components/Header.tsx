@@ -1,8 +1,14 @@
 import { Link } from "react-router-dom";
 import "./css/Header.css";
 import Logout from "./Logout";
+import { useContext } from "react";
+import { UserContext } from "./AuthorizeView"; // make sure to export UserContext from AuthorizeView.tsx
 
 function Header() {
+  const user = useContext(UserContext);
+
+  const isAdmin = user?.email === "admin@nichemovies.com"; // Replace with your actual admin email
+
   return (
     <>
       <div className="header-bar">
@@ -12,9 +18,11 @@ function Header() {
           <Link to="/movie">
             <button className="logout-button">Home</button>
           </Link>
-          <Link to="/AdminPage">
-            <button className="logout-button">Admin</button>
-          </Link>
+          {isAdmin && (
+            <Link to="/AdminPage">
+              <button className="logout-button">Admin</button>
+            </Link>
+          )}
           <Logout>
             <Link to="/">
               <button className="logout-button-1"> Logout</button>
@@ -27,3 +35,4 @@ function Header() {
 }
 
 export default Header;
+
