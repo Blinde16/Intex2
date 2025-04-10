@@ -62,7 +62,10 @@ function RegisterPage() {
             {error && <div className="text-red-500 text-sm">{error}</div>}
 
             <div>
-              <label htmlFor="email" className="block text-sm text-gray-300 mb-1">
+              <label
+                htmlFor="email"
+                className="block text-sm text-gray-300 mb-1"
+              >
                 Email address
               </label>
               <input
@@ -75,9 +78,14 @@ function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm text-gray-300 mb-1">
+              <p>Password must be 12 characters and have 1 capital</p>
+              <label
+                htmlFor="password"
+                className="block text-sm text-gray-300 mb-1"
+              >
                 Password
               </label>
+
               <input
                 className="w-full rounded-md bg-white/10 text-white placeholder-gray-400 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent py-3 px-4 transition"
                 type="password"
@@ -88,7 +96,10 @@ function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm text-gray-300 mb-1">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm text-gray-300 mb-1"
+              >
                 Confirm Password
               </label>
               <input
