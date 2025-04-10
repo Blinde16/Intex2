@@ -44,7 +44,7 @@ function AuthorizeView(props: { children: React.ReactNode }) {
       }
     }
 
-    fetchWithRetry(`"${apiUrl}/pingauth`, {
+    fetchWithRetry(`${apiUrl}/pingauth`, {
       method: "GET",
       credentials: "include",
     });
