@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Movie, GENRES } from "../types/Movie";
-import AuthorizeView, { AuthorizedUser } from "./AuthorizeView";
+import AuthorizeView from "./AuthorizeView";
 
 type MovieFormData = Omit<Movie, keyof typeof GENRES> &
   Record<(typeof GENRES)[number], number> & {

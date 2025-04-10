@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Movie, GENRES } from "../types/Movie";
 import { updateMovie } from "../api/movieAPI";
-import AuthorizeView, { AuthorizedUser } from "./AuthorizeView";
+import AuthorizeView from "./AuthorizeView";
 
 export type MovieFormData = Movie & {
   genre?: (typeof GENRES)[number] | "";
