@@ -61,50 +61,67 @@ namespace RootkitAuth.API.Controllers
             return Ok(new { message = "User registered successfully." });
         }
         [Authorize(Roles = "Admin")]
-        [HttpGet("users")]
-        public async Task<IActionResult> GetAllUsers()
+[HttpGet("users")]
+public async Task<IActionResult> GetAllUsers(int page = 1, int pageSize = 10, string? search = null)
+{
+    var identityUsers = _userManager.Users.ToList();
+    var movieUsers = _movieContext.movies_users.ToList();
+
+    var users = new List<AdminUserViewModel>();
+
+    foreach (var identityUser in identityUsers)
+    {
+        var roles = await _userManager.GetRolesAsync(identityUser);
+        var movieUser = movieUsers.FirstOrDefault(mu => mu.email.ToLower() == identityUser.Email.ToLower());
+
+        if (movieUser != null)
         {
-            var identityUsers = _userManager.Users.ToList();
-            var movieUsers = _movieContext.movies_users.ToList();
-
-            var users = new List<AdminUserViewModel>();
-
-            foreach (var identityUser in identityUsers)
+            users.Add(new AdminUserViewModel
             {
-                var roles = await _userManager.GetRolesAsync(identityUser);
-                var movieUser = movieUsers.FirstOrDefault(mu => mu.email.ToLower() == identityUser.Email.ToLower());
-
-                if (movieUser != null)
-                {
-                    users.Add(new AdminUserViewModel
-                    {
-                        Id = identityUser.Id,
-                        Email = identityUser.Email,
-                        Roles = roles,
-
-                        // Extended data
-                        Name = movieUser.name,
-                        Phone = movieUser.phone,
-                        Age = movieUser.age,
-                        Gender = movieUser.gender,
-                        City = movieUser.city,
-                        State = movieUser.state,
-                        Zip = movieUser.zip,
-
-                        Netflix = movieUser.Netflix,
-                        Amazon_Prime = movieUser.Amazon_Prime,
-                        Disney = movieUser.Disney,
-                        Paramount = movieUser.Paramount,
-                        Max = movieUser.Max,
-                        Hulu = movieUser.Hulu,
-                        Apple_TV = movieUser.Apple_TV,
-                        Peacock = movieUser.Peacock
-                    });
-                }
-            }
-
-            return Ok(users);
+                Id = identityUser.Id,
+                Email = identityUser.Email,
+                Roles = roles,
+                Name = movieUser.name,
+                Phone = movieUser.phone,
+                Age = movieUser.age,
+                Gender = movieUser.gender,
+                City = movieUser.city,
+                State = movieUser.state,
+                Zip = movieUser.zip,
+                Netflix = movieUser.Netflix,
+                Amazon_Prime = movieUser.Amazon_Prime,
+                Disney = movieUser.Disney,
+                Paramount = movieUser.Paramount,
+                Max = movieUser.Max,
+                Hulu = movieUser.Hulu,
+                Apple_TV = movieUser.Apple_TV,
+                Peacock = movieUser.Peacock
+            });
         }
+    }
+
+    // Apply search filter (if provided)
+    if (!string.IsNullOrEmpty(search))
+    {
+        search = search.ToLower();
+        users = users.Where(u =>
+            (!string.IsNullOrEmpty(u.Email) && u.Email.ToLower().Contains(search)) ||
+            (!string.IsNullOrEmpty(u.Name) && u.Name.ToLower().Contains(search)) ||
+            (!string.IsNullOrEmpty(u.Phone) && u.Phone.ToLower().Contains(search))
+        ).ToList();
+    }
+
+    var totalCount = users.Count;
+
+    // Apply pagination
+    var pagedUsers = users
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToList();
+
+    return Ok(new { users = pagedUsers, totalCount });
+}
+
         
         [Authorize(Roles = "Admin")]
         [HttpPut("users/update")]

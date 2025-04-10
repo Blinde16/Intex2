@@ -22,11 +22,10 @@ const AdminPage = () => {
   const [selectedYear, setSelectedYear] = useState<number | "">("");
   const navigate = useNavigate();
 
-  // Debounce searchTerm to reduce API spam
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(searchTerm);
-      setPageNumber(1); // reset to page 1 when search changes
+      setPageNumber(1);
     }, 500);
     return () => clearTimeout(timeout);
   }, [searchTerm]);
@@ -66,7 +65,7 @@ const AdminPage = () => {
       await deleteMovie(id);
       getMovies();
     } catch (err) {
-      console.error("Delete failed again", err);
+      console.error("Delete failed", err);
       alert("Delete failed.");
     }
   };
@@ -91,7 +90,6 @@ const AdminPage = () => {
       <AuthorizeView>
         <div className="container-fluid py-4">
           <div className="row">
-            {/* Filter sidebar on the left */}
             <div className="col-auto mb-4">
               <ContainerFilter
                 selectedType={selectedType}
@@ -115,14 +113,27 @@ const AdminPage = () => {
                 />
               </div>
             </div>
-            {/* Main content area */}
+
             <div className="col-md-9">
-              {/* Everything else goes here — search bar, button, tables, etc */}
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h1>Admin Page</h1>
               </div>
 
-              {/* Search Bar */}
+              <div className="d-flex gap-2 mb-3">
+                <button
+                  className="btn btn-success"
+                  onClick={() => navigate("/admin/new")}
+                >
+                  ➕ Add New Movie
+                </button>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => navigate("/admin/users")}
+                >
+                  👥 Manage Users
+                </button>
+              </div>
+
               <div className="mb-3">
                 <input
                   type="text"
@@ -132,13 +143,6 @@ const AdminPage = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-
-              <button
-                className="btn btn-success mb-3"
-                onClick={() => navigate("/admin/new")}
-              >
-                Add New Movie
-              </button>
 
               {error && <div className="alert alert-danger">{error}</div>}
 
@@ -178,11 +182,12 @@ const AdminPage = () => {
                             </span>
                           ))}
                         </td>
-
                         <td>
                           <button
                             className="btn btn-primary btn-sm w-100 mb-1"
-                            onClick={() => navigate(`/admin/edit/${p.show_id}`)}
+                            onClick={() =>
+                              navigate(`/admin/edit/${p.show_id}`)
+                            }
                           >
                             Edit
                           </button>

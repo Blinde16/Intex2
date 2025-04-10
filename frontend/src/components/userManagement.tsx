@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Pagination from "../components/pagination";
+import SearchBar from "../components/SearchBar";
+
+const apiUrl = import.meta.env.VITE_API_URL;
 
 type AdminUser = {
   id: string;
@@ -23,48 +27,63 @@ type AdminUser = {
   peacock: number;
 };
 
-const PAGE_SIZE = 10;
-
 function UserManagement() {
   const [users, setUsers] = useState<AdminUser[]>([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState("");
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [totalUsers, setTotalUsers] = useState<number>(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setPageNumber(1);
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [searchTerm]);
+
   const fetchUsers = async () => {
-    const res = await fetch(
-      `https://localhost:5000/register/users?page=${page}&pageSize=${PAGE_SIZE}`,
-      {
-        credentials: "include",
+    try {
+      const res = await fetch(
+        `${apiUrl}/register/users?page=${pageNumber}&pageSize=${pageSize}&search=${debouncedSearch}`,
+        { credentials: "include" }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to load users.");
       }
-    );
 
-    if (!res.ok) {
-      setError("Failed to load users.");
-      return;
+      const data = await res.json();
+
+      if (Array.isArray(data)) {
+        setUsers(data);
+        setTotalUsers(data.length < pageSize ? (pageNumber - 1) * pageSize + data.length : pageNumber * pageSize + 1);
+      } else if (data.users && typeof data.totalCount === "number") {
+        setUsers(data.users);
+        setTotalUsers(data.totalCount);
+      } else {
+        console.error("Unexpected API response", data);
+        setUsers([]);
+        setTotalUsers(0);
+      }
+
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load users. Please try again later.");
     }
-
-    const data = await res.json();
-    if (data.length < PAGE_SIZE) setHasMore(false);
-
-    setUsers((prev) => [...prev, ...data]);
-    setPage((prev) => prev + 1);
   };
 
   const handleDelete = async (id: string) => {
     if (!window.confirm("Delete this user?")) return;
-
-    const res = await fetch(
-      `https://localhost:5000/api/admin/users/delete/${id}`,
-      {
-        method: "DELETE",
-        credentials: "include",
-      }
-    );
-
+    const res = await fetch(`${apiUrl}/api/admin/users/delete/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
     if (res.ok) {
-      setUsers((prev) => prev.filter((u) => u.id !== id));
+      fetchUsers();
     } else {
       alert("Failed to delete user.");
     }
@@ -72,7 +91,9 @@ function UserManagement() {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [pageSize, pageNumber, debouncedSearch]);
+
+  const totalPages = Math.ceil(totalUsers / pageSize);
 
   return (
     <div className="container mt-4">
@@ -86,31 +107,29 @@ function UserManagement() {
         </button>
       </div>
 
-      {error && <p className="text-danger">{error}</p>}
+      <div className="mb-3">
+        <SearchBar setSearchTerm={setSearchTerm} />
+      </div>
 
-      <InfiniteScroll
-        dataLength={users.length}
-        next={fetchUsers}
-        hasMore={hasMore}
-        loader={<p>Loading more users...</p>}
-        endMessage={<p className="text-muted">No more users to load.</p>}
-      >
-        <div className="table-responsive">
-          <table className="table table-striped table-bordered">
-            <thead className="table-dark">
-              <tr>
-                <th>Email</th>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Location</th>
-                <th>Role</th>
-                <th>2FA</th>
-                <th>Subscriptions</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((u) => (
+      {error && <p className="alert alert-danger">{error}</p>}
+
+      <div className="table-responsive">
+        <table className="table table-striped table-bordered">
+          <thead className="table-dark">
+            <tr>
+              <th>Email</th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Location</th>
+              <th>Role</th>
+              <th>2FA</th>
+              <th>Subscriptions</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.length > 0 ? (
+              users.map((u) => (
                 <tr key={u.id}>
                   <td>{u.email}</td>
                   <td>{u.name}</td>
@@ -145,11 +164,28 @@ function UserManagement() {
                     </button>
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </InfiniteScroll>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={8} className="text-center">
+                  No users found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <Pagination
+        currentPage={pageNumber}
+        totalPages={totalPages}
+        pageSize={pageSize}
+        onPageChange={setPageNumber}
+        onPageSizeChange={(newSize) => {
+          setPageSize(newSize);
+          setPageNumber(1);
+        }}
+      />
     </div>
   );
 }
