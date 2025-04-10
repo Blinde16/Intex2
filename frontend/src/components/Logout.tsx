@@ -2,10 +2,10 @@ import { useNavigate } from "react-router-dom";
 
 function Logout(props: { children: React.ReactNode }) {
   const navigate = useNavigate();
-
+  const apiUrl = import.meta.env.VITE_API_URL;
   const handleLogout = async () => {
     try {
-      const response = await fetch("https://localhost:5000/logout", {
+      const response = await fetch(`${apiUrl}/logout`, {
         method: "POST",
         credentials: "include",
         headers: {

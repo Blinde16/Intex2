@@ -26,6 +26,7 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [posterRemoved, setPosterRemoved] = useState(false);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -46,7 +47,7 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
   };
 
   const handlePosterDelete = async () => {
-    const res = await fetch("https://localhost:5000/Movie/DeletePoster", {
+    const res = await fetch(`"${apiUrl}/Movie/DeletePoster`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ filename: formData.show_id }),
@@ -81,7 +82,7 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
       uploadData.append("filename", formData.title); // now using show_id as filename
 
       const posterRes = await fetch(
-        "https://localhost:5000/Movie/UploadPoster",
+        `${apiUrl}/Movie/UploadPoster`,
         {
           method: "POST",
           body: uploadData,

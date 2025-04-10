@@ -17,6 +17,7 @@ function MovieList({
   const [movieList, setMovieList] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
+  const apiUrl = import.meta.env.VITE_API_URL;
   const isInitialLoad = useRef(true);
 
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ function MovieList({
       params.append("afterId", movieList[movieList.length - 1].show_id);
     }
 
-    const url = `https://localhost:5000/Movie/GetMovies?${params.toString()}`;
+    const url = `${apiUrl}/Movie/GetMovies?${params.toString()}`;
 
     try {
       const response = await fetch(url, { credentials: "include" });

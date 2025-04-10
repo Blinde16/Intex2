@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./css/Identity.css";
-import Footer from "../components/Footer";
 
 function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -24,7 +24,7 @@ function RegisterPage() {
     }
 
     try {
-      const response = await fetch("https://localhost:5000/register", {
+      const response = await fetch(`${apiUrl}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -119,8 +119,6 @@ function RegisterPage() {
           </p>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }

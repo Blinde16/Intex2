@@ -21,6 +21,8 @@ function ContainerFilter({
   const [isTypeOpen, setIsTypeOpen] = useState(true);
   const [isGenreOpen, setIsGenreOpen] = useState(true);
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const genreBinMap: { [bin: string]: string[] } = {
     Action: ["Action", "TV_Action"],
     Adventure: ["Adventure"],
@@ -67,7 +69,7 @@ function ContainerFilter({
     const fetchTypes = async () => {
       try {
         const response = await fetch(
-          "https://localhost:5000/Movie/GetCategoryTypes",
+          `${apiUrl}/Movie/GetCategoryTypes`,
           { credentials: "include" }
         );
         const data = (await response.json()) as string[];
@@ -80,7 +82,7 @@ function ContainerFilter({
     const fetchGenres = async () => {
       try {
         const response = await fetch(
-          "https://localhost:5000/Movie/GetGenreTypes",
+          `${apiUrl}/Movie/GetGenreTypes`,
           { credentials: "include" }
         );
         const data = (await response.json()) as string[];

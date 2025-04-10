@@ -2,14 +2,13 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./css/Identity.css";
 import "@fortawesome/fontawesome-free/css/all.css";
-import Footer from "../components/Footer";
 
 function LoginPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [rememberme, setRememberme] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-
+  const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const location = useLocation();
   location.state?.mode || "login";
@@ -35,8 +34,8 @@ function LoginPage() {
     }
 
     const loginUrl = rememberme
-      ? "https://localhost:5000/login?useCookies=true"
-      : "https://localhost:5000/login?useSessionCookies=true";
+      ? `${apiUrl}/login?useCookies=true`
+      : `${apiUrl}/login?useSessionCookies=true`;
 
     try {
       const response = await fetch(loginUrl, {
@@ -143,8 +142,6 @@ function LoginPage() {
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }

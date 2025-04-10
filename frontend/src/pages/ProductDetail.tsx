@@ -37,7 +37,7 @@ const ProductDetail: React.FC = () => {
 
     // Fetch movie details
     axios
-      .get(`https://localhost:5000/Movie/GetMovieById/${show_id}`, {
+      .get(`${apiUrl}/Movie/GetMovieById/${show_id}`, {
         withCredentials: true,
       })
       .then((response) => setMovie(response.data))

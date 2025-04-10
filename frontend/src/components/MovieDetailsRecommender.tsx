@@ -9,7 +9,7 @@ interface Props {
 
 const MovieRecommendation: React.FC<Props> = ({ show_id }) => {
   const [movies, setMovies] = useState<Movie[]>([]);
-
+  const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const getPosterUrl = (title: string) => {
     const cleanTitle = title
@@ -26,7 +26,7 @@ const MovieRecommendation: React.FC<Props> = ({ show_id }) => {
     const fetchRecommendations = async () => {
       try {
         const response = await fetch(
-          `https://localhost:5000/Movie/recommendations/${show_id}`,
+          `${apiUrl}/Movie/recommendations/${show_id}`,
           {
             method: "GET",
             headers: {

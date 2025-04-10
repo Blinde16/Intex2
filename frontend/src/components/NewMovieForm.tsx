@@ -39,6 +39,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -73,7 +74,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
       .replace(/\s+/g, " ")
       .trim();
 
-    const res = await fetch("https://localhost:5000/Movie/AddMovie", {
+    const res = await fetch(`${apiUrl}/Movie/AddMovie`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -101,7 +102,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
       uploadData.append("filename", cleanTitleForFilename); // Send cleaned title as filename base
 
       const posterRes = await fetch(
-        "https://localhost:5000/Movie/UploadPoster",
+        `${apiUrl}/Movie/UploadPoster`,
         {
           method: "POST",
           body: uploadData,

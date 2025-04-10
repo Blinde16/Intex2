@@ -3,6 +3,7 @@ interface FetchMoviesResponse {
   movies: Movie[];
   totalNumberMovies: number;
 }
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export const fetchMovies = async (
   pageSize: number,
@@ -15,7 +16,7 @@ export const fetchMovies = async (
       .map((cat) => `types=${encodeURIComponent(cat)}`)
       .join("&");
 
-    const url = `https://localhost:5000/Movie/GetAdminMovies?pageSize=${pageSize}&pageNum=${pageNum}${
+    const url = `${apiUrl}/Movie/GetAdminMovies?pageSize=${pageSize}&pageNum=${pageNum}${
       selectedCategories.length ? `&${categoryParams}` : ""
     }${searchTerm ? `&searchTerm=${encodeURIComponent(searchTerm)}` : ""}`;
 
@@ -36,7 +37,7 @@ export const fetchMovies = async (
 
 export const addMovie = async (newMovie: Movie): Promise<Movie> => {
   try {
-    const response = await fetch(`https://localhost:5000/Movie/AddMovie`, {
+    const response = await fetch(`${apiUrl}/Movie/AddMovie`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -62,7 +63,7 @@ export const updateMovie = async (
 ): Promise<Movie> => {
   try {
     const response = await fetch(
-      `https://localhost:5000/Movie/UpdateMovie/${show_id}`,
+      `${apiUrl}/Movie/UpdateMovie/${show_id}`,
       {
         method: "PUT",
         headers: {
@@ -87,7 +88,7 @@ export const updateMovie = async (
 export const deleteMovie = async (show_id: string): Promise<void> => {
   try {
     const response = await fetch(
-      `https://localhost:5000/Movie/DeleteMovie/${show_id}`,
+      `${apiUrl}/Movie/DeleteMovie/${show_id}`,
       {
         method: "DELETE",
         credentials: "include", // ✅ send cookie

@@ -20,10 +20,11 @@ const MovieDetails: React.FC = () => {
   const { show_id } = useParams<{ show_id: string }>();
   const [movie, setMovie] = useState<Movie | null>(null);
   const [userRating, setUserRating] = useState<number>(0);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     axios
-      .get(`https://localhost:5000/Movie/GetMovieById/${show_id}`, {
+      .get(`${apiUrl}/Movie/GetMovieById/${show_id}`, {
         withCredentials: true,
       })
       .then((response) => {
