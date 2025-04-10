@@ -7,39 +7,40 @@ function MovieList({
   selectedContainers,
   selectedType,
   selectedGenres,
-  searchTerm, // ✅ Add this prop
+  searchTerm,
 }: {
   selectedContainers: string[];
   selectedType: string | null;
   selectedGenres: string[];
-  searchTerm: string; // ✅ Add this type
+  searchTerm: string;
 }) {
   const [movieList, setMovieList] = useState<Movie[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
+  const [resetCounter, setResetCounter] = useState<number>(0);
   const apiUrl = import.meta.env.VITE_API_URL;
-  const isInitialLoad = useRef(true);
 
   const navigate = useNavigate();
+
+  const pageSize = 25; // ✅ Custom page size
 
   const getPosterUrl = (title: string) => {
     if (!title || title.trim() === "") {
       return "https://moviepostersintex2.blob.core.windows.net/movieposter/placeholder.jpg";
     }
-  
-    // Define character groups
-    const removals = /[()'".,?!:\#"]/g; // symbols to completely remove
-  
+
+    const removals = /[()'".,?!:\#"]/g;
+
     let cleanTitle = title
-      .replace(/\s*([&/])\s*/g, "␣␣") // Step 1: remove spaces around separators, add placeholder for double space
-      .replace(removals, "")             // Step 2: remove decorative characters
-      .replace(/\s+/g, " ")              // Step 3: collapse multiple spaces to single (except placeholders)
-      .replace(/␣␣/g, "  ")              // Step 4: replace placeholder with real double space
-      .trim();                           // Step 5: trim edges
-  
+      .replace(/\s*([&/])\s*/g, "␣␣")
+      .replace(removals, "")
+      .replace(/\s+/g, " ")
+      .replace(/␣␣/g, "  ")
+      .trim();
+
     const encodedTitle = encodeURIComponent(cleanTitle);
     const folderName = encodeURIComponent("Movie Posters");
-  
+
     return `https://moviepostersintex2.blob.core.windows.net/movieposter/${folderName}/${encodedTitle}.jpg`;
   };
 
@@ -64,12 +65,15 @@ function MovieList({
     }
 
     if (searchTerm.trim()) {
-      params.append("title", searchTerm.trim()); // ✅ Add search term to query params
+      params.append("title", searchTerm.trim());
     }
 
     if (movieList.length > 0) {
       params.append("afterId", movieList[movieList.length - 1].show_id);
     }
+
+    // ✅ Add dynamic pageSize param
+    params.append("pageSize", pageSize.toString());
 
     const url = `${apiUrl}/Movie/GetMovies?${params.toString()}`;
 
@@ -80,17 +84,17 @@ function MovieList({
 
       const data = await response.json();
 
-      if (data.brews.length === 0) {
+      if (data.brews.length < pageSize) {
         setHasMore(false);
-      } else {
-        setMovieList((prevMovies) => {
-          const allMovies = [...prevMovies, ...data.brews];
-          const uniqueMovies = Array.from(
-            new Map(allMovies.map((m) => [m.show_id, m])).values()
-          );
-          return uniqueMovies;
-        });
       }
+
+      setMovieList((prevMovies) => {
+        const allMovies = [...prevMovies, ...data.brews];
+        const uniqueMovies = Array.from(
+          new Map(allMovies.map((m) => [m.show_id, m])).values()
+        );
+        return uniqueMovies;
+      });
     } catch (error) {
       console.error("Error fetching movies:", error);
     } finally {
@@ -101,10 +105,12 @@ function MovieList({
   useEffect(() => {
     setMovieList([]);
     setHasMore(true);
-    isInitialLoad.current = true;
+    setResetCounter((prev) => prev + 1);
+  }, [selectedContainers, selectedType, selectedGenres, searchTerm]);
+
+  useEffect(() => {
     fetchMovies();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedContainers, selectedType, selectedGenres, searchTerm]); // ✅ Add searchTerm dependency
+  }, [resetCounter]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -116,21 +122,9 @@ function MovieList({
       }
     };
 
-    if (isInitialLoad.current) {
-      isInitialLoad.current = false;
-      return;
-    }
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [
-    movieList,
-    hasMore,
-    selectedContainers,
-    selectedType,
-    selectedGenres,
-    searchTerm,
-  ]);
+  }, [movieList, hasMore]);
 
   return (
     <div>
