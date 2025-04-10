@@ -5,16 +5,18 @@
   padding: 20px 0;
 }
 
-
-
 .movie-card {
-  background-color: #1E1822;
+  background-color: #1e1822;
   border-radius: 10px;
   overflow: hidden;
   text-align: center;
   cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
   border: 1px solid #333;
+  max-width: 200px; /* Replace with your desired max width */
+  max-height: 600px; /* Replace with your desired max height */
 }
 
 .movie-card:hover {
@@ -53,13 +55,15 @@
 }
 
 .pagination-container button {
-  background-color: #1E1822;
+  background-color: #1e1822;
   color: white;
   border: 1px solid #444;
   padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
+  transition:
+    background-color 0.3s,
+    transform 0.2s;
 }
 
 .pagination-container button:hover {
@@ -73,7 +77,7 @@
 }
 
 .pagination-container select {
-  background-color: #1E1822;
+  background-color: #1e1822;
   color: white;
   border: 1px solid #444;
   padding: 4px 8px;

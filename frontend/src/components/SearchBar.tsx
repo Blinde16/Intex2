@@ -10,7 +10,8 @@ function SearchBar({ setSearchTerm }: SearchBarProps) {
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
-      setSearchTerm(input.trim());
+      // Convert the search term to lowercase
+      setSearchTerm(input.trim().toLowerCase());
     }, 300);
 
     return () => clearTimeout(delayDebounce);
