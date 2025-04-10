@@ -210,6 +210,8 @@ namespace RootkitAuth.API.Controllers
 
             return Ok(newMovie);
         }
+
+        
         [Authorize(Roles = "Admin")]
         [HttpPut("UpdateMovie/{showId}")]
         public IActionResult UpdateMovie(string showId, [FromBody] Movie updatedMovie)

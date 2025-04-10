@@ -1,37 +1,77 @@
-import { useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Movie, GENRES } from "../types/Movie";
-import { updateMovie } from "../api/movieAPI";
+import { updateMovie, fetchMovieById } from "../api/movieAPI";
 import AuthorizeView from "./AuthorizeView";
+import "../pages/css/MovieDetail.css";
 
 export type MovieFormData = Movie & {
   genre?: (typeof GENRES)[number] | "";
 };
 
 interface EditMovieFormProps {
-  movie: Movie;
+  movieId: string;
   onSuccess: () => void;
   onCancel: () => void;
 }
 
-const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
-  const [formData, setFormData] = useState<MovieFormData>(() => {
-    const initialGenre = GENRES.find((g) => movie[g] === 1);
-    return {
-      ...movie,
-      genre: initialGenre ?? "",
-    };
-  });
-
+const EditMovieForm = ({
+  movieId,
+  onSuccess,
+  onCancel,
+}: EditMovieFormProps) => {
+  const [formData, setFormData] = useState<MovieFormData | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const imageInputRef = useRef<HTMLInputElement>(null);
   const [posterRemoved, setPosterRemoved] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const apiUrl = import.meta.env.VITE_API_URL;
+
+  useEffect(() => {
+    const loadMovie = async () => {
+      console.log("🎬 Fetching movie with ID:", movieId);
+      try {
+        const movie = await fetchMovieById(movieId);
+        console.log("📦 Full movie object from backend:", movie);
+
+        // Normalize genre flags from lowercase or PascalCase
+        const genreFlagged = GENRES.filter(
+          (g) =>
+            movie[g] === 1 || movie[g.toLowerCase() as keyof typeof movie] === 1
+        );
+        console.log("🎭 Matched genres with flag = 1:", genreFlagged);
+
+        const initialGenre = genreFlagged[0] ?? "";
+        console.log("🎯 Selected initial genre for dropdown:", initialGenre);
+
+        // Normalize all GENRES to ensure they're in PascalCase format
+        const normalizedMovie = GENRES.reduce(
+          (acc, g) => {
+            const value =
+              movie[g] ?? movie[g.toLowerCase() as keyof typeof movie] ?? 0;
+            return { ...acc, [g]: value };
+          },
+          { ...movie }
+        );
+
+        setFormData({
+          ...normalizedMovie,
+          genre: initialGenre,
+        });
+      } catch (err) {
+        console.error("❌ Error loading movie:", err);
+      }
+    };
+
+    loadMovie();
+  }, [movieId]);
+
+  if (!formData) return <p>Loading movie...</p>;
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => {
+      if (!prev) return null;
       if (name === "release_year") {
         return { ...prev, [name]: parseInt(value) || 0 };
       }
@@ -46,10 +86,10 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
   };
 
   const handlePosterDelete = async () => {
-    const res = await fetch(`"${apiUrl}/Movie/DeletePoster`, {
+    const res = await fetch(`${apiUrl}/Movie/DeletePoster`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ filename: formData.show_id }),
+      body: JSON.stringify({ filename: formData!.show_id }),
       credentials: "include",
     });
 
@@ -64,30 +104,24 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { genre, ...movieData } = formData;
-
+    const { genre, ...movieData } = formData!;
     const finalPayload: Movie = {
       ...movieData,
-      release_year: Number(formData.release_year),
+      release_year: Number(formData!.release_year),
     };
 
-    // ✅ Update movie
-    await updateMovie(formData.show_id, finalPayload);
+    await updateMovie(formData!.show_id, finalPayload);
 
-    // ✅ Upload poster image if selected
     if (imageFile) {
       const uploadData = new FormData();
       uploadData.append("image", imageFile);
-      uploadData.append("filename", formData.title); // now using show_id as filename
+      uploadData.append("filename", formData!.title);
 
-      const posterRes = await fetch(
-        `${apiUrl}/Movie/UploadPoster`,
-        {
-          method: "POST",
-          body: uploadData,
-          credentials: "include",
-        }
-      );
+      const posterRes = await fetch(`${apiUrl}/Movie/UploadPoster`, {
+        method: "POST",
+        body: uploadData,
+        credentials: "include",
+      });
 
       if (!posterRes.ok) {
         alert("Movie updated, but poster failed to upload");
@@ -110,8 +144,6 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
 
   return (
     <AuthorizeView>
- 
-
       <form
         onSubmit={handleSubmit}
         className="bg-white text-black p-4 rounded shadow-lg max-w-3xl mx-auto"
@@ -193,7 +225,6 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
           />
         </div>
 
-        {/* Show current poster */}
         {!posterRemoved && (
           <div className="mb-4 mt-4">
             <h4 className="mt-6 font-semibold">🎞️ Current Poster</h4>
@@ -215,7 +246,6 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
           </div>
         )}
 
-        {/* Show new poster preview */}
         {imageFile && (
           <div className="mb-4">
             <h4 className="mb-2 font-semibold">📂 New Image Preview</h4>

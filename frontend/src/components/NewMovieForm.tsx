@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { Movie, GENRES } from "../types/Movie";
 import AuthorizeView from "./AuthorizeView";
+import "../pages/css/MovieDetail.css";
 
 type MovieFormData = Omit<Movie, keyof typeof GENRES> &
   Record<(typeof GENRES)[number], number> & {
@@ -100,14 +101,11 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
       uploadData.append("image", imageFile);
       uploadData.append("filename", cleanTitleForFilename); // Send cleaned title as filename base
 
-      const posterRes = await fetch(
-        `${apiUrl}/Movie/UploadPoster`,
-        {
-          method: "POST",
-          body: uploadData,
-          credentials: "include",
-        }
-      );
+      const posterRes = await fetch(`${apiUrl}/Movie/UploadPoster`, {
+        method: "POST",
+        body: uploadData,
+        credentials: "include",
+      });
 
       if (!posterRes.ok) {
         alert("Movie details added, but poster failed to upload");

@@ -10,6 +10,8 @@ import AdminPage from "./pages/AdminPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import CookieBanner from "./components/Cookiebanner";
 import ProductDetail from "./pages/ProductDetail";
+import NewMoviePage from "./pages/NewMoviePage";
+import EditMoviePage from "./pages/EditMoviePage";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/homepage" element={<Homepage />} />
           <Route path="/AdminPage" element={<AdminPage />} />
+          <Route path="/admin/new" element={<NewMoviePage />} />
+          <Route path="/admin/edit/:movieId" element={<EditMoviePage />} />
           <Route path="/PrivacyPage" element={<PrivacyPage />} />
           <Route path="/movie/:show_id" element={<ProductDetail />} />
         </Routes>
