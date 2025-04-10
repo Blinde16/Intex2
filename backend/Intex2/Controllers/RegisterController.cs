@@ -40,7 +40,6 @@ namespace RootkitAuth.API.Controllers
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            // Ensure role exists
             if (!await _roleManager.RoleExistsAsync("AuthenticatedCustomer"))
             {
                 await _roleManager.CreateAsync(new IdentityRole("AuthenticatedCustomer"));
@@ -49,6 +48,62 @@ namespace RootkitAuth.API.Controllers
             await _userManager.AddToRoleAsync(user, "AuthenticatedCustomer");
 
             return Ok(new { message = "User registered successfully." });
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("users/create")]
+        public async Task<IActionResult> CreateUserByAdmin([FromBody] AdminCreateUserDto model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var user = new IdentityUser
+            {
+                UserName = model.Email,
+                Email = model.Email
+            };
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            if (!await _roleManager.RoleExistsAsync(model.Role))
+            {
+                await _roleManager.CreateAsync(new IdentityRole(model.Role));
+            }
+
+            await _userManager.AddToRoleAsync(user, model.Role);
+
+            var nextUserId = _movieContext.movies_users.Any()
+                ? _movieContext.movies_users.Max(u => u.user_id) + 1
+                : 1;
+
+            var profile = new User
+            {
+                user_id = nextUserId,
+                name = model.Name,
+                phone = model.Phone,
+                email = model.Email,
+                age = model.Age,
+                gender = model.Gender,
+                city = model.City,
+                state = model.State,
+                zip = model.Zip,
+                Netflix = model.Netflix,
+                Amazon_Prime = model.Amazon_Prime,
+                Disney = model.Disney,
+                Paramount = model.Paramount,
+                Max = model.Max,
+                Hulu = model.Hulu,
+                Apple_TV = model.Apple_TV,
+                Peacock = model.Peacock
+            };
+
+            _movieContext.movies_users.Add(profile);
+            await _movieContext.SaveChangesAsync();
+
+            return Ok(new { message = "User created successfully in both tables." });
         }
 
         [Authorize(Roles = "Admin")]
@@ -110,7 +165,6 @@ namespace RootkitAuth.API.Controllers
             return Ok(new { users = pagedUsers, totalCount });
         }
 
-        // ✅ NEW: Get single user by ID
         [Authorize(Roles = "Admin")]
         [HttpGet("users/{id}")]
         public async Task<IActionResult> GetUserById(string id)
