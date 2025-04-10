@@ -11,6 +11,7 @@ const MovieRecommendation: React.FC<Props> = ({ show_id }) => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
+  const blobUrl = import.meta.env.BLOB_API_URL;
   const getPosterUrl = (title: string) => {
     const cleanTitle = title
       .replace(/[()'":?!,&#.]/g, " ")
@@ -19,7 +20,7 @@ const MovieRecommendation: React.FC<Props> = ({ show_id }) => {
 
     const encodedTitle = encodeURIComponent(cleanTitle);
     const folderName = encodeURIComponent("Movie Posters");
-    return `https://moviepostersintex2.blob.core.windows.net/movieposter/${folderName}/${encodedTitle}.jpg`;
+    return `${blobUrl}/${folderName}/${encodedTitle}.jpg`;
   };
 
   useEffect(() => {

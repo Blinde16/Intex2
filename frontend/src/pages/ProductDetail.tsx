@@ -19,10 +19,10 @@ interface Movie {
 }
 
 const apiUrl = import.meta.env.VITE_API_URL;
-
+const blobUrl = import.meta.env.BLOB_API_URL;
 const getPosterUrl = (title: string) => {
   if (!title || title.trim() === "") {
-    return "https://moviepostersintex2.blob.core.windows.net/movieposter/placeholder.jpg";
+    return `${blobUrl}/placeholder.jpg`;
   }
 
   const removals = /[()'".,?!:#"\-]/g;
@@ -39,7 +39,7 @@ const getPosterUrl = (title: string) => {
   const encodedTitle = encodeURIComponent(cleanTitle);
   const folderName = encodeURIComponent("Movie Posters");
 
-  return `https://moviepostersintex2.blob.core.windows.net/movieposter/${folderName}/${encodedTitle}.jpg`;
+  return `${blobUrl}/${folderName}/${encodedTitle}.jpg`;
 };
 
 const ProductDetail: React.FC = () => {
@@ -61,12 +61,16 @@ const ProductDetail: React.FC = () => {
       .catch((error) => console.error("Error fetching movie:", error));
 
     axios
-      .get(`${apiUrl}/Movie/GetAverageRating/${show_id}`, { withCredentials: true })
+      .get(`${apiUrl}/Movie/GetAverageRating/${show_id}`, {
+        withCredentials: true,
+      })
       .then((response) => setAverageRating(Number(response.data.averageRating)))
       .catch((error) => console.error("Error fetching average rating:", error));
 
     axios
-      .get(`${apiUrl}/Movie/GetUserRating/${show_id}`, { withCredentials: true })
+      .get(`${apiUrl}/Movie/GetUserRating/${show_id}`, {
+        withCredentials: true,
+      })
       .then((response) => {
         if (response.data && response.data.userRating !== null) {
           setUserRating(response.data.userRating);
@@ -89,9 +93,15 @@ const ProductDetail: React.FC = () => {
       .then((response) => {
         console.log("Rating submitted successfully:", response.data);
         axios
-          .get(`${apiUrl}/Movie/GetAverageRating/${show_id}`, { withCredentials: true })
-          .then((response) => setAverageRating(Number(response.data.averageRating)))
-          .catch((error) => console.error("Error fetching average rating:", error));
+          .get(`${apiUrl}/Movie/GetAverageRating/${show_id}`, {
+            withCredentials: true,
+          })
+          .then((response) =>
+            setAverageRating(Number(response.data.averageRating))
+          )
+          .catch((error) =>
+            console.error("Error fetching average rating:", error)
+          );
       })
       .catch((error) => console.error("Error submitting rating:", error));
   };

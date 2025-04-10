@@ -24,6 +24,7 @@ const EditMovieForm = ({
   const [posterRemoved, setPosterRemoved] = useState(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const apiUrl = import.meta.env.VITE_API_URL;
+  const blobUrl = import.meta.env.BLOB_API_URL;
 
   useEffect(() => {
     const loadMovie = async () => {
@@ -139,7 +140,7 @@ const EditMovieForm = ({
 
     const encodedTitle = encodeURIComponent(cleanTitle);
     const folderName = encodeURIComponent("Movie Posters");
-    return `https://moviepostersintex2.blob.core.windows.net/movieposter/${folderName}/${encodedTitle}.jpg`;
+    return `${blobUrl}/${folderName}/${encodedTitle}.jpg`;
   };
 
   return (
