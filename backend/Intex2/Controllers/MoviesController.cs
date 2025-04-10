@@ -115,17 +115,20 @@ namespace RootkitAuth.API.Controllers
             return Ok(new { brews = movies });
         }
 
-
         [Authorize(Roles = "Admin")]
         [HttpGet("GetAdminMovies")]
-        public IActionResult GetMovies(int pageSize = 10, int pageNum = 1, [FromQuery] List<string>? types = null, string? searchTerm = null)
+        public IActionResult GetMovies(
+            int pageSize = 10,
+            int pageNum = 1,
+            [FromQuery] List<string>? types = null,
+            [FromQuery] string? searchTerm = null,
+            [FromQuery] int? releaseYear = null,
+            [FromQuery] List<string>? genres = null)
         {
             var query = _movieContext.movies_titles.AsQueryable();
 
             if (types != null && types.Any())
-            {
-                query = query.Where(c => types.Contains(c.type ?? string.Empty));
-            }
+                query = query.Where(c => types.Contains(c.type ?? ""));
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
@@ -136,18 +139,40 @@ namespace RootkitAuth.API.Controllers
                     (c.cast ?? "").ToLower().Contains(lowered));
             }
 
+            if (releaseYear.HasValue)
+                query = query.Where(c => c.release_year == releaseYear.Value);
+
+            if (genres != null && genres.Any())
+            {
+                var param = System.Linq.Expressions.Expression.Parameter(typeof(Movie), "m");
+                System.Linq.Expressions.Expression? combined = null;
+
+                foreach (var genre in genres)
+                {
+                    var safeGenre = genre.Replace(" ", "_").Replace("-", "_").Replace("'", "");
+                    var prop = System.Linq.Expressions.Expression.Property(param, safeGenre);
+                    var val = System.Linq.Expressions.Expression.Constant((byte?)1, typeof(byte?));
+                    var equals = System.Linq.Expressions.Expression.Equal(prop, val);
+
+                    combined = combined == null ? equals : System.Linq.Expressions.Expression.OrElse(combined, equals);
+                }
+
+                if (combined != null)
+                {
+                    var lambda = System.Linq.Expressions.Expression.Lambda<Func<Movie, bool>>(combined, param);
+                    query = query.Where(lambda);
+                }
+            }
+
             var totalNumMovies = query.Count();
             var brews = query
                 .Skip((pageNum - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
 
-            return Ok(new
-            {
-                movies = brews,
-                totalNumberMovies = totalNumMovies
-            });
+            return Ok(new { movies = brews, totalNumberMovies = totalNumMovies });
         }
+
 
         [Authorize(Roles = "AuthenticatedCustomer, Admin")]
         [HttpGet("GetCategoryTypes")]

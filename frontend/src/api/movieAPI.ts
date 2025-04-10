@@ -9,12 +9,30 @@ export const fetchMovies = async (
   pageSize: number,
   pageNum: number,
   selectedCategories: string[],
-  searchTerm: string
+  searchTerm: string,
+  releaseYear?: number,
+  selectedGenres: string[] = []
 ): Promise<FetchMoviesResponse> => {
   try {
-    const categoryParams = selectedCategories
-      .map((cat) => `types=${encodeURIComponent(cat)}`)
-      .join("&");
+    const params = new URLSearchParams();
+    params.append("pageSize", pageSize.toString());
+    params.append("pageNum", pageNum.toString());
+
+    selectedCategories.forEach((cat) => {
+      params.append("types", cat);
+    });
+
+    if (searchTerm) {
+      params.append("searchTerm", searchTerm);
+    }
+
+    if (releaseYear) {
+      params.append("releaseYear", releaseYear.toString());
+    }
+
+    selectedGenres.forEach((genre) => {
+      params.append("genres", genre);
+    });
 
     const url = `${apiUrl}/Movie/GetAdminMovies?pageSize=${pageSize}&pageNum=${pageNum}${
       selectedCategories.length ? `&${categoryParams}` : ""
