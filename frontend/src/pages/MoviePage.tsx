@@ -1,13 +1,14 @@
-import AuthorizeView from '../components/AuthorizeView';
-import ContainerFilter from '../components/ContainerFilter';
-import Header from '../components/Header';
-import MovieList from '../components/MovieList';
-import SearchBar from '../components/SearchBar';
+// MoviePage.jsx
+import AuthorizeView from "../components/AuthorizeView";
+import ContainerFilter from "../components/ContainerFilter";
+import Header from "../components/Header";
+import MovieList from "../components/MovieList";
+import SearchBar from "../components/SearchBar";
 import { useState } from "react";
-import './css/MoviePage.css';
-import Adventure from '../components/HomeRecommender';
-import StickyFooter from '../components/StickyFooter';
-import HeroBanner from '../components/HeroBanner';
+import "./css/MoviePage.css";
+import Adventure from "../components/HomeRecommender";
+import StickyFooter from "../components/StickyFooter";
+import HeroBanner from "../components/HeroBanner";
 
 function MoviePage() {
   const [selectedContainers, setSelectedContainers] = useState<string[]>([]);
