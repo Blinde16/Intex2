@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import "./css/SearchBar.css"; // ✅ Create a new CSS for search bar
 
+//this is a search bar that is used on both the movie page and the admin page to lookup movies and users. 
+
 interface SearchBarProps {
   setSearchTerm: (term: string) => void;
 }

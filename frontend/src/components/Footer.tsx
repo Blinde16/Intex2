@@ -1,5 +1,8 @@
 import { Link } from "react-router-dom";
 
+
+//this is the Footer that has a link to our privacy policy
+
 const Footer = () => {
   const year = new Date().getFullYear();
 

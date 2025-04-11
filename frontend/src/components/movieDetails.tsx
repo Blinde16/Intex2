@@ -3,6 +3,9 @@ import { useParams } from "react-router-dom";
 import "./css/MovieDetails.css";
 import axios from "axios";
 
+//This page pulls up the movie details with a picture and all the information. the user can also click their rating and
+//that will be stored and displayed next time they visit.
+
 interface Movie {
   show_id: string;
   title: string;

@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import "./css/ContainerFilter.css";
 
+//this is the filter for the movie cards. It creates a list of general genres and also a toggle for type (tv show or movie)
+//it will then filter down the movie list based on user inputs.
+
 function ContainerFilter({
   selectedType,
   setSelectedType,

@@ -3,6 +3,8 @@ import { Movie, GENRES } from "../types/Movie";
 import AuthorizeView from "./AuthorizeView";
 import "../pages/css/MovieForm.css";
 
+//this is a form to add a new movie that is only accessable by admins.
+
 type MovieFormData = Omit<Movie, keyof typeof GENRES> &
   Record<(typeof GENRES)[number], number> & {
     genre?: string;

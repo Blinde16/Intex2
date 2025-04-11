@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Movie } from "../types/Movie";
 import { useNavigate } from "react-router-dom";
 
+//This is a recommender that takes the JSON passed and gives 5 recommendations that are similar to the movie
+//that is displayed on the movie details page.
+
 interface Props {
   show_id: string;
 }

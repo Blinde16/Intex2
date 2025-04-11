@@ -3,6 +3,9 @@ import { Movie } from "../types/Movie";
 import "./css/Recommender.css";
 import { useNavigate } from "react-router-dom";
 
+//this is a recommender for the home screen, it takes a JSON that is passed from our recommender and displays recommendations
+//for the logged in user by genre
+
 const genreFields = [
   "action",
   "adventure",

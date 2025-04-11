@@ -4,6 +4,10 @@ import { updateMovie, fetchMovieById } from "../api/movieAPI";
 import AuthorizeView from "./AuthorizeView";
 import "../pages/css/MovieForm.css";
 
+//this is a form to edit movies. this is only accessable in the admin page. It pulls up the movies current information
+//as a placeholder and allows you to edit the information by calling a handleChange. It also allows you to upload a new
+//movie poster if you want.
+
 export type MovieFormData = Movie & {
   genre?: (typeof GENRES)[number] | "";
 };

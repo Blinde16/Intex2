@@ -3,6 +3,8 @@ import { Movie } from "../types/Movie";
 import { useNavigate } from "react-router-dom";
 import "./css/movielist.css";
 
+//this is the movie list. It displays all movies with a picture as cards for the movie view page.
+
 function MovieList({
   selectedContainers,
   selectedType,

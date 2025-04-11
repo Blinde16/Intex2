@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { Movie } from "../types/Movie";
 import "../pages/css/MoviePage.css";
 
+//this is a banner at the top that will display the most popular movies with the best ratings. 
+//It has a carosel with buttons that scolls super nicely. and it displays some basic info
+
 const HeroBanner: React.FC = () => {
   const [heroMovies, setHeroMovies] = useState<Movie[]>([]);
   const [ratingsMap, setRatingsMap] = useState<

@@ -4,6 +4,10 @@ import Logout from "./Logout";
 import { useContext } from "react";
 import { UserContext } from "./AuthorizeView"; // make sure to import UserContext
 
+//This is the header that is displayed across all pages. the logo links back to home and it has a home button and a logout button.
+//it also has an admin button that only shows up when the user role is admin. 
+//it will display welcome (user email)
+
 function Header() {
   const user = useContext(UserContext); // Get user info from context
 
