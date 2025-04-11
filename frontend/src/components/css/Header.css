@@ -105,3 +105,10 @@
     margin-top: 0.5rem;
   }
 }
+
+.header-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  align-items: center;
+  display: flex;
+}

@@ -15,7 +15,7 @@ function Header() {
       <Link to="/movie">
         <img src="/logo.png" className="header-image" />
       </Link>
-      <h1>{username ? `Welcome ${username}` : "Welcome"}</h1>{" "}
+      <h1 className="header-title">{username ? `Welcome, ${username}` : "Welcome"}</h1>{" "}
       {/* Display username */}
       <div className="button-container">
         <Link to="/movie">
