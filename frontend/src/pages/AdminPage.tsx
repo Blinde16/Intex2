@@ -1,33 +1,33 @@
-import { useEffect, useState } from "react";
-import { Movie, GENRES } from "../types/Movie";
-import { deleteMovie, fetchMovies } from "../api/movieAPI";
-import { useNavigate } from "react-router-dom";
-import Pagination from "../components/pagination";
-import AuthorizeView from "../components/AuthorizeView";
-import Header from "../components/Header";
-import "./css/AdminPage.css";
-import Footer from "../components/Footer";
-import ContainerFilter from "../components/ContainerFilter";
+import { useEffect, useState } from "react"; // ✅ React hooks for state management and side effects
+import { Movie, GENRES } from "../types/Movie"; // ✅ Movie type and genre list
+import { deleteMovie, fetchMovies } from "../api/movieAPI"; // ✅ API functions for fetching and deleting movies
+import { useNavigate } from "react-router-dom"; // ✅ Hook for navigation
+import Pagination from "../components/pagination"; // ✅ Pagination component
+import AuthorizeView from "../components/AuthorizeView"; // ✅ Authorization wrapper
+import Header from "../components/Header"; // ✅ Header component
+import "./css/AdminPage.css"; // ✅ Styles for Admin Page
+import Footer from "../components/Footer"; // ✅ Footer component
+import ContainerFilter from "../components/ContainerFilter"; // ✅ Filter component for movie types and genres
 
 const AdminPage = () => {
-  const [movies, setMovies] = useState<Movie[]>([]);
-  const [error, setError] = useState<string>("");
-  const [pageSize, setPageSize] = useState<number>(10);
-  const [pageNumber, setPageNumber] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(0);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
-  const [selectedType, setSelectedType] = useState<string | null>(null);
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [selectedYear, setSelectedYear] = useState<number | "">("");
-  const navigate = useNavigate();
+  const [movies, setMovies] = useState<Movie[]>([]); // ✅ Movie list state
+  const [error, setError] = useState<string>(""); // ✅ Error message state
+  const [pageSize, setPageSize] = useState<number>(10); // ✅ Movies per page
+  const [pageNumber, setPageNumber] = useState<number>(1); // ✅ Current page number
+  const [totalPages, setTotalPages] = useState<number>(0); // ✅ Total number of pages
+  const [searchTerm, setSearchTerm] = useState(""); // ✅ Search input state
+  const [debouncedSearch, setDebouncedSearch] = useState(searchTerm); // ✅ Debounced search term
+  const [selectedType, setSelectedType] = useState<string | null>(null); // ✅ Selected movie type filter
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]); // ✅ Selected genres filter
+  const [selectedYear, setSelectedYear] = useState<number | "">(""); // ✅ Selected release year filter
+  const navigate = useNavigate(); // ✅ Hook to navigate between routes
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setDebouncedSearch(searchTerm);
-      setPageNumber(1);
+      setDebouncedSearch(searchTerm); // ✅ Debounce search term after typing
+      setPageNumber(1); // ✅ Reset to first page on new search
     }, 500);
-    return () => clearTimeout(timeout);
+    return () => clearTimeout(timeout); // ✅ Cleanup timeout
   }, [searchTerm]);
 
   const getMovies = async () => {
@@ -40,16 +40,16 @@ const AdminPage = () => {
         selectedYear ? Number(selectedYear) : undefined,
         selectedGenres
       );
-      setMovies(data.movies);
-      setTotalPages(Math.ceil(data.totalNumberMovies / pageSize));
+      setMovies(data.movies); // ✅ Update movies state
+      setTotalPages(Math.ceil(data.totalNumberMovies / pageSize)); // ✅ Calculate total pages
     } catch (err) {
       console.error("Failed to fetch movies:", err);
-      setError("Failed to load movies. Please try again later.");
+      setError("Failed to load movies. Please try again later."); // ✅ Set error message
     }
   };
 
   useEffect(() => {
-    getMovies();
+    getMovies(); // ✅ Fetch movies when dependencies change
   }, [
     pageSize,
     pageNumber,
@@ -60,37 +60,37 @@ const AdminPage = () => {
   ]);
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this movie?")) return;
+    if (!window.confirm("Are you sure you want to delete this movie?")) return; // ✅ Confirm before delete
     try {
-      await deleteMovie(id);
-      getMovies();
+      await deleteMovie(id); // ✅ Delete movie
+      getMovies(); // ✅ Refresh movie list
     } catch (err) {
       console.error("Delete failed", err);
-      alert("Delete failed.");
+      alert("Delete failed."); // ✅ Show delete failure message
     }
   };
 
   const clearAllFilters = () => {
-    setSelectedType(null);
-    setSelectedGenres([]);
-    setSelectedYear("");
-    setPageNumber(1);
+    setSelectedType(null); // ✅ Clear type filter
+    setSelectedGenres([]); // ✅ Clear genres filter
+    setSelectedYear(""); // ✅ Clear year filter
+    setPageNumber(1); // ✅ Reset to first page
   };
 
   function getActiveGenres(movie: Movie): string[] {
     return GENRES.filter(
       (g) =>
         movie[g] === 1 || movie[g.toLowerCase() as keyof typeof movie] === 1
-    );
+    ); // ✅ Get genres from movie object
   }
 
   return (
     <>
-      <Header />
-      <AuthorizeView>
-        <div className="container-fluid pt-4 pb-4 bg-white">
-          <div className="row">
-            <div className="col-auto mb-4">
+      <Header /> {/* ✅ Page header */}
+      <AuthorizeView> {/* ✅ Authorization wrapper */}
+        <div className="container-fluid pt-4 pb-4 bg-white"> {/* ✅ Page container */}
+          <div className="row"> {/* ✅ Grid row */}
+            <div className="col-auto mb-4"> {/* ✅ Filter sidebar */}
               <ContainerFilter
                 selectedType={selectedType}
                 setSelectedType={setSelectedType}
@@ -98,7 +98,7 @@ const AdminPage = () => {
                 setSelectedGenres={setSelectedGenres}
                 clearAllFilters={clearAllFilters}
               />
-              <div className="mb-3">
+              <div className="mb-3"> {/* ✅ Year filter input */}
                 <input
                   type="number"
                   className="form-control"
@@ -114,12 +114,12 @@ const AdminPage = () => {
               </div>
             </div>
 
-            <div className="col-md-9">
-              <div className="d-flex justify-content-between align-items-center mb-3">
+            <div className="col-md-9"> {/* ✅ Main content area */}
+              <div className="d-flex justify-content-between align-items-center mb-3"> {/* ✅ Page title */}
                 <h1>Admin Page</h1>
               </div>
 
-              <div className="d-flex gap-2 mb-3">
+              <div className="d-flex gap-2 mb-3"> {/* ✅ Action buttons */}
                 <button
                   className="btn btn-success"
                   onClick={() => navigate("/admin/new")}
@@ -134,7 +134,7 @@ const AdminPage = () => {
                 </button>
               </div>
 
-              <div className="mb-3">
+              <div className="mb-3"> {/* ✅ Search input */}
                 <input
                   type="text"
                   className="form-control"
@@ -144,9 +144,9 @@ const AdminPage = () => {
                 />
               </div>
 
-              {error && <div className="alert alert-danger">{error}</div>}
+              {error && <div className="alert alert-danger">{error}</div>} {/* ✅ Error alert */}
 
-              <table className="table table-striped table-bordered table-sm">
+              <table className="table table-striped table-bordered table-sm"> {/* ✅ Movies table */}
                 <thead className="table-light">
                   <tr>
                     <th>ID</th>
@@ -217,14 +217,14 @@ const AdminPage = () => {
                   setPageSize(newSize);
                   setPageNumber(1);
                 }}
-              />
+              /> {/* ✅ Pagination controls */}
             </div>
           </div>
         </div>
       </AuthorizeView>
-      <Footer />
+      <Footer /> {/* ✅ Page footer */}
     </>
   );
 };
 
-export default AdminPage;
+export default AdminPage; // ✅ Export component for routing
