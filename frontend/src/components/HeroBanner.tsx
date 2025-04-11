@@ -5,9 +5,12 @@ import "../pages/css/MoviePage.css";
 
 const HeroBanner: React.FC = () => {
   const [heroMovies, setHeroMovies] = useState<Movie[]>([]);
-  const [ratingsMap, setRatingsMap] = useState<Record<string, { avg: number; count: number }>>({});
+  const [ratingsMap, setRatingsMap] = useState<
+    Record<string, { avg: number; count: number }>
+  >({});
   const navigate = useNavigate();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const blobUrl = import.meta.env.BLOB_API_URL;
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/Movie/TopRatedMovies`, {
@@ -37,7 +40,7 @@ const HeroBanner: React.FC = () => {
 
   const getPosterUrl = (title: string) => {
     if (!title || title.trim() === "") {
-      return "https://moviepostersintex2.blob.core.windows.net/movieposter/placeholder.jpg";
+      return `${blobUrl}/placeholder.jpg`;
     }
 
     const removals = /[()'".,?!#"]/g;
@@ -52,14 +55,17 @@ const HeroBanner: React.FC = () => {
     const encodedTitle = encodeURIComponent(cleanTitle);
     const folderName = encodeURIComponent("Movie Posters");
 
-    return `https://moviepostersintex2.blob.core.windows.net/movieposter/${folderName}/${encodedTitle}.jpg`;
+    return `${blobUrl}/${folderName}/${encodedTitle}.jpg`;
   };
 
   const scroll = (direction: "left" | "right") => {
     const container = scrollContainerRef.current;
     if (container) {
       const scrollAmount = container.clientWidth;
-      container.scrollBy({ left: direction === "left" ? -scrollAmount : scrollAmount, behavior: "smooth" });
+      container.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
     }
   };
 
@@ -79,11 +85,16 @@ const HeroBanner: React.FC = () => {
               <h1 className="hero-title">{movie.title}</h1>
               <p className="hero-description">{movie.description}</p>
               <p className="hero-rating">
-                ⭐ {ratingsMap[movie.show_id]?.avg ?? "?"} ({ratingsMap[movie.show_id]?.count ?? 0} ratings)
+                ⭐ {ratingsMap[movie.show_id]?.avg ?? "?"} (
+                {ratingsMap[movie.show_id]?.count ?? 0} ratings)
               </p>
               <div className="hero-buttons">
-                <button onClick={() => navigate(`/movie/${movie.show_id}`)}>Play</button>
-                <button onClick={() => navigate(`/movie/${movie.show_id}`)}>More Info</button>
+                <button onClick={() => navigate(`/movie/${movie.show_id}`)}>
+                  Play
+                </button>
+                <button onClick={() => navigate(`/movie/${movie.show_id}`)}>
+                  More Info
+                </button>
               </div>
             </div>
           </div>
@@ -91,8 +102,12 @@ const HeroBanner: React.FC = () => {
       </div>
 
       {/* Scroll Arrows */}
-      <button className="hero-arrow left" onClick={() => scroll("left")}>‹</button>
-      <button className="hero-arrow right" onClick={() => scroll("right")}>›</button>
+      <button className="hero-arrow left" onClick={() => scroll("left")}>
+        ‹
+      </button>
+      <button className="hero-arrow right" onClick={() => scroll("right")}>
+        ›
+      </button>
 
       {/* Fade separator to next section */}
       <div className="hero-fade-bottom"></div>

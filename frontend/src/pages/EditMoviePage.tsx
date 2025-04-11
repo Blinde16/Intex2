@@ -33,7 +33,7 @@ const EditMoviePage = () => {
   const { movieId } = useParams();
   const navigate = useNavigate();
   const [movie, setMovie] = useState<Movie | null>(null);
-
+  const blobUrl = import.meta.env.BLOB_API_URL;
   useEffect(() => {
     const fetchMovie = async () => {
       if (!movieId) return;
@@ -56,7 +56,7 @@ const EditMoviePage = () => {
   }
 
   const encodedTitle = encodeURIComponent(movie.title);
-  const posterUrl = `https://moviepostersintex2.blob.core.windows.net/movieposter/Movie Posters/${encodedTitle}.jpg`;
+  const posterUrl = `${blobUrl}/Movie Posters/${encodedTitle}.jpg`;
 
   return (
     <div className="bg-background min-h-screen text-white">
@@ -78,7 +78,9 @@ const EditMoviePage = () => {
 
         {/* Form Section */}
         <div className="flex flex-col justify-start space-y-4 w-full max-w-xl bg-gray-900 p-6 rounded-2xl shadow-xl md:ml-6">
-          <h1 className="text-4xl font-extrabold text-purple-400 mb-4">✏️ Edit Movie</h1>
+          <h1 className="text-4xl font-extrabold text-purple-400 mb-4">
+            ✏️ Edit Movie
+          </h1>
           <EditMovieForm
             movieId={movieId!}
             onSuccess={() => navigate("/adminPage")}
