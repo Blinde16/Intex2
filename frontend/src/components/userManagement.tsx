@@ -73,16 +73,19 @@ function UserManagement() {
 
   const handleDelete = async (id: string) => {
     if (!window.confirm("Delete this user?")) return;
+  
     const res = await fetch(`${apiUrl}/register/users/delete/${id}`, {
       method: "DELETE",
       credentials: "include",
     });
+  
     if (res.ok) {
-      fetchUsers();
+      window.location.reload();
     } else {
       alert("Failed to delete user.");
     }
   };
+  
 
   useEffect(() => {
     fetchUsers();
@@ -156,7 +159,7 @@ function UserManagement() {
               ))
             ) : (
               <tr>
-                <td colSpan={8} className="text-center">No users found.</td>
+                <td colSpan={8} className="text-center">Loading users...</td>
               </tr>
             )}
           </tbody>

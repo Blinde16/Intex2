@@ -227,11 +227,21 @@ namespace RootkitAuth.API.Controllers
             if (user == null)
                 return NotFound();
 
+            var email = user.Email.ToLower();
+
             var result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            return Ok(new { message = "User deleted." });
+            var profile = _movieContext.movies_users.FirstOrDefault(mu => mu.email.ToLower() == email);
+            if (profile != null)
+            {
+                _movieContext.movies_users.Remove(profile);
+                await _movieContext.SaveChangesAsync();
+            }
+
+            return Ok(new { message = "User deleted from both tables." });
         }
+
     }
 }
