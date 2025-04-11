@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import axios from "axios";
 import MovieRecommendation from "../components/MovieDetailsRecommender";
 import Footer from "../components/Footer";
+import AuthorizeView from "../components/AuthorizeView";
 
 interface Movie {
   show_id: string;
@@ -19,7 +20,7 @@ interface Movie {
 }
 
 const apiUrl = import.meta.env.VITE_API_URL;
-const blobUrl = import.meta.env.VITE_BLOB_API_URL;
+const blobUrl = import.meta.env.BLOB_API_URL;
 const getPosterUrl = (title: string) => {
   if (!title || title.trim() === "") {
     return `${blobUrl}/placeholder.jpg`;
@@ -29,8 +30,8 @@ const getPosterUrl = (title: string) => {
 
   let cleanTitle = title
     .normalize("NFKD")
-    .replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "")
-    .replace(/\s*([&/])\s*/g, "␣␣")
+    .replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "") // Remove smart quotes
+    .replace(/\s*([&/])\s*/g, "␣␣") // Remove spaces around & and /
     .replace(removals, "")
     .replace(/\s+/g, " ")
     .replace(/␣␣/g, "  ")
@@ -90,7 +91,8 @@ const ProductDetail: React.FC = () => {
         { show_id: show_id, rating: rating },
         { withCredentials: true }
       )
-      .then(() => {
+      .then((response) => {
+        console.log("Rating submitted successfully:", response.data);
         axios
           .get(`${apiUrl}/Movie/GetAverageRating/${show_id}`, {
             withCredentials: true,
@@ -108,6 +110,7 @@ const ProductDetail: React.FC = () => {
   const handleStarClick = (rating: number) => {
     setUserRating(rating);
     submitRating(rating);
+    console.log(`User rated: ${rating} stars`);
   };
 
   if (!movie) {
@@ -126,95 +129,95 @@ const ProductDetail: React.FC = () => {
     .join(", ");
 
   return (
-    <div className="bg-background min-h-screen text-foreground overflow-x-hidden w-full">
-      <Header />
-
-      <div className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row items-start gap-8 px-6 py-12">
-        <div className="flex-shrink-0 rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition duration-500 w-64">
-          <img
-            src={imageUrl}
-            alt={movie.title}
-            className="w-full h-[500px] object-cover rounded-2xl"
-          />
-        </div>
-
-        <div className="flex flex-col justify-start space-y-4 text-left w-full max-w-md">
-          <h1 className="text-4xl font-extrabold">{movie.title}</h1>
-          <p className="text-muted-foreground text-sm">
-            {movie.release_year} • {movie.duration} • {movie.rating}
-          </p>
-
-          <div>
-            <h2 className="text-xl font-semibold mb-1">Overview</h2>
-            <p className="text-muted-foreground">{movie.description}</p>
+    <AuthorizeView>
+      <div className="bg-background min-h-screen text-foreground">
+        <Header />
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start gap-10 px-8 py-12 animate-fadeIn">
+          <div className="flex-shrink-0 rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition duration-500">
+            <img
+              src={imageUrl}
+              alt={movie.title}
+              className="w-full max-w-xs h-[500px] object-cover rounded-2xl"
+            />
           </div>
 
-          <div className="space-y-1 text-sm text-muted-foreground">
-            <p>
-              <span className="font-semibold text-foreground">Starring:</span>{" "}
-              {movie.cast}
+          <div className="flex flex-col justify-start space-y-4 text-left w-full max-w-xl">
+            <h1 className="text-5xl font-extrabold">{movie.title}</h1>
+            <p className="text-muted-foreground text-sm">
+              {movie.release_year} • {movie.duration} • {movie.rating}
             </p>
-            <p>
-              <span className="font-semibold text-foreground">Director:</span>{" "}
-              {movie.director}
-            </p>
-            <p>
-              <span className="font-semibold text-foreground">Genre:</span>{" "}
-              {genreList || "Unknown"}
-            </p>
-            <p>
-              <span className="font-semibold text-foreground">
-                Average Rating:
-              </span>{" "}
-              {averageRating !== null && averageRating !== 0
-                ? `${averageRating.toFixed(2)} / 5`
-                : "No ratings yet"}
-            </p>
-          </div>
 
-          <div>
-            <p className="font-semibold mb-2 text-foreground">Your Rating:</p>
-            {userRatingLoaded ? (
-              <div className="flex space-x-1 text-yellow-400 text-2xl cursor-pointer">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <span
-                    key={star}
-                    onClick={() => handleStarClick(star)}
-                    className={`transition-transform ${
-                      userRating >= star ? "scale-125" : ""
-                    }`}
-                  >
-                    {userRating >= star ? "⭐" : "☆"}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <p className="text-muted-foreground">Loading your rating...</p>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <MovieRecommendation show_id={show_id!} />
-
-      <div className="w-full max-w-[1200px] mx-auto space-y-8 px-6 pb-12">
-        {["User Reviews", "Trailers & Behind the Scenes"].map(
-          (section, index) => (
-            <div
-              key={index}
-              className="bg-muted rounded-2xl p-6 shadow-xl transform hover:-translate-y-1 transition duration-300 w-full"
-            >
-              <h3 className="text-2xl font-bold text-foreground mb-2">
-                {section}
-              </h3>
-              <p className="text-muted-foreground">Content coming soon...</p>
+            <div>
+              <h2 className="text-xl font-semibold mb-1">Overview</h2>
+              <p className="text-muted-foreground">{movie.description}</p>
             </div>
-          )
-        )}
-      </div>
 
-      <Footer />
-    </div>
+            <div className="space-y-1 text-sm text-muted-foreground">
+              <p>
+                <span className="font-semibold text-foreground">Starring:</span>{" "}
+                {movie.cast}
+              </p>
+              <p>
+                <span className="font-semibold text-foreground">Director:</span>{" "}
+                {movie.director}
+              </p>
+              <p>
+                <span className="font-semibold text-foreground">Genre:</span>{" "}
+                {genreList || "Unknown"}
+              </p>
+              <p>
+                <span className="font-semibold text-foreground">
+                  Average Rating:
+                </span>{" "}
+                {averageRating !== null && averageRating !== 0
+                  ? `${averageRating.toFixed(2)} / 5`
+                  : "No ratings yet"}
+              </p>
+            </div>
+
+            <div>
+              <p className="font-semibold mb-2 text-foreground">Your Rating:</p>
+              {userRatingLoaded ? (
+                <div className="flex space-x-1 text-yellow-400 text-2xl cursor-pointer">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <span
+                      key={star}
+                      onClick={() => handleStarClick(star)}
+                      className={`transition-transform ${
+                        userRating >= star ? "scale-125" : ""
+                      }`}
+                    >
+                      {userRating >= star ? "⭐" : "☆"}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground">Loading your rating...</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <MovieRecommendation show_id={show_id!} />
+
+        <div className="space-y-8 max-w-7xl mx-auto px-8 pb-12">
+          {["User Reviews", "Trailers & Behind the Scenes"].map(
+            (section, index) => (
+              <div
+                key={index}
+                className="bg-muted rounded-2xl p-6 shadow-xl transform hover:-translate-y-1 transition duration-300"
+              >
+                <h3 className="text-2xl font-bold text-foreground mb-2">
+                  {section}
+                </h3>
+                <p className="text-muted-foreground">Content coming soon...</p>
+              </div>
+            )
+          )}
+        </div>
+        <Footer />
+      </div>
+    </AuthorizeView>
   );
 };
 
