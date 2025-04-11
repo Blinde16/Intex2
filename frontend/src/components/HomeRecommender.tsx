@@ -43,7 +43,7 @@ const Adventure: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const blobUrl = import.meta.env.BLOB_API_URL;
+  const blobUrl = import.meta.env.VITE_BLOB_API_URL;
 
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_URL;

@@ -21,7 +21,7 @@ function MovieList({
   const isInitialLoad = useRef(true);
 
   const navigate = useNavigate();
-  const blobUrl = import.meta.env.BLOB_API_URL;
+  const blobUrl = import.meta.env.VITE_BLOB_API_URL;
   const getPosterUrl = (title: string) => {
     if (!title || title.trim() === "") {
       return `${blobUrl}/placeholder.jpg`;

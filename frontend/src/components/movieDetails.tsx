@@ -21,7 +21,7 @@ const MovieDetails: React.FC = () => {
   const [movie, setMovie] = useState<Movie | null>(null);
   const [userRating, setUserRating] = useState<number>(0);
   const apiUrl = import.meta.env.VITE_API_URL;
-  const blobUrl = import.meta.env.BLOB_API_URL;
+  const blobUrl = import.meta.env.VITE_BLOB_API_URL;
   useEffect(() => {
     axios
       .get(`${apiUrl}/Movie/GetMovieById/${show_id}`, { withCredentials: true })

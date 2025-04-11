@@ -24,7 +24,7 @@ const EditMovieForm = ({
   const [posterRemoved, setPosterRemoved] = useState(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const apiUrl = import.meta.env.VITE_API_URL;
-  const blobUrl = import.meta.env.BLOB_API_URL;
+  const blobUrl = import.meta.env.VITE_BLOB_API_URL;
 
   useEffect(() => {
     const loadMovie = async () => {

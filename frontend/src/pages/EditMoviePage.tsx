@@ -33,7 +33,7 @@ const EditMoviePage = () => {
   const { movieId } = useParams();
   const navigate = useNavigate();
   const [movie, setMovie] = useState<Movie | null>(null);
-  const blobUrl = import.meta.env.BLOB_API_URL;
+  const blobUrl = import.meta.env.VITE_BLOB_API_URL;
   useEffect(() => {
     const fetchMovie = async () => {
       if (!movieId) return;

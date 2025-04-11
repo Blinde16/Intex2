@@ -10,7 +10,7 @@ const HeroBanner: React.FC = () => {
   >({});
   const navigate = useNavigate();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const blobUrl = import.meta.env.BLOB_API_URL;
+  const blobUrl = import.meta.env.VITE_BLOB_API_URL;
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/Movie/TopRatedMovies`, {

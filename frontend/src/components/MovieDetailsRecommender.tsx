@@ -11,7 +11,7 @@ const MovieRecommendation: React.FC<Props> = ({ show_id }) => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const apiUrl = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
-  const blobUrl = import.meta.env.BLOB_API_URL;
+  const blobUrl = import.meta.env.VITE_BLOB_API_URL;
   const getPosterUrl = (title: string) => {
     const cleanTitle = title
       .replace(/[()'":?!,&#.]/g, " ")
