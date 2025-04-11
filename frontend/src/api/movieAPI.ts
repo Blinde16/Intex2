@@ -14,11 +14,8 @@ export const fetchMovies = async (
   selectedGenres: string[] = []
 ): Promise<FetchMoviesResponse> => {
   try {
-    const categoryParams = selectedCategories
-      .map((cat) => `types=${encodeURIComponent(cat)}`)
-      .join("&");
-
     const params = new URLSearchParams();
+
     params.append("pageSize", pageSize.toString());
     params.append("pageNum", pageNum.toString());
 
@@ -38,9 +35,7 @@ export const fetchMovies = async (
       params.append("genres", genre);
     });
 
-    const url = `${apiUrl}/Movie/GetAdminMovies?pageSize=${pageSize}&pageNum=${pageNum}${
-      selectedCategories.length ? `&${categoryParams}` : ""
-    }${searchTerm ? `&searchTerm=${encodeURIComponent(searchTerm)}` : ""}`;
+    const url = `${apiUrl}/Movie/GetAdminMovies?${params.toString()}`;
 
     const response = await fetch(url, {
       credentials: "include",

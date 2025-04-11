@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import '../App.css'; // Import your CSS file for styling
 
+//this component creates a cooki banner that the user must consent to at the bottom, then it stores a cookie
+//saying that the user has consented and it only shows it the first time.
+
 const COOKIE_NAME = "cookie_consent";
 
 const CookieBanner: React.FC = () => {

@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import "./css/StickyFooter.css";
 
+//this is the footer component with the link
+
 const StickyFooter = () => {
   return (
     <div className="sticky-footer">

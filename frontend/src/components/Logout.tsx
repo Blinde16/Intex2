@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
+// this logout button removes authentication and returns to the home page.
+
 function Logout(props: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;

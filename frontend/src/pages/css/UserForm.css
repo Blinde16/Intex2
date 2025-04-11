@@ -1,0 +1,126 @@
+/* Container */
+.user-form-container {
+    margin: 0 auto;
+    padding: 2rem;
+    color: #e0d7f5;
+    background: linear-gradient(to bottom right, #1e1822, #2a2137);
+    border-radius: 12px;
+    max-width: 800px;
+    width: 100%;
+  }
+  
+  /* Headers */
+  .form-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #d6bcfa;
+    letter-spacing: 0.02em;
+  }
+  
+  .form-section-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 1.5rem 0 0.5rem;
+    color: #c4b5fd;
+  }
+  
+  /* Grid layout */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .form-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  /* Inputs */
+  input.form-control,
+  select.form-control {
+    background-color: rgba(42, 33, 55, 0.9);
+    color: #f3e8ff !important;
+    border: 1px solid #7e22ce;
+    padding: 0.75rem;
+    border-radius: 8px;
+    width: 100%;
+  }
+  
+  
+  input.form-control::placeholder {
+    color: #b0a1c6 !important;
+  }
+  
+  input.form-control:focus,
+  select.form-control:focus {
+    border-color: #9333ea;
+    outline: none;
+    background-color: rgba(53, 39, 68, 0.9);
+  }
+  
+  /* Checkboxes */
+  .checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.5rem;
+  }
+  
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  /* Buttons */
+  .btn {
+    padding: 0.75rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(to right, #7e22ce, #9333ea);
+    color: white;
+  }
+  
+  .btn-primary:hover {
+    background: linear-gradient(to right, #9333ea, #7e22ce);
+    transform: translateY(-2px);
+  }
+  
+  .btn-secondary {
+    background: linear-gradient(to right, #7e22ce, #9333ea);
+    color: white;
+  }
+  
+  .btn-secondary:hover {
+    background: linear-gradient(to right, #9333ea, #7e22ce);
+    transform: translateY(-2px);
+  }
+  
+  /* Layout helpers */
+  .flex {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .mt-6 {
+    margin-top: 1.5rem;
+  }
+  
+  .mb-4 {
+    margin-bottom: 1rem;
+  }
+  
+  .text-danger {
+    color: #ef4444;
+    margin-top: 0.5rem;
+  }
+  

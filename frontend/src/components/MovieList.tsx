@@ -3,6 +3,8 @@ import { Movie } from "../types/Movie";
 import { useNavigate } from "react-router-dom";
 import "./css/movielist.css";
 
+//this is the movie list. It displays all movies with a picture as cards for the movie view page.
+
 function MovieList({
   selectedContainers,
   selectedType,
@@ -21,29 +23,29 @@ function MovieList({
   const isInitialLoad = useRef(true);
 
   const navigate = useNavigate();
-
+  const blobUrl = import.meta.env.VITE_BLOB_API_URL;
   const getPosterUrl = (title: string) => {
     if (!title || title.trim() === "") {
-      return "https://moviepostersintex2.blob.core.windows.net/movieposter/placeholder.jpg";
+      return `${blobUrl}/placeholder.jpg`;
     }
-  
+
     const removals = /[()'".,?!:#"\-]/g; // Symbols to remove (basic ones)
-  
+
     let cleanTitle = title
-      .normalize("NFKD")                        // Normalize special characters (like smart quotes)
+      .normalize("NFKD") // Normalize special characters (like smart quotes)
       .replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "") // Remove smart quotes (single)
-      .replace(/\s*([&/])\s*/g, "␣␣")          // Remove spaces around & and /
-      .replace(removals, "")                    // Remove decorative characters
-      .replace(/\s+/g, " ")                     // Collapse multiple spaces
-      .replace(/␣␣/g, "  ")                    // Replace placeholder with real double space
+      .replace(/\s*([&/])\s*/g, "␣␣") // Remove spaces around & and /
+      .replace(removals, "") // Remove decorative characters
+      .replace(/\s+/g, " ") // Collapse multiple spaces
+      .replace(/␣␣/g, "  ") // Replace placeholder with real double space
       .trim();
-  
+
     const encodedTitle = encodeURIComponent(cleanTitle);
     const folderName = encodeURIComponent("Movie Posters");
-  
-    return `https://moviepostersintex2.blob.core.windows.net/movieposter/${folderName}/${encodedTitle}.jpg`;
+
+    return `${blobUrl}/${folderName}/${encodedTitle}.jpg`;
   };
-  
+
   const fetchMovies = async () => {
     if (loading || !hasMore) return;
     setLoading(true);

@@ -88,7 +88,7 @@ const AdminPage = () => {
     <>
       <Header />
       <AuthorizeView>
-        <div className="container-fluid py-4">
+        <div className="container-fluid pt-4 pb-4 bg-white">
           <div className="row">
             <div className="col-auto mb-4">
               <ContainerFilter
@@ -185,9 +185,7 @@ const AdminPage = () => {
                         <td>
                           <button
                             className="btn btn-primary btn-sm w-100 mb-1"
-                            onClick={() =>
-                              navigate(`/admin/edit/${p.show_id}`)
-                            }
+                            onClick={() => navigate(`/admin/edit/${p.show_id}`)}
                           >
                             Edit
                           </button>

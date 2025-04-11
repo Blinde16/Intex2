@@ -3,6 +3,9 @@ import { useParams } from "react-router-dom";
 import "./css/MovieDetails.css";
 import axios from "axios";
 
+//This page pulls up the movie details with a picture and all the information. the user can also click their rating and
+//that will be stored and displayed next time they visit.
+
 interface Movie {
   show_id: string;
   title: string;
@@ -21,7 +24,7 @@ const MovieDetails: React.FC = () => {
   const [movie, setMovie] = useState<Movie | null>(null);
   const [userRating, setUserRating] = useState<number>(0);
   const apiUrl = import.meta.env.VITE_API_URL;
-
+  const blobUrl = import.meta.env.VITE_BLOB_API_URL;
   useEffect(() => {
     axios
       .get(`${apiUrl}/Movie/GetMovieById/${show_id}`, { withCredentials: true })
@@ -35,29 +38,29 @@ const MovieDetails: React.FC = () => {
 
   const getPosterUrl = (title: string) => {
     if (!title || title.trim() === "") {
-      return "https://moviepostersintex2.blob.core.windows.net/movieposter/placeholder.jpg";
+      return `${blobUrl}/placeholder.jpg`;
     }
-  
+
     const removals = /[()'".,?!:#"\-]/g; // Symbols to remove (basic ones)
-  
+
     let cleanTitle = title
-      .normalize("NFKD")                        // Normalize special characters (like smart quotes)
+      .normalize("NFKD") // Normalize special characters (like smart quotes)
       .replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "") // Remove smart quotes (single)
-      .replace(/\s*([&/])\s*/g, "␣␣")          // Remove spaces around & and /
-      .replace(removals, "")                    // Remove decorative characters
-      .replace(/\s+/g, " ")                     // Collapse multiple spaces
-      .replace(/␣␣/g, "  ")                    // Replace placeholder with real double space
+      .replace(/\s*([&/])\s*/g, "␣␣") // Remove spaces around & and /
+      .replace(removals, "") // Remove decorative characters
+      .replace(/\s+/g, " ") // Collapse multiple spaces
+      .replace(/␣␣/g, "  ") // Replace placeholder with real double space
       .trim();
-  
+
     const encodedTitle = encodeURIComponent(cleanTitle);
     const folderName = encodeURIComponent("Movie Posters");
-  
-    return `https://moviepostersintex2.blob.core.windows.net/movieposter/${folderName}/${encodedTitle}.jpg`;
+
+    return `{blobUrl}/${folderName}/${encodedTitle}.jpg`;
   };
 
   const imageUrl = movie
     ? getPosterUrl(movie.title)
-    : "https://moviepostersintex2.blob.core.windows.net/movieposter/placeholder.jpg";
+    : `${blobUrl}/placeholder.jpg`;
 
   const genreList = Object.entries(movie || {})
     .filter(([, value]) => typeof value === "number" && value === 1)

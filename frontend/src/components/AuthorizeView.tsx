@@ -2,10 +2,13 @@ import React, { useState, useEffect, createContext } from "react";
 import { Navigate } from "react-router-dom";
 export const UserContext = createContext<User | null>(null);
 
+//This component will create an athorize view to only let "Authorized User" view certain pages
 
 interface User {
   email: string;
 }
+
+//this is the function for authorize view with its props
 
 function AuthorizeView(props: { children: React.ReactNode }) {
   const [authorized, setAuthorized] = useState<boolean>(false);
@@ -45,6 +48,8 @@ function AuthorizeView(props: { children: React.ReactNode }) {
       }
     }
 
+    //it will also retry
+
     fetchWithRetry(`${apiUrl}/pingauth`, {
       method: "GET",
       credentials: "include",
@@ -60,6 +65,8 @@ function AuthorizeView(props: { children: React.ReactNode }) {
       <UserContext.Provider value={user}>{props.children}</UserContext.Provider>
     );
   }
+
+  //at login it will check email
 
   return <Navigate to="/login" />;
 }

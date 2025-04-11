@@ -6,6 +6,8 @@ interface PaginationProps {
   onPageSizeChange: (newSize: number) => void;
 }
 
+//pagination component used on the admin page for both manage movies and manage users
+
 const Pagination = ({
   currentPage,
   totalPages,
