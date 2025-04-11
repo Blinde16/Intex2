@@ -12,7 +12,9 @@ function Header() {
   return (
     <>
       <div className="header-bar">
-        <img src="/logo.png" className="header-image" />
+        <Link to="/movie">
+          <img src="/logo.png" className="header-image" />
+        </Link>
         <h1></h1>
         <div className="button-container">
           <Link to="/movie">
@@ -35,4 +37,3 @@ function Header() {
 }
 
 export default Header;
-
