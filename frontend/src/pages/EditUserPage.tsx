@@ -1,110 +1,148 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import "./css/EditUserPage.css";
-
-const apiUrl = import.meta.env.VITE_API_URL;
-
-type AdminUser = {
-  id: string;
-  email: string;
-  roles: string[];
-  twoFactorEnabled: boolean;
-};
+import { useNavigate, useParams } from "react-router-dom";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import AuthorizeView from "../components/AuthorizeView";
+import "../pages/css/UserForm.css";
 
 function EditUserPage() {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [user, setUser] = useState<AdminUser | null>(null);
-  const [role, setRole] = useState("");
-  const [enable2FA, setEnable2FA] = useState(false);
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("AuthenticatedCustomer");
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!id) {
-      setError("Invalid user ID");
-      return;
+    const fetchUser = async () => {
+      try {
+        const res = await fetch(`${apiUrl}/register/users/${id}`, {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("Failed to fetch user.");
+
+        const user = await res.json();
+        setEmail(user.email);
+        setRole(user.roles.includes("Admin") ? "Admin" : "AuthenticatedCustomer");
+        setTwoFactorEnabled(user.twoFactorEnabled);
+      } catch (err) {
+        console.error(err);
+        setError("❌ Failed to load user data.");
+      }
+    };
+
+    fetchUser();
+  }, [id, apiUrl]);
+
+  const validateForm = () => {
+    if (!email) {
+      setError("❌ Email is required.");
+      return false;
     }
 
-    fetch(`${apiUrl}/register/users/${id}`, {
-      credentials: "include",
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
-        }
-        return res.json();
-      })
-      .then((data: AdminUser) => {
-        setUser(data);
-        setRole(data.roles[0] || "");
-        setEnable2FA(data.twoFactorEnabled);
-      })
-      .catch((err) => setError(err.message));
-  }, [id]);
+    setError("");
+    return true;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const res = await fetch(`${apiUrl}/register/users/update`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        userId: id,
-        role,
-        enable2FA,
-      }),
-    });
+    if (!validateForm()) return;
 
-    if (res.ok) {
-      navigate("/admin/users");
-    } else {
-      const msg = await res.text();
-      setError(msg || "Failed to update user.");
+    try {
+      const res = await fetch(`${apiUrl}/register/users/update`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          userId: id,
+          role,
+          enable2FA: twoFactorEnabled,
+        }),
+      });
+
+      if (res.ok) {
+        navigate("/admin/users");
+      } else {
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0 && data[0].description) {
+            setError(`❌ ${data[0].description}`);
+          } else if (typeof data === "string") {
+            setError(`❌ ${data}`);
+          } else {
+            setError("❌ Failed to update user.");
+          }
+        } else {
+          const msg = await res.text();
+          setError(`❌ ${msg || "Failed to update user."}`);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      setError("❌ An unexpected error occurred.");
     }
   };
 
-  if (!user) return <p className="container mt-4">Loading...</p>;
-
   return (
-    <div className="edit-user-container">
-      <h2>Edit User</h2>
-      <form onSubmit={handleSubmit} className="edit-user-form">
-        <div className="form-group">
-          <label>Email</label>
-          <input className="form-control" type="email" value={user.email} disabled />
-        </div>
+    <>
+      <Header />
+      <AuthorizeView>
+        <div className="user-form-container">
+          <h2 className="form-title">🖊️ Edit User</h2>
+          <form onSubmit={handleSubmit}>
 
-        <div className="form-group">
-          <label>Role</label>
-          <select className="form-select" value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="AuthenticatedCustomer">AuthenticatedCustomer</option>
-            <option value="Admin">Admin</option>
-          </select>
-        </div>
+            <div className="form-grid">
+              <input
+                className="form-control"
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <select
+                className="form-control"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+              >
+                <option value="AuthenticatedCustomer">Authenticated Customer</option>
+                <option value="Admin">Admin</option>
+              </select>
+            </div>
 
-        <div className="form-check form-switch mb-3">
-          <input
-            className="form-check-input"
-            type="checkbox"
-            id="enable2FA"
-            checked={enable2FA}
-            onChange={(e) => setEnable2FA(e.target.checked)}
-          />
-          <label className="form-check-label" htmlFor="enable2FA">
-            Enable Two-Factor Authentication (2FA)
-          </label>
-        </div>
+            <h4 className="form-section-title mt-6">🔐 Security Settings</h4>
+            <div className="checkbox-group">
+              <label className="checkbox-item">
+                <input
+                  type="checkbox"
+                  checked={twoFactorEnabled}
+                  onChange={(e) => setTwoFactorEnabled(e.target.checked)}
+                />
+                Enable Two-Factor Authentication
+              </label>
+            </div>
 
-        {error && <p className="text-danger">{error}</p>}
+            {error && <p className="text-danger">{error}</p>}
 
-        <div className="button-group">
-          <button className="btn btn-primary me-2" type="submit">Save</button>
-          <button className="btn btn-secondary" onClick={() => navigate("/admin/users")}>Cancel</button>
+            <div className="flex mt-6">
+              <button type="submit" className="btn btn-primary">💾 Save Changes</button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => navigate("/admin/users")}
+              >
+                ❌ Cancel
+              </button>
+            </div>
+          </form>
         </div>
-      </form>
-    </div>
+      </AuthorizeView>
+      <Footer />
+    </>
   );
 }
 

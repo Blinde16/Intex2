@@ -29,8 +29,8 @@ const getPosterUrl = (title: string) => {
 
   let cleanTitle = title
     .normalize("NFKD")
-    .replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "") // Remove smart quotes
-    .replace(/\s*([&/])\s*/g, "␣␣") // Remove spaces around & and /
+    .replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "")
+    .replace(/\s*([&/])\s*/g, "␣␣")
     .replace(removals, "")
     .replace(/\s+/g, " ")
     .replace(/␣␣/g, "  ")
@@ -90,8 +90,7 @@ const ProductDetail: React.FC = () => {
         { show_id: show_id, rating: rating },
         { withCredentials: true }
       )
-      .then((response) => {
-        console.log("Rating submitted successfully:", response.data);
+      .then(() => {
         axios
           .get(`${apiUrl}/Movie/GetAverageRating/${show_id}`, {
             withCredentials: true,
@@ -109,7 +108,6 @@ const ProductDetail: React.FC = () => {
   const handleStarClick = (rating: number) => {
     setUserRating(rating);
     submitRating(rating);
-    console.log(`User rated: ${rating} stars`);
   };
 
   if (!movie) {
@@ -128,20 +126,20 @@ const ProductDetail: React.FC = () => {
     .join(", ");
 
   return (
-    <div className="bg-background min-h-screen text-foreground">
+    <div className="bg-background min-h-screen text-foreground overflow-x-hidden w-full">
       <Header />
 
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start gap-10 px-8 py-12 animate-fadeIn">
-        <div className="flex-shrink-0 rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition duration-500">
+      <div className="w-full max-w-[1200px] mx-auto flex flex-col md:flex-row items-start gap-8 px-6 py-12">
+        <div className="flex-shrink-0 rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition duration-500 w-64">
           <img
             src={imageUrl}
             alt={movie.title}
-            className="w-full max-w-xs h-[500px] object-cover rounded-2xl"
+            className="w-full h-[500px] object-cover rounded-2xl"
           />
         </div>
 
-        <div className="flex flex-col justify-start space-y-4 text-left w-full max-w-xl">
-          <h1 className="text-5xl font-extrabold">{movie.title}</h1>
+        <div className="flex flex-col justify-start space-y-4 text-left w-full max-w-md">
+          <h1 className="text-4xl font-extrabold">{movie.title}</h1>
           <p className="text-muted-foreground text-sm">
             {movie.release_year} • {movie.duration} • {movie.rating}
           </p>
@@ -199,12 +197,12 @@ const ProductDetail: React.FC = () => {
 
       <MovieRecommendation show_id={show_id!} />
 
-      <div className="space-y-8 max-w-7xl mx-auto px-8 pb-12">
+      <div className="w-full max-w-[1200px] mx-auto space-y-8 px-6 pb-12">
         {["User Reviews", "Trailers & Behind the Scenes"].map(
           (section, index) => (
             <div
               key={index}
-              className="bg-muted rounded-2xl p-6 shadow-xl transform hover:-translate-y-1 transition duration-300"
+              className="bg-muted rounded-2xl p-6 shadow-xl transform hover:-translate-y-1 transition duration-300 w-full"
             >
               <h3 className="text-2xl font-bold text-foreground mb-2">
                 {section}
@@ -214,6 +212,7 @@ const ProductDetail: React.FC = () => {
           )
         )}
       </div>
+
       <Footer />
     </div>
   );

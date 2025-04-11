@@ -1,27 +1,25 @@
 .header-bar {
-  width: 100vw; /* ✅ FULL width of the viewport */
+  width: 100vw;
   background-color: #1e1822;
   color: white;
   padding: 0.75rem 2rem;
-  position: flex;
+  position: relative;
   top: 0;
   z-index: 1000;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0; /* ✅ Remove any margins */
-  border: none; /* Clean edge */
+  margin: 0;
+  border: none;
+  flex-wrap: wrap;
 }
 
-/* Logo clean sizing */
 .header-image {
-  height: 3vw;
-  max-height: 40px;
+  height: 40px;
   width: auto;
   object-fit: contain;
-  margin-right: 15px;
+  margin-bottom: 8px;
   transition: transform 0.3s ease, filter 0.3s ease;
 }
 
@@ -34,6 +32,7 @@
 .button-container {
   display: flex;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .logout-button {
@@ -85,4 +84,24 @@
   font-size: 0.9rem;
   transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
   box-shadow: 2px 2px 2px rgba(168, 85, 247, 0.4);
+}
+
+@media (max-width: 768px) {
+  .header-bar {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .header-image {
+    height: 50px;
+    margin-bottom: 10px;
+  }
+
+  .button-container {
+    justify-content: center;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
 }

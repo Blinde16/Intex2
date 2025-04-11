@@ -1,11 +1,11 @@
 import { useState, useRef } from "react";
 import { Movie, GENRES } from "../types/Movie";
 import AuthorizeView from "./AuthorizeView";
-import "../pages/css/MovieDetail.css";
+import "../pages/css/MovieForm.css";
 
 type MovieFormData = Omit<Movie, keyof typeof GENRES> &
   Record<(typeof GENRES)[number], number> & {
-    genre?: string; // UI-only
+    genre?: string;
   };
 
 interface NewMovieFormProps {
@@ -15,7 +15,7 @@ interface NewMovieFormProps {
 
 const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
   const [formData, setFormData] = useState<MovieFormData>(() => ({
-    show_id: "", //Insert sid here!,
+    show_id: "",
     type: "",
     title: "",
     director: "",
@@ -26,15 +26,10 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
     duration: "",
     description: "",
     genre: "",
-
-    // Add all genre flag properties with default 0
-    ...GENRES.reduce(
-      (acc, genre) => {
-        acc[genre] = 0;
-        return acc;
-      },
-      {} as Record<(typeof GENRES)[number], number>
-    ),
+    ...GENRES.reduce((acc, genre) => {
+      acc[genre] = 0;
+      return acc;
+    }, {} as Record<(typeof GENRES)[number], number>),
   }));
 
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -49,11 +44,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
     setFormData((prev) => ({
       ...prev,
       [name]:
-        name === "release_year"
-          ? parseInt(value) || 0
-          : typeof value === "string"
-            ? value
-            : value,
+        name === "release_year" ? parseInt(value) || 0 : value,
     }));
   };
 
@@ -68,7 +59,6 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
 
     const { genre, ...movieData } = formData;
 
-    // ✅ Frontend title cleaning for filename
     const cleanTitleForFilename = movieData.title
       .replace(/[()'"`:?!,&#.]/g, " ")
       .replace(/\s+/g, " ")
@@ -95,11 +85,10 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
       return;
     }
 
-    // ✅ Upload poster image with cleaned title as filename base
     if (imageFile) {
       const uploadData = new FormData();
       uploadData.append("image", imageFile);
-      uploadData.append("filename", cleanTitleForFilename); // Send cleaned title as filename base
+      uploadData.append("filename", cleanTitleForFilename);
 
       const posterRes = await fetch(`${apiUrl}/Movie/UploadPoster`, {
         method: "POST",
@@ -117,13 +106,10 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
 
   return (
     <AuthorizeView>
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white text-black p-4 rounded shadow-lg max-w-3xl mx-auto"
-      >
-        <h2 className="text-2xl font-bold mb-4">🎬 Add New Movie</h2>
+      <form onSubmit={handleSubmit} className="form-container">
+        <h2 className="form-title">🎬 Add New Movie</h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="form-grid">
           <input
             className="form-control"
             type="text"
@@ -189,7 +175,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
             placeholder="Duration"
           />
           <input
-            className="form-control col-span-2"
+            className="form-control"
             type="text"
             name="description"
             value={formData.description}
@@ -198,7 +184,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
           />
         </div>
 
-        <h4 className="mt-4 mb-2 font-semibold">🎬 Movie Poster</h4>
+        <h4 className="form-section-title">🎬 Movie Poster</h4>
         <input
           className="form-control mb-4"
           type="file"
@@ -207,7 +193,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
           ref={imageInputRef}
         />
 
-        <h4 className="mt-4 mb-2 font-semibold">🎭 Select Genre</h4>
+        <h4 className="form-section-title">🎭 Select Genre</h4>
         <select
           name="genre"
           className="form-control mb-4"
@@ -231,7 +217,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
           ))}
         </select>
 
-        <div className="mt-6 flex gap-4">
+        <div className="flex mt-6">
           <button type="submit" className="btn btn-primary">
             ✅ Add Movie
           </button>

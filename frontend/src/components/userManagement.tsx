@@ -67,25 +67,24 @@ function UserManagement() {
         setTotalUsers(0);
       }
     } catch (err: any) {
-      setError("Failed to load users. Please try again later.");
+      setError("❌ Failed to load users. Please try again later.");
     }
   };
 
   const handleDelete = async (id: string) => {
     if (!window.confirm("Delete this user?")) return;
-  
+
     const res = await fetch(`${apiUrl}/register/users/delete/${id}`, {
       method: "DELETE",
       credentials: "include",
     });
-  
+
     if (res.ok) {
       window.location.reload();
     } else {
       alert("Failed to delete user.");
     }
   };
-  
 
   useEffect(() => {
     fetchUsers();
@@ -96,7 +95,7 @@ function UserManagement() {
   return (
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2>User Management</h2>
+        <h2>Registered Users</h2>
         <button
           className="btn btn-success"
           onClick={() => navigate("/admin/users/add")}
@@ -132,34 +131,48 @@ function UserManagement() {
                   <td>{u.email}</td>
                   <td>{u.name}</td>
                   <td>{u.phone}</td>
-                  <td>{u.city}, {u.state} {u.zip}</td>
+                  <td>
+                    {u.city}, {u.state} {u.zip}
+                  </td>
                   <td>{u.roles.join(", ")}</td>
                   <td>{u.twoFactorEnabled ? "✅" : "❌"}</td>
-                  <td>{[
-                    u.netflix && "Netflix",
-                    u.amazon_Prime && "Prime",
-                    u.disney && "Disney",
-                    u.hulu && "Hulu",
-                  ].filter(Boolean).join(", ")}</td>
                   <td>
-                    <button
-                      className="btn btn-sm btn-warning me-2"
-                      onClick={() => navigate(`/admin/users/edit/${u.id}`)}
-                    >
-                      ✏️ Edit
-                    </button>
-                    <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => handleDelete(u.id)}
-                    >
-                      🗑️ Delete
-                    </button>
+                    {[
+                      u.netflix && "Netflix",
+                      u.amazon_Prime && "Prime",
+                      u.disney && "Disney",
+                      u.hulu && "Hulu",
+                      u.paramount && "Paramount",
+                      u.max && "Max",
+                      u.apple_TV && "Apple TV",
+                      u.peacock && "Peacock",
+                    ]
+                      .filter(Boolean)
+                      .join(", ")}
+                  </td>
+                  <td>
+                    <div className="flex gap-2">
+                      <button
+                        className="btn btn-warning btn-sm"
+                        onClick={() => navigate(`/admin/users/edit/${u.id}`)}
+                      >
+                        ✏️ Edit
+                      </button>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleDelete(u.id)}
+                      >
+                        🗑️ Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={8} className="text-center">Loading users...</td>
+                <td colSpan={8} className="text-center">
+                  Loading users...
+                </td>
               </tr>
             )}
           </tbody>
