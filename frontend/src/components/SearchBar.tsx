@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import "./css/SearchBar.css"; // ✅ Create a new CSS for search bar
 
+//this is a search bar that is used on both the movie page and the admin page to lookup movies and users. 
+
 interface SearchBarProps {
   setSearchTerm: (term: string) => void;
 }
@@ -10,7 +12,8 @@ function SearchBar({ setSearchTerm }: SearchBarProps) {
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
-      setSearchTerm(input.trim());
+      // Convert the search term to lowercase
+      setSearchTerm(input.trim().toLowerCase());
     }, 300);
 
     return () => clearTimeout(delayDebounce);
@@ -25,7 +28,7 @@ function SearchBar({ setSearchTerm }: SearchBarProps) {
     <div className="search-bar-container">
       <input
         type="text"
-        placeholder="Search by movie title..."
+        placeholder="Search"
         value={input}
         onChange={(e) => setInput(e.target.value)}
         className="search-input"

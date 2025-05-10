@@ -2,7 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { Movie, GENRES } from "../types/Movie";
 import { updateMovie, fetchMovieById } from "../api/movieAPI";
 import AuthorizeView from "./AuthorizeView";
-import "../pages/css/MovieDetail.css";
+import "../pages/css/MovieForm.css";
+
+//this is a form to edit movies. this is only accessable in the admin page. It pulls up the movies current information
+//as a placeholder and allows you to edit the information by calling a handleChange. It also allows you to upload a new
+//movie poster if you want.
 
 export type MovieFormData = Movie & {
   genre?: (typeof GENRES)[number] | "";
@@ -21,28 +25,22 @@ const EditMovieForm = ({
 }: EditMovieFormProps) => {
   const [formData, setFormData] = useState<MovieFormData | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [posterRemoved, setPosterRemoved] = useState(false);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const apiUrl = import.meta.env.VITE_API_URL;
+  const blobUrl = import.meta.env.VITE_BLOB_API_URL;
 
   useEffect(() => {
     const loadMovie = async () => {
-      console.log("🎬 Fetching movie with ID:", movieId);
       try {
         const movie = await fetchMovieById(movieId);
-        console.log("📦 Full movie object from backend:", movie);
 
-        // Normalize genre flags from lowercase or PascalCase
         const genreFlagged = GENRES.filter(
           (g) =>
             movie[g] === 1 || movie[g.toLowerCase() as keyof typeof movie] === 1
         );
-        console.log("🎭 Matched genres with flag = 1:", genreFlagged);
 
         const initialGenre = genreFlagged[0] ?? "";
-        console.log("🎯 Selected initial genre for dropdown:", initialGenre);
 
-        // Normalize all GENRES to ensure they're in PascalCase format
         const normalizedMovie = GENRES.reduce(
           (acc, g) => {
             const value =
@@ -57,7 +55,7 @@ const EditMovieForm = ({
           genre: initialGenre,
         });
       } catch (err) {
-        console.error("❌ Error loading movie:", err);
+        console.error("Error loading movie:", err);
       }
     };
 
@@ -82,22 +80,6 @@ const EditMovieForm = ({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setImageFile(e.target.files[0]);
-    }
-  };
-
-  const handlePosterDelete = async () => {
-    const res = await fetch(`${apiUrl}/Movie/DeletePoster`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ filename: formData!.show_id }),
-      credentials: "include",
-    });
-
-    if (res.ok) {
-      alert("Poster deleted");
-      setPosterRemoved(true);
-    } else {
-      alert("Failed to delete poster.");
     }
   };
 
@@ -139,18 +121,15 @@ const EditMovieForm = ({
 
     const encodedTitle = encodeURIComponent(cleanTitle);
     const folderName = encodeURIComponent("Movie Posters");
-    return `https://moviepostersintex2.blob.core.windows.net/movieposter/${folderName}/${encodedTitle}.jpg`;
+    return `${blobUrl}/${folderName}/${encodedTitle}.jpg`;
   };
 
   return (
     <AuthorizeView>
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white text-black p-4 rounded shadow-lg max-w-3xl mx-auto"
-      >
-        <h2 className="text-2xl font-bold mb-4">✏️ Edit Movie</h2>
+      <form onSubmit={handleSubmit} className="form-container">
+        <h2 className="form-title">✏️ Edit Movie</h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="form-grid">
           <input
             className="form-control"
             type="text"
@@ -216,7 +195,7 @@ const EditMovieForm = ({
             placeholder="Duration"
           />
           <input
-            className="form-control col-span-2"
+            className="form-control"
             type="text"
             name="description"
             value={formData.description}
@@ -225,39 +204,31 @@ const EditMovieForm = ({
           />
         </div>
 
-        {!posterRemoved && (
-          <div className="mb-4 mt-4">
-            <h4 className="mt-6 font-semibold">🎞️ Current Poster</h4>
-            <img
-              src={getPosterUrl(formData.title)}
-              alt="Current poster"
-              className="w-40 h-auto rounded border border-gray-300 mb-2"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).style.display = "none";
-              }}
-            />
-            <button
-              type="button"
-              onClick={handlePosterDelete}
-              className="btn btn-danger mt-2"
-            >
-              🗑️ Remove Poster
-            </button>
-          </div>
-        )}
+        {/* Current poster, display only */}
+        <div className="mb-4 mt-4 centered-container">
+          <h4 className="form-section-title">🎞️ Current Poster</h4>
+          <img
+            src={getPosterUrl(formData.title)}
+            alt="Current poster"
+            className="w-40 rounded"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.display = "none";
+            }}
+          />
+        </div>
 
         {imageFile && (
-          <div className="mb-4">
-            <h4 className="mb-2 font-semibold">📂 New Image Preview</h4>
+          <div className="mb-4 centered-container">
+            <h4 className="form-section-title">📂 New Image Preview</h4>
             <img
               src={URL.createObjectURL(imageFile)}
               alt="New Poster Preview"
-              className="max-h-64 rounded shadow border"
+              className="max-h-64 rounded"
             />
           </div>
         )}
 
-        <h4 className="mt-4 mb-2 font-semibold">🎬 Upload New Poster</h4>
+        <h4 className="form-section-title">🎬 Upload New Poster</h4>
         <input
           className="form-control mb-4"
           type="file"
@@ -266,7 +237,7 @@ const EditMovieForm = ({
           ref={imageInputRef}
         />
 
-        <h4 className="mt-4 mb-2 font-semibold">🎭 Select Genre</h4>
+        <h4 className="form-section-title">🎭 Select Genre</h4>
         <select
           name="genre"
           className="form-control mb-4"
@@ -293,7 +264,7 @@ const EditMovieForm = ({
           ))}
         </select>
 
-        <div className="mt-6 flex gap-4">
+        <div className="flex mt-6">
           <button type="submit" className="btn btn-primary">
             💾 Save Changes
           </button>
@@ -302,7 +273,7 @@ const EditMovieForm = ({
             onClick={onCancel}
             className="btn btn-secondary"
           >
-            Cancel
+            ❌ Cancel
           </button>
         </div>
       </form>
